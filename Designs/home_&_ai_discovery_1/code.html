@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DineAI | Discover &amp; Book</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --primary: #121212;
+                --accent: #B08E21;
+                --bg-light: #ffffff;
+                --bg-soft-gray: #f9fafb;
+                --text-main: #111827;
+                --text-muted: #6b7280;
+                --border: #e5e7eb;
+                --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 10px -2px rgba(0, 0, 0, 0.03);
+            }
+        }
+        .font-display { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .luxury-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e5e7eb;
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #B08E21 100%);
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "gold": "#B08E21",
+                        "charcoal": "#111827",
+                        "soft-gray": "#f9fafb",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "none": "0",
+                        "sm": "0.125rem",
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen">
+<header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+<div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
+<div class="flex items-center gap-12">
+<div class="flex items-center gap-3">
+<div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined font-bold">restaurant_menu</span>
+</div>
+<h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">DineAI</h1>
+</div>
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-sm font-bold tracking-wide text-charcoal hover:text-gold transition-colors" href="#">EXPLORE</a>
+<a class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" href="#">CONCIERGE</a>
+<a class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" href="#">COLLECTIONS</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="p-2 text-charcoal hover:text-gold transition-colors">
+<span class="material-symbols-outlined">light_mode</span>
+</button>
+<div class="h-6 w-[1px] bg-[var(--border)]"></div>
+<div class="flex items-center gap-4 cursor-pointer group">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-bold uppercase tracking-wider text-charcoal">Alex Rivera</p>
+<p class="text-[10px] text-gold font-bold">ELITE MEMBER</p>
+</div>
+<div class="size-11 rounded-full border-2 border-gold/20 group-hover:border-gold transition-all overflow-hidden bg-[var(--bg-soft-gray)]" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDUdgvZVNvGU8wbMNvsNtbwyhXDkV8VeGSP24jvV38Nr03J8z-od3m50T_r1n_ORqWdtrOHWhnFF3Wh335Y864FYHHECqxA11SZB8Cbg5wddQ6rdSSP0zILUk8CilYIgLWe-F-DMDpjZg4hIihUKwW8kGAoar_4aeDQvKk80jiioTfVc7cAAo6JVmgO6E65vziAW-8dXeGtQAWwuEaSMIwtsCl8A7e3FzjcQtTK6mMBF3BWyjU7yKo5NqfGMlQZrq376qwpBxD0yEU"); background-size: cover;'>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-8 py-10">
+<section class="relative mb-20">
+<div class="relative h-[640px] w-full rounded-3xl overflow-hidden flex items-center justify-center px-4">
+<div class="absolute inset-0 z-0 transition-transform duration-1000 scale-105" style='background-image: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.1)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCLvLWTCXTllvS6B3VKWU_cnjsb-TE8et33MBP084E9ueOiwQFeoUlcAy89sbANijqXHKiAdetZC1TC3RDBwmylkruho0cFZHpEkLKmjsSXH2Tq7aElRyqfyNY9gH5ktx6FBKOlWd0xl2Z3rypLvO_9T4t7YXqrhRumQh-w71pZnA8CS0tmxgjrmJ4aG4tpvbr7k8WFH9NObrakNgK__Sd9ygNYFtqsfbPjXnBKWSlnHCSOHtbaBoslBCHt0R4OEyXoWIUM0QbCmjU"); background-size: cover; background-position: center;'></div>
+<div class="relative z-10 max-w-[840px] w-full text-center space-y-10">
+<div class="space-y-4">
+<h2 class="text-5xl md:text-7xl font-extrabold text-charcoal tracking-tight leading-tight">
+                        Taste the <span class="text-gold">Future</span> of Dining.
+                    </h2>
+<p class="text-gray-700 text-lg md:text-xl font-medium tracking-wide max-w-2xl mx-auto">
+                        Your personal AI sommelier and concierge for the world's most exclusive culinary experiences.
+                    </p>
+</div>
+<div class="relative group max-w-3xl mx-auto">
+<div class="absolute -inset-1 bg-gold/10 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
+<div class="relative flex h-20 w-full items-stretch rounded-2xl overflow-hidden bg-white border border-gray-200 shadow-xl">
+<div class="flex items-center justify-center pl-8 text-gold">
+<span class="material-symbols-outlined text-3xl">auto_awesome</span>
+</div>
+<input class="w-full bg-transparent border-none focus:ring-0 text-charcoal placeholder:text-gray-400 text-xl px-6 font-light" placeholder="Describe your mood... e.g., 'A romantic candlelit dinner'"/>
+<div class="flex items-center px-4">
+<button class="gold-gradient text-white px-10 h-12 rounded-xl font-bold transition-all flex items-center gap-2 hover:brightness-105 active:scale-95 shadow-lg shadow-gold/20">
+<span>Search</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-charcoal text-xs font-bold tracking-widest uppercase hover:bg-gold hover:text-white hover:border-gold transition-all shadow-sm">Date Night</button>
+<button class="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-charcoal text-xs font-bold tracking-widest uppercase hover:bg-gold hover:text-white hover:border-gold transition-all shadow-sm">Rooftops</button>
+<button class="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-charcoal text-xs font-bold tracking-widest uppercase hover:bg-gold hover:text-white hover:border-gold transition-all shadow-sm">Chef's Table</button>
+<button class="px-6 py-2.5 rounded-full bg-white border border-gray-200 text-charcoal text-xs font-bold tracking-widest uppercase hover:bg-gold hover:text-white hover:border-gold transition-all shadow-sm">Tasting Menu</button>
+</div>
+</div>
+</div>
+</section>
+<section class="mb-20">
+<div class="flex items-end justify-between mb-10 px-2">
+<div>
+<span class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-2 block">Personalized</span>
+<h3 class="text-3xl font-extrabold tracking-tight text-charcoal">Recommended for you</h3>
+</div>
+<button class="text-gold font-bold text-sm flex items-center gap-2 group hover:gap-3 transition-all">
+                EXPLORE ALL <span class="material-symbols-outlined text-lg">arrow_right_alt</span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="group cursor-pointer bg-white rounded-2xl p-3 border border-gray-100 shadow-[var(--card-shadow)] card-hover">
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden mb-4">
+<div class="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-md border border-gray-100 rounded-full px-3 py-1 flex items-center gap-1.5 text-charcoal shadow-sm">
+<span class="material-symbols-outlined text-gold text-[16px] fill-1">star</span>
+<span class="text-xs font-bold">4.8</span>
+</div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4H8QMoUVeTaTtsZblYOvmmWwGh4W4dqhuB0LmyeHRjRmiMkJcs_SAQTqEBlF6Kz8doKG0iomWoXeIQBxL6MrxgW4RRRkw_Xo7I_9U6QRuqO2iLy-bTAIateb1rpC5USjyzJ3ie8zPE6aaC0oyC498lAFuPsBRRZm3dSFOakdyf7tw2gYEFfutUyGKrT_8i-cWcmdU-TkUnnfLOeagFy6QYzjsjLzbPTNsBJbpp9mvKXUVJWCH3nksnhFUxBh5e_BjABkiROQZ_xE");'></div>
+</div>
+<div class="px-2 pb-2 space-y-1">
+<h4 class="font-extrabold text-xl text-charcoal group-hover:text-gold transition-colors">L'Artisan Bistro</h4>
+<p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">French • Soho • $$$</p>
+</div>
+</div>
+<div class="group cursor-pointer bg-white rounded-2xl p-3 border border-gray-100 shadow-[var(--card-shadow)] card-hover">
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden mb-4">
+<div class="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-md border border-gray-100 rounded-full px-3 py-1 flex items-center gap-1.5 text-charcoal shadow-sm">
+<span class="material-symbols-outlined text-gold text-[16px] fill-1">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBDvyOxq3FSexbkSd4QEiKeEQpQkqtXxxUQ3-ndVYXaZk7KauSae9IwZ9sfoU23SkOrVvTQhvExAy5iQzzxFuJrsNMQrbEadvy5bsV4_NuKU9fLNDOD48-07jRCRPrXzTqfzMToSRcawOdnNCXQzt5-vvF7cuen2BWi5cj2TmngbITIyhDiGkB1ITSDiAK1lVeXu13QAUYqJ7DIDNl0seEuO8ZNkRSTwIrOLtUmDcC0njOxBBXwKKBpBO3SEOzssUSJGjWfNvg76xo");'></div>
+</div>
+<div class="px-2 pb-2 space-y-1">
+<h4 class="font-extrabold text-xl text-charcoal group-hover:text-gold transition-colors">Kyoto Nights</h4>
+<p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Japanese • Midtown • $$$$</p>
+</div>
+</div>
+<div class="group cursor-pointer bg-white rounded-2xl p-3 border border-gray-100 shadow-[var(--card-shadow)] card-hover">
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden mb-4">
+<div class="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-md border border-gray-100 rounded-full px-3 py-1 flex items-center gap-1.5 text-charcoal shadow-sm">
+<span class="material-symbols-outlined text-gold text-[16px] fill-1">star</span>
+<span class="text-xs font-bold">4.6</span>
+</div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDqacwv8CfkHOcnSTV4E6-CH_YS-z8_k0WntCMqMhUQjQmVZu0xgb5zG6YTekuF_DwO_2sB-KCyyCV9QZSJa8Ex-0FfEQWXZ_jJ4qL2OK0InNhEbL6PT6qk88So9-9pUW6XYaSjbeXBo_dDacPNNj1BieAs_6kT9O0h1L76oUULQBMhYouqbCiY4tIglFz6tsKYkJIpYYChq9L4sMGQW5ZDgMK2_0e84e1utq2v_CkiNZpSdbXfm6_Mreygxq-fvrxRV7olZReq50");'></div>
+</div>
+<div class="px-2 pb-2 space-y-1">
+<h4 class="font-extrabold text-xl text-charcoal group-hover:text-gold transition-colors">The Green Room</h4>
+<p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Vegan • Chelsea • $$</p>
+</div>
+</div>
+<div class="group cursor-pointer bg-white rounded-2xl p-3 border border-gray-100 shadow-[var(--card-shadow)] card-hover">
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden mb-4">
+<div class="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-md border border-gray-100 rounded-full px-3 py-1 flex items-center gap-1.5 text-charcoal shadow-sm">
+<span class="material-symbols-outlined text-gold text-[16px] fill-1">star</span>
+<span class="text-xs font-bold">4.7</span>
+</div>
+<div class="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDEJXELlDjSCohz4i1RKOJajHX07Hw5DPoR_6MnmfereovwVQa4fqx0yg-Lu2TENb6I2h2AyR6X8Mv5QxmcXUqAv0Cm1x53kTD_Tpas5AlKaou2qDA0JrE-ouTaBVuKQWQiMTQ7OwrPhjAGU6gM4lvPSuywMirFOha8cBW9ao-14cZelcIDQYKCY1HlGqj5UZ4zn7jdfgyu3WLovV4MiBi12x74thXX8_4UsYGA-FCjOsRkFlSbC18lg96u7XQxA2BjwGNsHzLuJms");'></div>
+</div>
+<div class="px-2 pb-2 space-y-1">
+<h4 class="font-extrabold text-xl text-charcoal group-hover:text-gold transition-colors">Oceanic Grill</h4>
+<p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Seafood • Marina • $$$$</p>
+</div>
+</div>
+</div>
+</section>
+<section class="mb-20">
+<div class="flex flex-col mb-10 px-2">
+<span class="text-gold text-xs font-bold tracking-[0.3em] uppercase mb-2">Live Demand</span>
+<h3 class="text-3xl font-extrabold tracking-tight text-charcoal">Trending nearby</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="relative group rounded-3xl overflow-hidden h-[440px] cursor-pointer shadow-lg border border-gray-100">
+<div class="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" style='background-image: linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuA3ASkLh4cRI7xydxOTJRc1nP1ngCHC_Dg4D1yBT3OEuYKLcTxmGNHwu76CbEX0kZ47DEwgNeX0mQeaw8SnmFuguzbhDzsWVPoOZ0B_jMxH-3uEcPAiGj8s8-lSOB7pjAdtOC26ersLDqMcKWikHbpJDWTZy8wFZKdUvm52VDznLEDrVxUIt8fDL36TziS3DpjOuVglgyJqEry9snHejcpa_1uCed4aOX87pbH6WOPRjJ1umZ1jYAYhHrxJjBxa1JpYBGsWBXOQIeg");'></div>
+<div class="absolute inset-0 z-10 p-10 flex flex-col justify-end">
+<div class="flex items-center gap-3 mb-4">
+<span class="gold-gradient text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded text-white">High Demand</span>
+<span class="text-charcoal/70 text-xs font-bold backdrop-blur-md bg-white/60 border border-white/40 px-3 py-1 rounded-full">12 reservations in the last hour</span>
+</div>
+<h4 class="text-3xl font-black text-charcoal mb-2">Osteria Romana</h4>
+<p class="text-gray-600 font-medium mb-6">Authentic Carbonara &amp; Roman Classics • West Village</p>
+<div class="flex items-center gap-6">
+<button class="bg-charcoal text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-gold transition-colors uppercase tracking-widest shadow-xl shadow-charcoal/10">Reserve Now</button>
+<div class="flex -space-x-3">
+<div class="size-9 rounded-full border-2 border-white bg-gray-200" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCdlQJYZWW1qY52SKkpnVZ56B006HrWPDosAsq8Vd3usPomRUPE8ERZbsmoLicOcZVZNV721a3KCu-2eRFA1Wgfb3AFAEuWwJ5D1QWdcMkZuzVxDhiyt_1fDjjZ2tpFZa3WGQACGRhYCj5_7gn1Mb51huyu_68rVoKWN3wCneniOhAOLKN21IzF_jb7XrZ34KayPVuR4fkmJP0N4HbgZZU0DCfi_J6dr2vhT8dCF-0AQmxuvxDqbFRtjM7MXekCgQtPXY7cPGAixaY"); background-size: cover;'></div>
+<div class="size-9 rounded-full border-2 border-white bg-gray-200" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDq3SBZEvbeblo99tGMdGCL9yQ3tazvrTD_-xP7JjxG37TC8DoWFP4l8nQKQ_6BgV8sQscHDlB0FZCCE68ErwDP_fwW7dGAO6BVoM_SEMuuRzcbKpEcHzfX8HgVectImMkECh4DLHAaiYETJ7j5CxLNzV9U_XEhgKk_viutERYhkTsVZdEbrRecn_d0ayD_zhTC4qCDydsD7zuV4X7brNwOf35byNSPcAP49z1nz8Wz_0YeHnILPJuooIlGV6_8OxOploebt-nkfFA"); background-size: cover;'></div>
+<div class="size-9 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold text-charcoal shadow-sm">+8</div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative group rounded-3xl overflow-hidden h-[440px] cursor-pointer shadow-lg border border-gray-100">
+<div class="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" style='background-image: linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDn7FtyuAWtWFzPETCC6J0MsVmeWekSxVAfiJ-kFg5Kx1MJ4SOJkX02zIVPlF6fbac7XtrrH1RoDcw2FSC9AOWLYXc_AcF-dfCv0O-l8VV9OETtV8K2JAZtBxaoC4inMG_Hv3essorYk1B7vR-dz3ulMlFNZDxSKx0aDlNbajPqmV9pPJjWLdnrE0iquMW9ee1aYwr7FUk4MzCTfA8rp-r7tYcinswcipUYZmyV5Hl0MD8S_iyEoVy5lIP-ZFaKwbZdo0S7h_mCDEw");'></div>
+<div class="absolute inset-0 z-10 p-10 flex flex-col justify-end">
+<div class="flex items-center gap-3 mb-4">
+<span class="gold-gradient text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded text-white">Trending Now</span>
+<span class="text-charcoal/70 text-xs font-bold backdrop-blur-md bg-white/60 border border-white/40 px-3 py-1 rounded-full">85% full for tonight</span>
+</div>
+<h4 class="text-3xl font-black text-charcoal mb-2">Velvet Lounge</h4>
+<p class="text-gray-600 font-medium mb-6">Artisanal Cocktails &amp; Jazz • Upper East Side</p>
+<div class="flex items-center gap-6">
+<button class="bg-charcoal text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-gold transition-colors uppercase tracking-widest shadow-xl shadow-charcoal/10">Reserve Now</button>
+<div class="flex -space-x-3">
+<div class="size-9 rounded-full border-2 border-white bg-gray-200" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuApn8MSjEFNp6b6_XLPwIBEVre_MDNixOeWIRXmjqY_HwhD9IjKTIjd0TogMgl9bmqxWUTLnjNAf6rUYPhBi1f9R4mHj2yKaWS1YnbC_9OfWHAThKFGr7iwQm-chK3YHhqYGe9Xa0WWC-unaOFYpHRcRVjSk1CTXHZTnNjbPaycndM3W5UAgQI4mWiWcmH1hj643fkz3Q0KgLXQjNu42RMR82RYFl8ylTO1rtIeFiMbENr5oAHD8rZoSnKvN4wCUYQSjm2MXxP-qo0"); background-size: cover;'></div>
+<div class="size-9 rounded-full border-2 border-white bg-gray-200" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLcqJRjooGPS69GY8B5OSts8-o9hUPrMihVf6anorXgKEoEGy0T-lzXj_lnjrZaTpmK9C9hSRD3K1W0H3kqgY4Hu6CyJbscnP2vS5ANGErqDtWLCVP_lEvDd9MZ5A8Fn2-PO9b8xU75gSZRyKg-7r66D2fRuouLTV8gRBtMfD9xt2CJ_AJRYmssDTbKeze8mAM8LrCFYQQzziViJXxOwkiQgVSB826rZMtyabbYAOd8DiSP56GO6IgjY2Jep_aAkwvVkvGknirRnk"); background-size: cover;'></div>
+<div class="size-9 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-bold text-charcoal shadow-sm">+14</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="border-t border-[var(--border)] py-20 bg-[var(--bg-soft-gray)]">
+<div class="max-w-[1440px] mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-16">
+<div class="space-y-6">
+<div class="flex items-center gap-3">
+<div class="size-8 gold-gradient rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm font-bold">restaurant_menu</span>
+</div>
+<h2 class="text-xl font-black uppercase tracking-widest text-charcoal">DineAI</h2>
+</div>
+<p class="text-sm text-[var(--text-muted)] leading-relaxed font-medium">
+                The next evolution of haute cuisine discovery. Curating the world's finest tables through artificial intelligence.
+            </p>
+</div>
+<div>
+<h5 class="font-bold text-xs uppercase tracking-[0.2em] mb-8 text-gold">DISCOVERY</h5>
+<ul class="space-y-4 text-sm font-semibold text-charcoal uppercase tracking-wider">
+<li><a class="hover:text-gold transition-colors" href="#">Near Me</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Curated Guides</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Private Dining</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Tasting Events</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-bold text-xs uppercase tracking-[0.2em] mb-8 text-gold">THE HOUSE</h5>
+<ul class="space-y-4 text-sm font-semibold text-charcoal uppercase tracking-wider">
+<li><a class="hover:text-gold transition-colors" href="#">Our Story</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Membership</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Concierge</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Journal</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-bold text-xs uppercase tracking-[0.2em] mb-8 text-gold">SUPPORT</h5>
+<ul class="space-y-4 text-sm font-semibold text-charcoal uppercase tracking-wider">
+<li><a class="hover:text-gold transition-colors" href="#">Help Center</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Reservations</a></li>
+<li><a class="hover:text-gold transition-colors" href="#">Legal</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-[1440px] mx-auto px-8 mt-20 pt-10 border-t border-[var(--border)] flex flex-col md:flex-row justify-between items-center gap-8">
+<p class="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">© 2024 DineAI Luxury Group. All rights reserved.</p>
+<div class="flex items-center gap-8 text-[var(--text-muted)]">
+<span class="material-symbols-outlined cursor-pointer hover:text-gold transition-colors">diamond</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-gold transition-colors">wine_bar</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-gold transition-colors">star</span>
+</div>
+</div>
+</footer>
+
+</body></html>

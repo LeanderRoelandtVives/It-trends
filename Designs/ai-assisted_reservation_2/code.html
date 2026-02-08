@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DineReserve AI - Assisted Booking (Dark Mode)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#3b82f6",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0a0f18",
+                        "card-dark": "#161d2b",
+                        "bubble-ai": "#2d3748",
+                        "bubble-user": "#1e40af",
+                        "accent-success": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Manrope', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        :root {
+            --calendar-available: #3b82f6;
+            --calendar-bg: #161d2b;
+            --message-ai-bg: #2d3748;
+            --message-user-bg: #1e40af;
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-slate-200 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-slate-800 px-10 py-3 bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] text-white">DineReserve AI</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8 items-center">
+<div class="hidden md:flex items-center gap-9">
+<a class="text-sm font-medium leading-normal hover:text-primary transition-colors text-slate-400" href="#">Explore</a>
+<a class="text-sm font-medium leading-normal hover:text-primary transition-colors text-slate-400" href="#">My Bookings</a>
+<a class="text-sm font-medium leading-normal hover:text-primary transition-colors text-slate-400" href="#">Favorites</a>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-blue-600 transition-colors">
+<span class="truncate">Profile</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-700" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCrK8lx9x1fggj_e0LF01B4FuTkDVkLLhxXuSTDCeJtdxrfC-u_P9I-6EDacTXJRpklC93zbTL9zrvZ1OgFT8vzN_m7gHboRJPPIdZ3uxwweht8s9nJ7HUgTEDHog62bnPcuvqupMpWfr7BamAO5NNmhxHGHX4c5vdOsuPa9SowRPTN__OPBdfL6QYNGq1JU7y5Kxotl0o3F1ud2chbn1prIQgw7M_r066HAr6dhEpSoesmJMWFKUuQAlafPZaH7CcLXauYv2D8H8o");'></div>
+</div>
+</header>
+<main class="flex-1 flex justify-center py-8">
+<div class="layout-content-container flex flex-col w-full max-w-[1280px] px-6">
+<div class="flex flex-wrap justify-between items-end gap-4 mb-8">
+<div class="flex flex-col gap-2">
+<p class="text-4xl font-black leading-tight tracking-[-0.033em] text-white">Table for Two at L'Artiste</p>
+<div class="flex items-center gap-2">
+<span class="text-slate-400 text-base font-normal leading-normal">French Fine Dining • 4.8 stars • Manhattan, NY</span>
+</div>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-slate-800 text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-slate-700 transition-colors">
+<span class="truncate">Back to Discovery</span>
+</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="bg-card-dark rounded-xl border border-slate-800 p-6 shadow-2xl">
+<h3 class="text-lg font-bold leading-tight tracking-[-0.015em] mb-4 text-white">Select Date &amp; Time</h3>
+<div class="flex flex-col items-center gap-0.5 max-w-full mx-auto lg:mx-0">
+<div class="flex items-center p-1 justify-between w-full mb-2">
+<button class="p-2 rounded-full hover:bg-slate-800 text-slate-400">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<p class="text-base font-bold leading-tight flex-1 text-center text-white">October 2023</p>
+<button class="p-2 rounded-full hover:bg-slate-800 text-slate-400">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 w-full text-center">
+<p class="text-slate-500 text-[13px] font-bold h-10 flex items-center justify-center">S</p>
+<p class="text-slate-500 text-[13px] font-bold h-10 flex items-center justify-center">M</p>
+<p class="text-slate-500 text-[13px] font-bold h-10 flex items-center justify-center">T</p>
+<p class="text-slate-500 text-[13px] font-bold h-10 flex items-center justify-center">W</p>
+<p class="text-slate-500 text-[13px] font-bold h-10 flex items-center justify-center">T</p>
+<p class="text-slate-500 text-[13px] font-bold h-10 flex items-center justify-center">F</p>
+<p class="text-slate-500 text-[13px] font-bold h-10 flex items-center justify-center">S</p>
+<button class="h-12 w-full text-sm font-medium col-start-4"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 transition-colors text-slate-400">1</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 transition-colors text-slate-400">2</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 transition-colors text-slate-400">3</div></button>
+<button class="h-12 w-full text-sm font-medium group"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">4</div></button>
+<button class="h-12 w-full text-white text-sm font-bold">
+<div class="flex size-full items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">5</div>
+</button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">6</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">7</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">8</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">9</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">10</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 text-slate-400">11</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">12</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">13</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">14</div></button>
+<button class="h-12 w-full text-sm font-medium"><div class="flex size-full items-center justify-center rounded-lg hover:bg-slate-800 border border-primary/40 text-primary">15</div></button>
+</div>
+</div>
+<hr class="my-6 border-slate-800"/>
+<h3 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-3">Party Size</h3>
+<div class="flex gap-2 flex-wrap mb-6">
+<div class="flex h-10 items-center justify-center rounded-lg bg-slate-800/50 px-4 cursor-pointer hover:bg-slate-800 transition-colors border border-slate-700">
+<p class="text-sm font-medium text-slate-300">1 Guest</p>
+</div>
+<div class="flex h-10 items-center justify-center rounded-lg bg-primary/20 px-4 cursor-pointer border-2 border-primary">
+<p class="text-sm font-bold text-primary">2 Guests</p>
+</div>
+<div class="flex h-10 items-center justify-center rounded-lg bg-slate-800/50 px-4 cursor-pointer hover:bg-slate-800 transition-colors border border-slate-700">
+<p class="text-sm font-medium text-slate-300">3 Guests</p>
+</div>
+<div class="flex h-10 items-center justify-center rounded-lg bg-slate-800/50 px-4 cursor-pointer hover:bg-slate-800 transition-colors border border-slate-700">
+<p class="text-sm font-medium text-slate-300">4 Guests</p>
+</div>
+</div>
+<h3 class="text-xs font-bold uppercase text-slate-500 tracking-wider mb-3">Available Times</h3>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+<button class="h-10 rounded-lg bg-slate-800/50 border border-slate-700 font-medium text-sm hover:border-primary/50 text-slate-300">6:00 PM</button>
+<button class="h-10 rounded-lg bg-slate-800/50 border border-slate-700 font-medium text-sm hover:border-primary/50 text-slate-300">6:30 PM</button>
+<button class="h-10 rounded-lg bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20">7:00 PM</button>
+<button class="h-10 rounded-lg bg-slate-800/50 border border-slate-700 font-medium text-sm hover:border-primary/50 text-slate-300">7:30 PM</button>
+<button class="h-10 rounded-lg bg-slate-800/50 border border-slate-700 font-medium text-sm hover:border-primary/50 text-slate-300">8:00 PM</button>
+<button class="h-10 rounded-lg bg-slate-800/50 border border-slate-700 font-medium text-sm hover:border-primary/50 text-slate-300">8:30 PM</button>
+<button class="h-10 rounded-lg bg-slate-800/50 border border-slate-700 font-medium text-sm hover:border-primary/50 text-slate-300">9:00 PM</button>
+<button class="h-10 rounded-lg bg-slate-900 border border-slate-800 font-medium text-sm text-slate-600 cursor-not-allowed" disabled="">9:30 PM</button>
+</div>
+</div>
+<div class="flex gap-4 p-4 rounded-xl bg-primary/5 border border-primary/20 items-start">
+<span class="material-symbols-outlined text-primary">info</span>
+<div>
+<h4 class="font-bold text-sm text-slate-200">Booking Window</h4>
+<p class="text-xs text-slate-400 mt-1">L'Artiste holds tables for 15 minutes. Cancellations within 24 hours may incur a $25 fee per guest.</p>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 flex flex-col h-[700px] bg-card-dark rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
+<div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div>
+<h3 class="font-bold text-sm text-white">Concierge AI</h3>
+<p class="text-[10px] text-accent-success flex items-center gap-1">
+<span class="size-1.5 rounded-full bg-accent-success animate-pulse"></span> Online &amp; Ready
+                                </p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer">more_vert</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 flex flex-col gap-5 no-scrollbar bg-gradient-to-b from-transparent to-slate-900/20">
+<div class="flex flex-col gap-1 max-w-[85%] self-start">
+<div class="bg-bubble-ai p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl text-slate-200">
+<p class="text-sm">Bonjour! I see you're looking at October 5th at 7:00 PM for 2 guests. Would you like me to reserve this table?</p>
+</div>
+<span class="text-[10px] text-slate-500 ml-1 uppercase font-bold tracking-wider">11:42 AM</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[85%] self-end">
+<div class="bg-bubble-user p-3 rounded-tl-xl rounded-bl-xl rounded-br-xl text-white shadow-lg shadow-blue-900/20">
+<p class="text-sm">Yes, please. It's for my wife's birthday, and she's allergic to shellfish. Can we get a window seat?</p>
+</div>
+<span class="text-[10px] text-slate-500 mr-1 text-right uppercase font-bold tracking-wider">11:43 AM</span>
+</div>
+<div class="flex flex-col gap-1 max-w-[85%] self-start">
+<div class="bg-bubble-ai p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl text-slate-200">
+<p class="text-sm">Magnifique! A birthday celebration. I've noted the shellfish allergy for the chef. I'm checking window seat availability for 7:00 PM...</p>
+</div>
+</div>
+<div class="bg-primary/10 border-2 border-dashed border-primary/30 p-4 rounded-xl mt-2">
+<h4 class="text-sm font-bold text-primary mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">edit_note</span>
+                                Drafting Reservation
+                            </h4>
+<div class="space-y-3">
+<div class="flex justify-between text-xs items-center">
+<span class="text-slate-400">Date &amp; Time</span>
+<span class="font-bold text-white">Oct 5, 2023 @ 7:00 PM</span>
+</div>
+<div class="flex justify-between text-xs items-center">
+<span class="text-slate-400">Occasion</span>
+<span class="font-bold text-primary flex items-center gap-1 bg-primary/20 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">cake</span> Birthday
+                                    </span>
+</div>
+<div class="flex justify-between text-xs items-start">
+<span class="text-slate-400">Special Requests</span>
+<span class="font-bold text-white text-right">Shellfish Allergy,<br/>Window Seat</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-slate-900/50 border-t border-slate-800">
+<div class="flex gap-2">
+<input class="flex-1 bg-slate-950 border-slate-800 rounded-lg text-sm px-4 focus:ring-primary focus:border-primary text-slate-200 placeholder:text-slate-600" placeholder="Tell me more about your request..." type="text"/>
+<button class="size-10 bg-primary rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/30 hover:bg-blue-600 transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+<div class="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
+<button class="whitespace-nowrap px-3 py-1.5 rounded-full border border-slate-700 text-[11px] font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">Need high chair</button>
+<button class="whitespace-nowrap px-3 py-1.5 rounded-full border border-slate-700 text-[11px] font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">Outdoor seating?</button>
+<button class="whitespace-nowrap px-3 py-1.5 rounded-full border border-slate-700 text-[11px] font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">Pre-order wine</button>
+</div>
+</div>
+<div class="p-4 bg-primary hover:bg-blue-600 transition-colors cursor-pointer group">
+<button class="w-full flex items-center justify-center gap-2 text-white font-bold text-sm h-12 uppercase tracking-widest">
+<span>Confirm &amp; Book Reservation</span>
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<footer class="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 p-8 border-t border-slate-800">
+<div class="flex items-center gap-2 text-slate-500 text-sm">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+<span>Secure end-to-end encrypted reservation</span>
+</div>
+<div class="flex gap-8">
+<a class="text-slate-500 text-sm hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-slate-500 text-sm hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-slate-500 text-sm hover:text-primary transition-colors" href="#">Contact Support</a>
+</div>
+</footer>
+</div>
+</main>
+</div>
+
+</body></html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DineFinder - Search Results &amp; Map View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#0a0c10",
+                        "card-dark": "#161b22",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #282e39;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #3f4756;
+        }
+        .map-dark-overlay {
+            filter: brightness(0.6) contrast(1.2) grayscale(1) invert(1);
+        }
+        .ai-glow {
+            box-shadow: 0 0 20px 2px rgba(19, 91, 236, 0.4);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white font-display overflow-hidden">
+<div class="flex h-screen flex-col">
+<header class="flex h-16 items-center justify-between border-b border-slate-800 bg-background-dark px-6 py-3 shrink-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined !text-2xl">restaurant_menu</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight text-white">DineFinder</h2>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex h-10 w-[400px] items-stretch rounded-lg bg-slate-900 border border-slate-700">
+<div class="flex items-center justify-center pl-4 text-slate-400">
+<span class="material-symbols-outlined !text-xl">search</span>
+</div>
+<input class="w-full border-none bg-transparent px-3 text-sm focus:ring-0 placeholder:text-slate-500 text-white" placeholder="Search cuisines, restaurants, or locations..." value="San Francisco, CA"/>
+<div class="flex items-center pr-2">
+<span class="material-symbols-outlined !text-xl text-slate-400 cursor-pointer">tune</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="flex items-center gap-6">
+<a class="text-sm font-semibold text-primary" href="#">Explore</a>
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="#">Bookings</a>
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="#">Favorites</a>
+</nav>
+<div class="h-9 w-9 rounded-full bg-cover bg-center ring-2 ring-primary/20 border border-slate-700" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBQfr06zvHiJSBasaXK7Ta5tlSUoWHEgKbf1pgRUB-RF2fOkOwJ_Z3ImQgZ8ssS5DzOFV91oDa5ctsn9qjQ3CeFxLdZhPyAQbwR742QJcxALAYaVmyC1GM-7una0aqwOoTVmwdNW3ddefj-9XyxYhio6SLfSacO6epUD0H-14cmBvH8MldZ5OvYR8PiiyvB7vfj6QhVtFozA_kVhstwaFsgtzyyBN9CFgOxCqON9ZNqUR2vqYP1xoHtWla0xLX--p34-QC9h9o4GcE");'></div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 border-r border-slate-800 bg-background-dark overflow-y-auto custom-scrollbar shrink-0">
+<div class="flex flex-col p-6 gap-6">
+<div>
+<h1 class="text-lg font-bold text-white">Refine Search</h1>
+<p class="text-slate-500 text-xs font-medium uppercase mt-1">42 restaurants found</p>
+</div>
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined !text-xl">tune</span>
+<p class="text-sm font-bold">All Filters</p>
+</div>
+<div class="space-y-4 pt-2">
+<div class="flex flex-col gap-2">
+<label class="flex items-center gap-3 group cursor-pointer">
+<div class="size-5 rounded border border-slate-700 flex items-center justify-center group-hover:border-primary transition-colors bg-slate-900">
+<div class="size-3 bg-primary rounded-sm opacity-0 group-hover:opacity-10 transition-opacity"></div>
+</div>
+<span class="text-sm font-medium text-slate-300">Open Now</span>
+</label>
+<label class="flex items-center gap-3 group cursor-pointer">
+<div class="size-5 rounded border border-slate-700 flex items-center justify-center group-hover:border-primary transition-colors bg-slate-900">
+<div class="size-3 bg-primary rounded-sm opacity-100"></div>
+</div>
+<span class="text-sm font-medium text-slate-300">Top Rated (4.5+)</span>
+</label>
+</div>
+<div class="pt-4">
+<p class="text-xs font-bold text-slate-500 uppercase mb-3">Price Range</p>
+<div class="flex gap-1">
+<button class="flex-1 py-1 text-xs font-bold rounded bg-slate-800 text-slate-400 hover:bg-primary/20 hover:text-primary transition-colors">$</button>
+<button class="flex-1 py-1 text-xs font-bold rounded bg-primary text-white">$$</button>
+<button class="flex-1 py-1 text-xs font-bold rounded bg-slate-800 text-slate-400 hover:bg-primary/20 hover:text-primary transition-colors">$$$</button>
+<button class="flex-1 py-1 text-xs font-bold rounded bg-slate-800 text-slate-400 hover:bg-primary/20 hover:text-primary transition-colors">$$$$</button>
+</div>
+</div>
+<div class="pt-4">
+<p class="text-xs font-bold text-slate-500 uppercase mb-3">Cuisine</p>
+<div class="flex flex-col gap-2">
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="rounded border-slate-700 text-primary focus:ring-primary/20 bg-slate-900" type="checkbox"/>
+<span class="text-sm font-medium text-slate-300">American</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="rounded border-slate-700 text-primary focus:ring-primary/20 bg-slate-900" type="checkbox"/>
+<span class="text-sm font-medium text-slate-300">Italian</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="rounded border-slate-700 text-primary focus:ring-primary/20 bg-slate-900" type="checkbox"/>
+<span class="text-sm font-medium text-slate-300">Japanese</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer">
+<input class="rounded border-slate-700 text-primary focus:ring-primary/20 bg-slate-900" type="checkbox"/>
+<span class="text-sm font-medium text-slate-300">Mediterranean</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex overflow-hidden">
+<div class="w-[520px] flex flex-col bg-[#0c1016] border-r border-slate-800 overflow-y-auto custom-scrollbar shrink-0">
+<div class="flex gap-2 p-4 border-b border-slate-800 bg-[#0c1016] sticky top-0 z-10">
+<button class="flex h-8 items-center gap-x-2 rounded-lg bg-primary text-white px-3 text-sm font-semibold">
+<span>Open Now</span>
+<span class="material-symbols-outlined !text-lg">close</span>
+</button>
+<button class="flex h-8 items-center gap-x-2 rounded-lg bg-slate-800 text-slate-300 px-3 text-sm font-medium hover:bg-slate-700 transition-colors">
+<span>Distance</span>
+<span class="material-symbols-outlined !text-lg">expand_more</span>
+</button>
+<button class="flex h-8 items-center gap-x-2 rounded-lg bg-slate-800 text-slate-300 px-3 text-sm font-medium hover:bg-slate-700 transition-colors">
+<span>Rating</span>
+<span class="material-symbols-outlined !text-lg">expand_more</span>
+</button>
+</div>
+<div class="flex flex-col gap-4 p-4">
+<div class="group relative flex flex-col gap-3 rounded-xl bg-card-dark p-4 card-shadow border border-slate-800 hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex gap-4">
+<div class="flex flex-[2_2_0px] flex-col gap-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-yellow-500 font-bold text-xs">
+<span class="material-symbols-outlined !text-sm fill-1">star</span>
+<span>4.8</span>
+<span class="text-slate-500 font-normal ml-1">(1.2k reviews)</span>
+</div>
+<p class="text-white text-lg font-bold leading-tight mt-1 group-hover:text-primary transition-colors">The Golden Grill</p>
+<p class="text-slate-400 text-sm font-medium">Modern American • $$$ • 0.8 miles</p>
+</div>
+<div class="flex items-center gap-2 mt-auto">
+<button class="flex flex-1 items-center justify-center rounded-lg h-9 bg-primary text-white text-sm font-bold gap-2 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined !text-lg">calendar_today</span>
+<span>Book Table</span>
+</button>
+<button class="flex items-center justify-center size-9 rounded-lg bg-slate-800 text-white hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined !text-xl">favorite</span>
+</button>
+</div>
+</div>
+<div class="w-32 h-32 bg-center bg-cover rounded-lg shrink-0 overflow-hidden border border-slate-700/50" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjSDiQ8UagC8HbI03RJ7hsbWNiIL3GAAHHJR0m1EQv1_kN9BvZE30myR3DhmTKy5LFHSR2Vfr5ro8n4uHoB2Ip6ib5PMoovb_YiBj_Vc4EBMvhW41nkuBUByjSLPIrOIH58B9wXS5uOj0PfS9Y6A7ZMl8nXrHoVkNzZtBcu4yIL0r2Aw1od6WIWAaz8kY0qS4tW2fNh3J_2rJo5kcA3ZDpGYg_rD5V_J_kTUqhPO3qPWgxvZkkohgsedUdeQjd_4JgrOIJEp89GS0");'></div>
+</div>
+</div>
+<div class="group relative flex flex-col gap-3 rounded-xl bg-card-dark p-4 card-shadow border border-slate-800 hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex gap-4">
+<div class="flex flex-[2_2_0px] flex-col gap-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-yellow-500 font-bold text-xs">
+<span class="material-symbols-outlined !text-sm fill-1">star</span>
+<span>4.6</span>
+<span class="text-slate-500 font-normal ml-1">(842 reviews)</span>
+</div>
+<p class="text-white text-lg font-bold leading-tight mt-1 group-hover:text-primary transition-colors">Lumina Sushi Bar</p>
+<p class="text-slate-400 text-sm font-medium">Japanese • $$$$ • 1.2 miles</p>
+</div>
+<div class="flex items-center gap-2 mt-auto">
+<button class="flex flex-1 items-center justify-center rounded-lg h-9 bg-primary text-white text-sm font-bold gap-2 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined !text-lg">calendar_today</span>
+<span>Book Table</span>
+</button>
+<button class="flex items-center justify-center size-9 rounded-lg bg-slate-800 text-white hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined !text-xl">favorite</span>
+</button>
+</div>
+</div>
+<div class="w-32 h-32 bg-center bg-cover rounded-lg shrink-0 overflow-hidden border border-slate-700/50" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBnfyOvfsXD1P4rwyuS_HmRQ7kqIQhOIUsSr8OjVdeh3maw6vEP6RfWJe4Rz9sMGq21G80lbR4WQmYKJyUBjoVBQcjBwzmH6Z27fStZt_41SNP3ECT-h16_r-r7V8yuBZ-vXQ27xmgBB3Mjd24-DaTW4zI-bQh77BfDxNIV0Lwow1oWO_husvfH2VHsYKACFcbmpHC_BElwO9vdBZqAHijSHl9bbqK6q8u0W3U2JYJ9MjOD1H1q_hM0R56cwYTS_nLaxRc2eUsZ3ak");'></div>
+</div>
+</div>
+<div class="group relative flex flex-col gap-3 rounded-xl bg-card-dark p-4 card-shadow border border-slate-800 hover:border-primary/50 transition-all cursor-pointer">
+<div class="flex gap-4">
+<div class="flex flex-[2_2_0px] flex-col gap-2">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-yellow-500 font-bold text-xs">
+<span class="material-symbols-outlined !text-sm fill-1">star</span>
+<span>4.9</span>
+<span class="text-slate-500 font-normal ml-1">(2.5k reviews)</span>
+</div>
+<p class="text-white text-lg font-bold leading-tight mt-1 group-hover:text-primary transition-colors">Pasta &amp; Co.</p>
+<p class="text-slate-400 text-sm font-medium">Italian • $$ • 1.5 miles</p>
+</div>
+<div class="flex items-center gap-2 mt-auto">
+<button class="flex flex-1 items-center justify-center rounded-lg h-9 bg-primary text-white text-sm font-bold gap-2 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined !text-lg">calendar_today</span>
+<span>Book Table</span>
+</button>
+<button class="flex items-center justify-center size-9 rounded-lg bg-slate-800 text-white hover:text-red-400 transition-colors">
+<span class="material-symbols-outlined !text-xl">favorite</span>
+</button>
+</div>
+</div>
+<div class="w-32 h-32 bg-center bg-cover rounded-lg shrink-0 overflow-hidden border border-slate-700/50" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDMIk5kA-NtIlCrJ8oRewoiK2cUMCQu6iPhpGEux7WIrg1vEai8aZd4CaV4h5w1DpRw0s7UiEGlPegZth4buo4-eEA0GjB8_dk7rHgrhb_o1juR2pL3iH8_aNLsZORsenEG68GSLe9NtFPPPilwwWmMMrBOuw4g9zxhgJ8qX7dyOHMJeX2gACj-ob7mv4SdacTZzmEkz5P7wvQwLD-5v3asNxDwgq7ZwjG258cp-U3p9Mc_hs6WBQLItzUhTKvOED4smXlDb4q0R9k");'></div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 relative bg-slate-900 overflow-hidden">
+<div class="absolute inset-0 map-dark-overlay opacity-50" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuClp49pJ8mxUMeKltsBfxiLPMYPDIBlBAByJxnTenD8d66JDuHKEC5F7xDsWzB8sKjZ4_wbHqPTKv0Cy0_r9QrMWy2AwSHLtDNizZ8P2bebS6gzUZcuhajfIxIGnuvnwrFfQYYIvtxWyvsf1RZOOrCv4UcIKDsgEVrXXg0dRp0ZtUGu9McF0vQWBf-JHicmUb7y-KcVklAVgSfO6F3AKiK3WSStk3e3EpGvXbNzSIfoVaVAVE0wE8fNJUlzkXvE5BztSn9pDWDR3tg"); background-size: cover; background-position: center;'></div>
+<div class="absolute top-[20%] left-[30%] group">
+<div class="bg-primary text-white px-3 py-1.5 rounded-full font-bold shadow-[0_4px_12px_rgba(19,91,236,0.5)] flex items-center gap-1 cursor-pointer transition-transform group-hover:scale-110 border border-white/20">
+<span>$</span><span>$</span><span>$</span>
+</div>
+</div>
+<div class="absolute top-[45%] left-[55%] group">
+<div class="bg-slate-900 text-white px-3 py-1.5 rounded-full font-bold shadow-xl flex items-center gap-1 cursor-pointer transition-transform group-hover:scale-110 border-2 border-primary">
+<span>$</span><span>$</span>
+</div>
+</div>
+<div class="absolute top-[60%] left-[25%] group">
+<div class="bg-slate-900 text-white px-3 py-1.5 rounded-full font-bold shadow-xl flex items-center gap-1 cursor-pointer transition-transform group-hover:scale-110 border border-slate-700">
+<span>$</span><span>$</span><span>$</span><span>$</span>
+</div>
+</div>
+<div class="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-slate-900/90 backdrop-blur-md p-1.5 rounded-full shadow-2xl border border-slate-700">
+<button class="px-5 py-2 rounded-full text-xs font-bold text-white hover:bg-slate-800 transition-colors">Search this area</button>
+</div>
+<div class="absolute bottom-6 right-6 flex flex-col items-end gap-3">
+<div class="max-w-[300px] bg-slate-900/95 backdrop-blur-lg p-5 rounded-2xl shadow-2xl border border-slate-700/50 ai-glow">
+<div class="flex items-center gap-2 mb-3">
+<div class="size-2.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AI Concierge</span>
+</div>
+<p class="text-sm font-semibold leading-relaxed text-white">"I've found 3 quiet romantic spots under $50. Would you like to see their available times?"</p>
+<div class="mt-4 flex flex-col gap-2">
+<button class="w-full text-left p-2.5 rounded-lg bg-slate-800/80 hover:bg-primary/20 hover:text-primary transition-all text-xs font-bold text-slate-300 border border-slate-700/50">
+                                Show romantic spots
+                            </button>
+<button class="w-full text-left p-2.5 rounded-lg bg-slate-800/80 hover:bg-primary/20 hover:text-primary transition-all text-xs font-bold text-slate-300 border border-slate-700/50">
+                                View available times
+                            </button>
+</div>
+</div>
+<button class="flex items-center gap-3 bg-primary hover:bg-primary/90 text-white pl-4 pr-5 py-3.5 rounded-full shadow-[0_8px_30px_rgba(19,91,236,0.4)] transition-all transform hover:scale-105 active:scale-95 group ai-glow">
+<span class="material-symbols-outlined !text-2xl group-hover:rotate-12 transition-transform">smart_toy</span>
+<span class="font-bold text-sm tracking-wide">Refine these results</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+</body></html>

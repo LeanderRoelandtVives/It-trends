@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DineAI Concierge Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --primary: 19, 91, 236;
+                --primary-foreground: 255, 255, 255;
+                --background: 246, 246, 248;
+                --sidebar: 255, 255, 255;
+                --card: 255, 255, 255;
+                --border: 226, 232, 240;
+                --text-main: 15, 23, 42;
+                --text-muted: 100, 116, 139;
+            }
+            .dark {
+                --primary: 19, 91, 236;
+                --background: 10, 13, 20;
+                --sidebar: 17, 19, 24;
+                --card: 28, 31, 39;
+                --border: 31, 41, 55;
+                --text-main: 248, 250, 252;
+                --text-muted: 157, 166, 185;
+            }.theme-nature {
+                --primary: 34, 197, 94;
+                --background: 240, 244, 240;
+                --sidebar: 255, 255, 255;
+                --card: 255, 255, 255;
+                --border: 209, 219, 209;
+                --text-main: 20, 30, 20;
+                --text-muted: 100, 116, 100;
+            }
+            .dark.theme-nature {
+                --primary: 34, 197, 94;
+                --background: 12, 20, 12;
+                --sidebar: 18, 26, 18;
+                --card: 30, 40, 30;
+                --border: 45, 55, 45;
+                --text-main: 230, 240, 230;
+                --text-muted: 140, 160, 140;
+            }.theme-sunset {
+                --primary: 249, 115, 22;
+                --background: 255, 247, 237;
+                --sidebar: 255, 255, 255;
+                --card: 255, 255, 255;
+                --border: 255, 237, 213;
+                --text-main: 67, 20, 7;
+                --text-muted: 154, 82, 40;
+            }
+            .dark.theme-sunset {
+                --primary: 249, 115, 22;
+                --background: 20, 10, 5;
+                --sidebar: 28, 15, 10;
+                --card: 40, 20, 15;
+                --border: 60, 30, 20;
+                --text-main: 255, 240, 230;
+                --text-muted: 180, 140, 120;
+            }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "rgb(var(--primary))",
+                        background: "rgb(var(--background))",
+                        sidebar: "rgb(var(--sidebar))",
+                        card: "rgb(var(--card))",
+                        border: "rgb(var(--border))",
+                        "text-main": "rgb(var(--text-main))",
+                        "text-muted": "rgb(var(--text-muted))",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: rgb(var(--border));
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background font-display text-text-main transition-colors duration-500">
+<div class="flex h-screen w-full overflow-hidden">
+<nav class="w-20 flex flex-col items-center py-6 gap-8 bg-sidebar border-r border-border shrink-0">
+<div class="size-12 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div class="flex flex-col gap-6">
+<a class="text-primary" href="#"><span class="material-symbols-outlined text-[28px]">dashboard</span></a>
+<a class="text-text-muted hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined text-[28px]">explore</span></a>
+<a class="text-text-muted hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined text-[28px]">notifications</span></a>
+<a class="text-text-muted hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined text-[28px]">account_circle</span></a>
+</div>
+<div class="mt-auto flex flex-col gap-4 p-2 bg-background/50 rounded-2xl border border-border">
+<button class="size-8 rounded-full bg-[#135bec] border-2 border-white/20" onclick="document.documentElement.className = 'dark'" title="Classic Blue"></button>
+<button class="size-8 rounded-full bg-green-500 border-2 border-white/20" onclick="document.documentElement.className = 'dark theme-nature'" title="Nature Green"></button>
+<button class="size-8 rounded-full bg-orange-500 border-2 border-white/20" onclick="document.documentElement.className = 'dark theme-sunset'" title="Warm Sunset"></button>
+<button class="size-8 flex items-center justify-center text-text-muted hover:text-primary transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined text-[20px]">contrast</span>
+</button>
+</div>
+<div class="mt-4">
+<a class="text-text-muted hover:text-primary" href="#"><span class="material-symbols-outlined text-[28px]">settings</span></a>
+</div>
+</nav>
+<aside class="w-80 flex flex-col bg-sidebar border-r border-border overflow-y-auto shrink-0">
+<div class="p-6">
+<h1 class="text-xl font-bold mb-1">DineAI Agent</h1>
+<p class="text-text-muted text-sm mb-6">Your personal dining assistant</p>
+<div class="mb-8">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xs font-bold uppercase tracking-widest text-text-muted opacity-60">Taste Profile</h2>
+<button class="text-xs text-primary font-bold">Refine</button>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full border border-primary/20">Spicy Enthusiast</span>
+<span class="px-3 py-1 bg-background text-text-main text-xs font-semibold rounded-full border border-border">Vegan-friendly</span>
+<span class="px-3 py-1 bg-background text-text-main text-xs font-semibold rounded-full border border-border">Quiet Vibes</span>
+<span class="px-3 py-1 bg-background text-text-main text-xs font-semibold rounded-full border border-border">Umami</span>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xs font-bold uppercase tracking-widest text-text-muted opacity-60">My Bookings</h2>
+</div>
+<div class="flex flex-col gap-4">
+<div class="p-4 rounded-xl bg-card border border-border shadow-sm">
+<div class="flex gap-3">
+<div class="size-12 rounded-lg bg-center bg-cover flex-shrink-0" data-alt="Cozy interior of an Italian restaurant" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDB5PnFsctL0DffbZvChcRKCiwvkGI7Px1bi3oMdUjpJsAJvCkpBNgWtnZ6Qzr9eE-5OjgIo4BQnDrJRLVvIZ3XApmzBQDus6PuV8vbmioO8dyHP3yk1N0IcJ3yIc--nNbyPAHy2lvZD7Qd3lYcAVn9dFKOu24xARPq00yCb4XnM5vkylrIJbpaBASomA8uJ9tGOTvPlLsagxGpS7sDn8Nnx4D0xXQ_fPz8eXbDX7rwG6Ad4oHSyoQXQ3p9PINCYWtCHz6yugARsbA");'></div>
+<div class="flex flex-col min-w-0">
+<p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider mb-0.5">Confirmed</p>
+<h3 class="text-sm font-bold truncate">The Pasta House</h3>
+<p class="text-[11px] text-text-muted">Fri, Oct 27 • 7:00 PM</p>
+</div>
+</div>
+<button class="w-full mt-3 py-2 text-xs font-bold bg-background hover:bg-border rounded-lg text-text-main transition-colors border border-border/50">Modify</button>
+</div>
+<div class="p-4 rounded-xl bg-transparent border border-dashed border-border group">
+<div class="flex gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
+<div class="size-12 rounded-lg bg-center bg-cover flex-shrink-0 grayscale group-hover:grayscale-0 transition-all" data-alt="Professional sushi platter arrangement" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_D7mFbwxbgLy6hUqAqmC6B0crLwMdTNZ5XEWIdiuff0lj77wio9jZC5K3hjvrx4rlVfRXvd5Ii2Th4F6i2KG29xG9nOj2DOxCRxJWVn-nXNEGD9IJA8DYl1wwQL336HjO0C7xvd_J29ASfhd-P4JQ4aSu6fKpw6WaNOqflU2cmU57TemhuP30fyGWHFFu7OkIhiVaLSzzJxyCuP4d4WbHg_zFGM9DL0VY0DSEGuwOfdVHXC6c3upJcjTLX8BV2bsKLRTqSp-CMm4");'></div>
+<div class="flex flex-col min-w-0">
+<p class="text-[10px] text-text-muted font-bold uppercase tracking-wider mb-0.5">Completed</p>
+<h3 class="text-sm font-bold truncate">Sushi Zen</h3>
+<p class="text-[11px] text-text-muted">Oct 20 • 8:30 PM</p>
+</div>
+</div>
+<button class="w-full mt-3 py-2 text-xs font-bold border border-border hover:bg-card rounded-lg text-text-muted transition-colors">Rebook</button>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col bg-background relative">
+<header class="flex items-center justify-between px-8 py-4 border-b border-border bg-sidebar/80 backdrop-blur-md z-10 sticky top-0">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary ring-2 ring-primary/10 ring-offset-2 ring-offset-background">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="absolute bottom-0 right-0 size-3 bg-emerald-500 border-2 border-background rounded-full"></div>
+</div>
+<div>
+<h2 class="text-base font-bold">Concierge Session</h2>
+<p class="text-xs text-text-muted flex items-center gap-1">
+<span class="flex gap-0.5">
+<span class="size-1 bg-primary rounded-full animate-pulse"></span>
+<span class="size-1 bg-primary rounded-full animate-pulse delay-75"></span>
+<span class="size-1 bg-primary rounded-full animate-pulse delay-150"></span>
+</span>
+                        AI Assistant is typing...
+                    </p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="p-2 rounded-lg bg-card text-text-muted hover:text-primary transition-colors border border-border"><span class="material-symbols-outlined">search</span></button>
+<button class="p-2 rounded-lg bg-card text-text-muted hover:text-primary transition-colors border border-border"><span class="material-symbols-outlined">more_horiz</span></button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8 chat-container space-y-10 pb-40">
+<div class="flex gap-5 max-w-4xl">
+<div class="size-10 rounded-xl bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="space-y-6 flex-1">
+<div class="p-5 rounded-2xl rounded-tl-none bg-card border border-border shadow-sm">
+<p class="text-sm leading-relaxed">
+                            Good evening, Marcus! I noticed you visited <strong>The Pasta House</strong> last week and gave it a great review. 
+                            <br/><br/>
+                            Would you like to try something similar tonight? A new authentic Trattoria called <strong>"L'Anima"</strong> just opened 2 blocks from your office, and they're famous for their hand-rolled Tagliatelle.
+                        </p>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 -mx-1 px-1 scrollbar-hide">
+<div class="min-w-[300px] bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer">
+<div class="h-40 bg-center bg-cover relative" data-alt="Modern upscale restaurant interior" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAc6UBg8woNfBPGRSGfbt33r9Mv8hmvJnLJveF8NyIixkXbnbQIgBJ11_L7CszYyDytnc6thStrCZ4o72TCbe82fg7vhpSVYf07ZzqSBrWKD4SU3ndAzK2syt5BU89fLvB2UQUmkcdnUEvUgY3bJIxuuQUiiyC1kaV7NdLnocA9_wMsF5xAd_rlNGK1TLOMkMJqAPpmHth_6krTrUPyayejbckxgFVLygCxyshVZwrRwKml49qmPosVOTuTlvAIOA9vOleQUkz08oA");'>
+<div class="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white border border-white/10">4.9 ★</div>
+</div>
+<div class="p-5">
+<h4 class="font-bold text-sm mb-1">L'Anima Trattoria</h4>
+<p class="text-xs text-text-muted mb-4">0.4 miles • Italian • $$$</p>
+<button class="w-full py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-primary/30 transition-all">Book Now</button>
+</div>
+</div>
+<div class="min-w-[300px] bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer">
+<div class="h-40 bg-center bg-cover relative" data-alt="Artisanal pasta dish" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDRysIZJEq2L4DD0dEPH2Rm2AYh7FoAnNziT-u3-DItlmG7RiL00upso1iKGgCnn0EmAXwrUsXlmP9FxupKMfXipdsttmYCr0oPp_LOAAZEzxjWO8jMe0s57pKX8ZiZy7MOXrnabNtEww6kUdmOwXX9gAGIpN7W21S9ng4YHhTwpU7DxsmtlbWjB1uR8WSiXX8IeooSq0aan21lMANWfXNqNFafTKAk0IoBUqABDSqpvwPgS--nfSxrVf14KlcpkBdmUrn5-IoKY6k");'>
+<div class="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white border border-white/10">4.7 ★</div>
+</div>
+<div class="p-5">
+<h4 class="font-bold text-sm mb-1">Cucina Urbana</h4>
+<p class="text-xs text-text-muted mb-4">1.2 miles • Modern Italian • $$</p>
+<button class="w-full py-2.5 border border-primary text-primary text-xs font-bold rounded-xl hover:bg-primary/5 transition-all">View Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex gap-5 max-w-2xl ml-auto flex-row-reverse">
+<div class="size-10 rounded-xl bg-border flex-shrink-0 flex items-center justify-center text-text-main border border-border">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div class="p-5 rounded-2xl rounded-tr-none bg-primary text-white shadow-lg shadow-primary/20">
+<p class="text-sm leading-relaxed">That sounds perfect! Do they have a table for 2 at 8:00 PM? Also, make sure it's a quiet area if possible.</p>
+</div>
+</div>
+<div class="flex gap-5 max-w-4xl">
+<div class="size-10 rounded-xl bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="p-5 rounded-2xl rounded-tl-none bg-card border border-border shadow-sm">
+<p class="text-sm leading-relaxed">
+                        Checking L'Anima for 8:00 PM... 
+                        <br/><br/>
+                        Yes! They have a booth available in their library section which is very quiet. Should I go ahead and secure this for you?
+                    </p>
+<div class="mt-5 flex gap-3">
+<button class="px-6 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-primary/30 transition-all">Yes, book it</button>
+<button class="px-6 py-2.5 bg-background text-text-main text-xs font-bold rounded-xl border border-border hover:bg-border transition-all">Maybe later</button>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-background via-background/95 to-transparent">
+<div class="max-w-4xl mx-auto relative group">
+<div class="absolute inset-y-0 left-5 flex items-center gap-3">
+<button class="text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<div class="w-[1px] h-4 bg-border"></div>
+<button class="text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">image</span>
+</button>
+</div>
+<input class="w-full bg-card border border-border rounded-2xl py-5 pl-28 pr-20 text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all shadow-2xl placeholder:text-text-muted/50" placeholder="Ask your concierge anything..." type="text"/>
+<div class="absolute inset-y-0 right-5 flex items-center gap-3">
+<button class="text-text-muted hover:text-primary transition-colors">
+<span class="material-symbols-outlined">mic</span>
+</button>
+<button class="size-10 bg-primary rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-xl">send</span>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] text-text-muted mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Powered by DineAI Omni Intelligence</p>
+</div>
+</main>
+</div>
+
+</body></html>

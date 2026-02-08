@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DineAI Concierge Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,FILL@0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2563eb",
+                        "surface-light": "#ffffff",
+                        "sidebar-light": "#f8fafc",
+                        "card-bg": "#ffffff",
+                        "accent-gray": "#f1f5f9",
+                        "ai-bubble": "#f1f5f9",
+                        "user-bubble": "#2563eb",
+                        "text-main": "#0f172a",
+                        "text-muted": "#64748b"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "0.75rem", "xl": "1rem", "2xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-white text-text-main font-display selection:bg-primary/20;
+            }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #e2e8f0;
+            border-radius: 10px;
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+        }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+<div class="flex h-screen w-full overflow-hidden">
+<nav class="w-20 flex flex-col items-center py-8 gap-10 bg-white border-r border-slate-100">
+<div class="size-12 bg-primary rounded-2xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-2xl">restaurant</span>
+</div>
+<div class="flex flex-col gap-8">
+<a class="text-primary" href="#"><span class="material-symbols-outlined text-[28px] font-medium">dashboard</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined text-[28px]">explore</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined text-[28px]">notifications</span></a>
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined text-[28px]">account_circle</span></a>
+</div>
+<div class="mt-auto">
+<a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined text-[28px]">settings</span></a>
+</div>
+</nav>
+<aside class="w-80 flex flex-col bg-sidebar-light border-r border-slate-100 overflow-y-auto">
+<div class="p-8">
+<div class="flex items-center gap-3 mb-1">
+<div class="size-2.5 bg-primary rounded-full"></div>
+<h1 class="text-lg font-extrabold tracking-tight text-slate-900">AI Concierge</h1>
+</div>
+<p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-10">Premium Discovery</p>
+<div class="mb-12">
+<div class="flex items-center justify-between mb-6 pb-2 border-b border-slate-200">
+<h2 class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500">Taste Profile</h2>
+<span class="material-symbols-outlined text-slate-400 text-lg cursor-pointer hover:text-primary">edit_square</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium text-slate-600">Spicy Preference</span>
+<span class="text-[10px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full">HIGH</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium text-slate-600">Dietary Needs</span>
+<span class="text-[10px] font-bold text-slate-500 bg-slate-200/50 px-2.5 py-1 rounded-full">VEGAN</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm font-medium text-slate-600">Atmosphere</span>
+<span class="text-[10px] font-bold text-slate-500 bg-slate-200/50 px-2.5 py-1 rounded-full">QUIET</span>
+</div>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-6 pb-2 border-b border-slate-200">
+<h2 class="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-500">Recent Activity</h2>
+</div>
+<div class="flex flex-col gap-4">
+<div class="group cursor-pointer">
+<div class="p-4 rounded-xl bg-white border border-slate-100 shadow-sm group-hover:shadow-md transition-all">
+<div class="flex gap-4">
+<div class="size-11 rounded-lg bg-center bg-cover flex-shrink-0" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDB5PnFsctL0DffbZvChcRKCiwvkGI7Px1bi3oMdUjpJsAJvCkpBNgWtnZ6Qzr9eE-5OjgIo4BQnDrJRLVvIZ3XApmzBQDus6PuV8vbmioO8dyHP3yk1N0IcJ3yIc--nNbyPAHy2lvZD7Qd3lYcAVn9dFKOu24xARPq00yCb4XnM5vkylrIJbpaBASomA8uJ9tGOTvPlLsagxGpS7sDn8Nnx4D0xXQ_fPz8eXbDX7rwG6Ad4oHSyoQXQ3p9PINCYWtCHz6yugARsbA");'></div>
+<div class="flex flex-col min-w-0">
+<p class="text-[10px] font-bold text-emerald-600 uppercase tracking-wide">Confirmed</p>
+<h3 class="text-sm font-bold text-slate-800 truncate">The Pasta House</h3>
+<p class="text-[11px] text-slate-400 font-medium">Oct 27, 7:00 PM</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 opacity-60">
+<div class="flex gap-4">
+<div class="size-11 rounded-lg bg-center bg-cover flex-shrink-0 grayscale" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_D7mFbwxbgLy6hUqAqmC6B0crLwMdTNZ5XEWIdiuff0lj77wio9jZC5K3hjvrx4rlVfRXvd5Ii2Th4F6i2KG29xG9nOj2DOxCRxJWVn-nXNEGD9IJA8DYl1wwQL336HjO0C7xvd_J29ASfhd-P4JQ4aSu6fKpw6WaNOqflU2cmU57TemhuP30fyGWHFFu7OkIhiVaLSzzJxyCuP4d4WbHg_zFGM9DL0VY0DSEGuwOfdVHXC6c3upJcjTLX8BV2bsKLRTqSp-CMm4");'></div>
+<div class="flex flex-col min-w-0">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Previous</p>
+<h3 class="text-sm font-bold text-slate-600 truncate">Sushi Zen</h3>
+<p class="text-[11px] text-slate-400 font-medium">Oct 20, 8:30 PM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col bg-white relative">
+<header class="flex items-center justify-between px-10 py-6 border-b border-slate-100 bg-white/80 backdrop-blur-xl z-20">
+<div class="flex items-center gap-5">
+<div class="relative">
+<div class="size-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-200">
+<span class="material-symbols-outlined text-primary text-2xl">auto_awesome</span>
+</div>
+<div class="absolute -bottom-0.5 -right-0.5 size-4 bg-emerald-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<h2 class="text-lg font-bold text-slate-900 tracking-tight">Personal Assistant</h2>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Online</span>
+<span class="text-slate-300 text-xs">•</span>
+<span class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Enhanced Intelligence v4.2</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="size-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/20 transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">search</span>
+</button>
+<button class="size-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-500 hover:text-primary hover:border-primary/20 transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">more_horiz</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-10 chat-container space-y-10 pb-40">
+<div class="flex gap-5 max-w-4xl">
+<div class="size-10 rounded-xl bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">smart_toy</span>
+</div>
+<div class="space-y-6 flex-1">
+<div class="p-6 rounded-2xl rounded-tl-none bg-ai-bubble border border-slate-200 shadow-sm">
+<p class="text-[15px] leading-relaxed text-slate-700">
+                            Good evening, Marcus. I've analyzed your preference for quiet venues and your history at <span class="text-slate-900 font-bold underline decoration-primary/30 underline-offset-4">The Pasta House</span>. <br/><br/>
+                            I've found a new match for you: <span class="text-slate-900 font-bold">L'Anima Trattoria</span>. It aligns 94% with your profile. The atmosphere is noted for being exceptionally intimate and authentic.
+                        </p>
+</div>
+<div class="flex gap-6 overflow-x-auto pb-6 no-scrollbar">
+<div class="min-w-[340px] bg-white border border-slate-100 rounded-2xl overflow-hidden card-shadow hover:translate-y-[-4px] transition-all cursor-pointer group">
+<div class="h-44 bg-center bg-cover relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAc6UBg8woNfBPGRSGfbt33r9Mv8hmvJnLJveF8NyIixkXbnbQIgBJ11_L7CszYyDytnc6thStrCZ4o72TCbe82fg7vhpSVYf07ZzqSBrWKD4SU3ndAzK2syt5BU89fLvB2UQUmkcdnUEvUgY3bJIxuuQUiiyC1kaV7NdLnocA9_wMsF5xAd_rlNGK1TLOMkMJqAPpmHth_6krTrUPyayejbckxgFVLygCxyshVZwrRwKml49qmPosVOTuTlvAIOA9vOleQUkz08oA");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<div class="flex items-center gap-1.5 mb-1 bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full w-fit">
+<span class="material-symbols-outlined text-xs text-yellow-400 FILL">star</span>
+<span class="text-[10px] font-bold text-white uppercase tracking-wider">4.9 Rating</span>
+</div>
+<h4 class="font-bold text-white text-lg">L'Anima Trattoria</h4>
+</div>
+</div>
+<div class="p-6">
+<p class="text-xs text-slate-400 font-bold mb-5 uppercase tracking-wide">0.4 miles • Italian • $$$</p>
+<button class="w-full py-3.5 bg-primary text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-blue-700 shadow-lg shadow-primary/20 transition-all">Confirm Reservation</button>
+</div>
+</div>
+<div class="min-w-[340px] bg-white border border-slate-100 rounded-2xl overflow-hidden card-shadow hover:translate-y-[-4px] transition-all cursor-pointer group">
+<div class="h-44 bg-center bg-cover relative" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDRysIZJEq2L4DD0dEPH2Rm2AYh7FoAnNziT-u3-DItlmG7RiL00upso1iKGgCnn0EmAXwrUsXlmP9FxupKMfXipdsttmYCr0oPp_LOAAZEzxjWO8jMe0s57pKX8ZiZy7MOXrnabNtEww6kUdmOwXX9gAGIpN7W21S9ng4YHhTwpU7DxsmtlbWjB1uR8WSiXX8IeooSq0aan21lMANWfXNqNFafTKAk0IoBUqABDSqpvwPgS--nfSxrVf14KlcpkBdmUrn5-IoKY6k");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<div class="flex items-center gap-1.5 mb-1 bg-white/20 backdrop-blur-md px-2 py-0.5 rounded-full w-fit">
+<span class="material-symbols-outlined text-xs text-yellow-400 FILL">star</span>
+<span class="text-[10px] font-bold text-white uppercase tracking-wider">4.7 Rating</span>
+</div>
+<h4 class="font-bold text-white text-lg">Cucina Urbana</h4>
+</div>
+</div>
+<div class="p-6">
+<p class="text-xs text-slate-400 font-bold mb-5 uppercase tracking-wide">1.2 miles • Modern Italian • $$</p>
+<button class="w-full py-3.5 border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-slate-50 transition-all">View Details</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex gap-5 max-w-4xl ml-auto flex-row-reverse">
+<div class="size-10 rounded-xl bg-slate-100 flex-shrink-0 flex items-center justify-center text-slate-600 shadow-sm">
+<span class="material-symbols-outlined text-xl">person</span>
+</div>
+<div class="p-6 rounded-2xl rounded-tr-none bg-user-bubble text-white shadow-xl shadow-primary/20">
+<p class="text-[15px] leading-relaxed font-medium">That sounds perfect! Do they have a table for 2 at 8:00 PM? Also, make sure it's a quiet area if possible.</p>
+</div>
+</div>
+<div class="flex gap-5 max-w-4xl">
+<div class="size-10 rounded-xl bg-primary/10 flex-shrink-0 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl">smart_toy</span>
+</div>
+<div class="p-6 rounded-2xl rounded-tl-none bg-ai-bubble border border-slate-200 shadow-sm">
+<p class="text-[15px] leading-relaxed text-slate-700">
+                        Checking current availability at L'Anima Trattoria... <br/>
+                        Success. They have a table in their <strong>Library Section</strong> (designated quiet zone) available at 8:00 PM. <br/><br/>
+                        Would you like me to secure this booking for you now?
+                    </p>
+<div class="mt-6 flex gap-3">
+<button class="px-6 py-3 bg-white text-primary text-[11px] font-bold uppercase tracking-widest rounded-xl border border-slate-200 hover:border-primary/30 hover:bg-slate-50 transition-all shadow-sm">Book This Table</button>
+<button class="px-6 py-3 bg-transparent text-slate-400 text-[11px] font-bold uppercase tracking-widest rounded-xl hover:text-slate-600 transition-all">Explore Others</button>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-white via-white/95 to-transparent">
+<div class="max-w-4xl mx-auto">
+<div class="relative group">
+<div class="absolute inset-y-0 left-5 flex items-center gap-3">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">add_circle</span>
+</button>
+</div>
+<input class="w-full bg-white border border-slate-200 rounded-2xl py-5 pl-16 pr-24 text-[15px] text-slate-900 focus:ring-4 focus:ring-primary/5 focus:border-primary/30 placeholder-slate-400 transition-all custom-shadow" placeholder="Ask your concierge anything..." type="text"/>
+<div class="absolute inset-y-0 right-5 flex items-center gap-3">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl">mic</span>
+</button>
+<button class="size-11 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined text-2xl">send</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-center gap-4 mt-6">
+<div class="h-[1px] w-16 bg-slate-100"></div>
+<p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Secured by DineAI Neural Engine</p>
+<div class="h-[1px] w-16 bg-slate-100"></div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>
