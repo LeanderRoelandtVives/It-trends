@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up | DineAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "accent-gold": "#D4AF37",
+                        "card-dark": "#1c1f27",
+                        "border-dark": "#3b4354"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ai-glow {
+            box-shadow: 0 0 15px rgba(19, 91, 236, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- Left Section: Immersive Culinary Background -->
+<div class="hidden lg:flex w-1/2 relative">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Dark atmospheric professional kitchen with chef preparing plate" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAfHCWUJ8QDmcSrfgdXgKcFaDG1XLm6bYF632LvR5uFyjp2TjJ6MfMKYIIHeucMz6gUNzVgFL9lug3UseJpN4VBL2_k0I8aMvvKzNf8fn5bfR0YoTOlHHQOqAIQJ1XJT8Y1pdnYJcT0njtPBe3Voh1O2xElZIFX076rdmVuZe4MTRBWXhC500hEqhAunL5wa4QCqJuS7qtDPJhTkUal2V1X2GpAG9R-rVNhg36CR-C4GfzXzQtB_f0T_UUz60BZSUC6dA5B618I1JY');">
+<!-- Dark Overlay for better contrast -->
+<div class="absolute inset-0 bg-gradient-to-r from-background-dark/20 to-background-dark"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-between p-12 w-full">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="restaurant">restaurant</span>
+</div>
+<h1 class="text-2xl font-bold tracking-tight">DineAI</h1>
+</div>
+<div class="max-w-md">
+<h2 class="text-5xl font-extrabold leading-tight mb-6">Redefining the art of discovery.</h2>
+<p class="text-xl text-gray-400 font-light">Experience a world where every reservation is a masterpiece, curated specifically for your palate.</p>
+</div>
+<div class="flex items-center gap-4 text-sm text-gray-500">
+<span>© 2024 DineAI Global</span>
+<span class="size-1 bg-gray-600 rounded-full"></span>
+<span>Privacy Policy</span>
+<span class="size-1 bg-gray-600 rounded-full"></span>
+<span>Terms</span>
+</div>
+</div>
+</div>
+<!-- Right Section: Sign Up Form -->
+<div class="w-full lg:w-1/2 h-full flex flex-col items-center justify-center p-8 md:p-16 bg-background-light dark:bg-background-dark overflow-y-auto">
+<div class="w-full max-w-[480px]">
+<!-- Page Heading -->
+<div class="mb-10">
+<h2 class="text-4xl font-black tracking-tight mb-2">Join the Table</h2>
+<p class="text-gray-400">Discover your next favorite meal with our AI-powered concierge.</p>
+</div>
+<!-- Registration Form -->
+<form class="space-y-5">
+<div class="grid grid-cols-2 gap-4">
+<label class="flex flex-col gap-2">
+<span class="text-sm font-medium text-gray-300">First Name</span>
+<input class="form-input rounded-lg border-border-dark bg-card-dark text-white focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 placeholder:text-gray-600" placeholder="Alex" type="text"/>
+</label>
+<label class="flex flex-col gap-2">
+<span class="text-sm font-medium text-gray-300">Last Name</span>
+<input class="form-input rounded-lg border-border-dark bg-card-dark text-white focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 placeholder:text-gray-600" placeholder="Luxury" type="text"/>
+</label>
+</div>
+<label class="flex flex-col gap-2">
+<span class="text-sm font-medium text-gray-300">Email Address</span>
+<input class="form-input rounded-lg border-border-dark bg-card-dark text-white focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 placeholder:text-gray-600" placeholder="e.g., alex@luxury.com" type="email"/>
+</label>
+<label class="flex flex-col gap-2">
+<span class="text-sm font-medium text-gray-300">Password</span>
+<input class="form-input rounded-lg border-border-dark bg-card-dark text-white focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 placeholder:text-gray-600" placeholder="••••••••" type="password"/>
+</label>
+<!-- AI Preference Box -->
+<div class="ai-glow bg-primary/10 border border-primary/30 rounded-xl p-5 mt-8 mb-4 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3">
+<span class="material-symbols-outlined text-accent-gold opacity-50 text-3xl">auto_awesome</span>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<div class="size-8 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-icon="smart_toy">smart_toy</span>
+</div>
+<span class="font-bold text-sm uppercase tracking-wider text-primary">AI Concierge Initialization</span>
+</div>
+<p class="text-sm text-gray-200 mb-4">"Help your AI agent personalize your journey. Which flavors do you crave most?"</p>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card-dark border border-accent-gold/40 text-xs font-medium text-accent-gold hover:bg-accent-gold/10 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">restaurant_menu</span> Fine Dining
+                            </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card-dark border border-gray-600 text-xs font-medium text-gray-300 hover:border-accent-gold/40 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">local_cafe</span> Casual
+                            </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card-dark border border-gray-600 text-xs font-medium text-gray-300 hover:border-accent-gold/40 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">ramen_dining</span> Fusion
+                            </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card-dark border border-gray-600 text-xs font-medium text-gray-300 hover:border-accent-gold/40 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">diamond</span> Hidden Gems
+                            </button>
+</div>
+</div>
+<button class="w-full h-14 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg transition-all transform active:scale-[0.98] shadow-lg shadow-primary/20" type="submit">
+                        Create Account
+                    </button>
+</form>
+<!-- Social Auth -->
+<div class="mt-8">
+<div class="relative flex items-center justify-center mb-6">
+<div class="flex-grow border-t border-border-dark"></div>
+<span class="px-4 text-xs font-medium text-gray-500 uppercase tracking-widest">Or sign up with</span>
+<div class="flex-grow border-t border-border-dark"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 h-12 bg-card-dark border border-border-dark rounded-lg hover:bg-[#252a35] transition-colors">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.12 4.44-1.12.92-2.6 1.64-5.72 1.64-5.12 0-9.28-4.16-9.28-9.28s4.16-9.28 9.28-9.28c2.8 0 4.92 1.08 6.56 2.6l2.32-2.32C19.24 2.12 16.2 1 12.48 1 5.48 1 0 6.48 0 13.48s5.48 12.48 12.48 12.48c3.84 0 6.76-1.28 9.08-3.68 2.4-2.4 3.12-5.76 3.12-8.52 0-.84-.08-1.64-.24-2.44H12.48z" fill="#EA4335"></path>
+</svg>
+<span class="text-sm font-medium">Google</span>
+</button>
+<button class="flex items-center justify-center gap-2 h-12 bg-card-dark border border-border-dark rounded-lg hover:bg-[#252a35] transition-colors">
+<span class="material-symbols-outlined text-lg">ios</span>
+<span class="text-sm font-medium">Apple</span>
+</button>
+</div>
+</div>
+<!-- Footer Link -->
+<p class="mt-10 text-center text-gray-400 text-sm">
+                    Already have an account? 
+                    <a class="text-primary font-bold hover:underline" href="#">Sign In</a>
+</p>
+</div>
+</div>
+</div>
+</body></html>

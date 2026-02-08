@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DineSmart - The Azure Bistro</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#ffffff",
+                        "background-sidebar": "#f8fafc",
+                        "charcoal": "#1e293b",
+                        "ai-highlight": "#f0f7ff",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .light .menu-section-container {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 24px -2px rgba(0,0,0,0.04);
+        }
+        .light .menu-item-card {
+            border-bottom: 1px dashed #e2e8f0;
+            border-radius: 0;
+            background: transparent;
+        }
+        .light .menu-item-card:last-child {
+            border-bottom: none;
+        }
+        .food-photo-container {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .food-photo-container:hover {
+            transform: scale(1.01);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+        .ai-highlight-box {
+            background-color: #f0f7ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-slate-950 text-charcoal dark:text-slate-100 min-h-screen transition-colors duration-300">
+<div class="fixed top-24 left-4 z-[100] flex flex-col gap-2">
+<button class="p-3 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700" onclick="document.documentElement.classList.toggle('dark')">
+<span class="material-symbols-outlined dark:hidden">dark_mode</span>
+<span class="material-symbols-outlined hidden dark:block text-yellow-400">light_mode</span>
+</button>
+</div>
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-white/10 bg-white/95 dark:bg-slate-950/90 backdrop-blur-md px-4 md:px-20 lg:px-40 py-3">
+<div class="max-w-[1200px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<h2 class="text-charcoal dark:text-white text-xl font-bold tracking-tight">DineSmart</h2>
+</div>
+<div class="hidden md:flex min-w-64">
+<div class="flex w-full items-stretch rounded-lg h-10 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 px-3">
+<span class="material-symbols-outlined text-slate-400 self-center text-sm">search</span>
+<input class="w-full border-none bg-transparent focus:ring-0 text-sm placeholder:text-slate-500" placeholder="Find dishes, cuisines..."/>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Explore</a>
+<a class="text-slate-600 dark:text-slate-300 text-sm font-semibold hover:text-primary transition-colors" href="#">Reservations</a>
+<div class="flex items-center gap-1 text-primary cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+<span class="text-sm font-bold">AI Concierge</span>
+</div>
+</nav>
+<div class="aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/20 border border-white/10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCn5JrRTjufBshpFAnReKqPf9FnGxn5YgKYIUBDhoQLbTq8DLUBUbTvC-SLQBXVWeapS2zUPwLTPqYrjzBDrKxrT9RIAVRlirXk01SIK-fWwyS1G6yVfeJIliWowpUQ6fLJr_5m9IhDWmrkDVBYWlveQkpcjafNVwo0whoglfrQE1czTmt_nAYOc_P9nUXSY3Gz1LbHdSOlsg1QoqTBSgnFvFJwl2qG-UPMQLLk9EAT3lJ9Dm-J7oxYowCcr8Ye0kKHN2zVjEW6_J0");'></div>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-4 md:px-10 py-6">
+<div class="grid grid-cols-4 grid-rows-2 gap-3 h-[500px] mb-8 overflow-hidden rounded-2xl">
+<div class="col-span-2 row-span-2 bg-cover bg-center relative group cursor-pointer food-photo-container rounded-xl overflow-hidden shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1uREphcjXDTc_xMmp8UoBmZET45Zrnw0o6QMK26VOoV_1zXf9QI2mgsfSiUmG5cIBMu7E5FDY_BweKsgyUwGi2FbWFjkzRIIWXvz8AhtBcG1S1ab2qdwDsWhWdAUWwVgwVCpLmZw0VgduuC_eLISdJPK2P6c0U0G3K_48oDOTbHV-2D0siHnFf55ncJnTx6HDNTJW-ydotak9eZ9EN8-W0o0MRj-_PN636YIoRk_eins4pqupNhkYFv4tZfaxudvTFJ8uZdVYja0");'>
+<div class="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors"></div>
+</div>
+<div class="col-span-1 row-span-1 bg-cover bg-center relative group cursor-pointer food-photo-container rounded-xl border border-slate-100 shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBhizRQdIZLdPWuLzUC5RqLHBmvH7jvedSn986jPzJJKrzHWu5lj3zecHrjkEyRYp7_1_vQlmF_wI5croKxA78k2ErR-R5PtI03KhCzaqoTE6CyPADBp60f_3C45wXmToK2jY5_J9WK94VCoFNvoHGBd-o9hheiVpAimJ5GtQqHQ5At-Ap0HcsQgaGkr3xmB867rdgEsZArywa3NfQx7EKlk-MaYQ4OH1Tz5o_831S4xh-RIHKqnsclHgYUVjzN26gW7Q5-ANsb33M");'></div>
+<div class="col-span-1 row-span-1 bg-cover bg-center relative group cursor-pointer food-photo-container rounded-xl border border-slate-100 shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAtmLD-RCGJlDoG6dpyMSpSXLbhOZI1pvynXg-yttR9KAKbCy2HWWXVXQoi8v8JUxsCgdHeTh1iU10n9MTqvFF_2TpE3KNWhGueXXM_llxt0PwnTe9rNGx1XHt3QPGspCHiBrwtMwEvjg_S9Lbq2B2lCAfMXBRp9VYbAx5GrIrMWk4WfvhMhu4gx3EUV69Ag8F1EcFDLf9xgZIUUZhL3E4XPGOUOQBGa0LboCfSe875cgB8fA3sUJmWY84C100VbB81rwQ1W4tnw-Y");'></div>
+<div class="col-span-2 row-span-1 bg-cover bg-center relative group cursor-pointer food-photo-container rounded-xl border border-slate-100 shadow-sm" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1yaqxtm3EJEgroZCrP8ZtPsNFBgv9c6MI60l9WUYv7U4eNX9NKj8NcB0R3K0pqUQToa3I8lOwP7EDq57-eJUz_kEfeMqgZMmF4_Wez2afTPhQfVC3x2yR83NTaXYfD-M8M4QPx68NzFo-GGcBlM3whEKISOR-3aBqUiIXU9zqo3SXSheloOF7dsnjTojuWxxTj1TQkOJgT6VVgWkG3JBWXMa6Yydk__6JWYp5Jg7ghv3EFvSRIgj8TXd6hdyW7C56IbA3nYTMHRc");'>
+<button class="absolute bottom-4 right-4 bg-white/95 text-charcoal px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 shadow-lg border border-slate-200">
+<span class="material-symbols-outlined text-sm">grid_view</span>
+                42 Photos
+            </button>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start gap-6 mb-10">
+<div>
+<div class="flex flex-wrap items-center gap-3 mb-2">
+<h1 class="text-charcoal dark:text-white text-5xl font-black tracking-tight font-serif italic">The Azure Bistro</h1>
+<span class="bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-500 text-[10px] font-black px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-500/20 tracking-widest uppercase">Michelin Selection</span>
+</div>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-slate-500 dark:text-slate-400 text-sm font-medium">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-amber-500 fill-amber-500 text-lg">star</span>
+<span class="text-charcoal dark:text-white font-bold">4.8</span>
+<span>(1.2k reviews)</span>
+</div>
+<span>•</span>
+<span>Modern Mediterranean</span>
+<span>•</span>
+<span class="text-charcoal dark:text-white font-bold">$$$</span>
+<span>•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Manhattan, NY</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-full size-11 border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition-all shadow-sm">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+<button class="flex items-center justify-center rounded-full size-11 border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-white/10 transition-all shadow-sm">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<div class="lg:col-span-2">
+<div class="flex gap-10 border-b border-slate-200 dark:border-white/10 mb-8 overflow-x-auto pb-px">
+<a class="border-b-2 border-primary text-primary pb-4 font-bold text-sm tracking-wide" href="#">Menu</a>
+<a class="text-slate-400 dark:text-slate-500 pb-4 font-bold text-sm tracking-wide hover:text-charcoal dark:hover:text-slate-300 transition-colors" href="#">Reviews</a>
+<a class="text-slate-400 dark:text-slate-500 pb-4 font-bold text-sm tracking-wide hover:text-charcoal dark:hover:text-slate-300 transition-colors" href="#">Atmosphere</a>
+<a class="text-slate-400 dark:text-slate-500 pb-4 font-bold text-sm tracking-wide hover:text-charcoal dark:hover:text-slate-300 transition-colors" href="#">About</a>
+</div>
+<div class="mb-10 p-6 ai-highlight-box dark:bg-primary/10 border border-primary/20 flex gap-5 items-start">
+<div class="size-12 rounded-xl bg-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<div>
+<h3 class="text-primary font-bold text-lg leading-tight mb-1">Personalized Pairings for Sarah</h3>
+<p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed mb-4">
+                        "Since you're looking for <span class="text-primary font-bold">lighter options</span> tonight, I've curated these coastal-inspired dishes. The Seabass is our highest match for your heart-healthy preferences."
+                    </p>
+<div class="flex flex-wrap gap-2">
+<span class="bg-primary/10 text-primary text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">Seafood Lover</span>
+<span class="bg-primary/10 text-primary text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest">Low Sodium</span>
+</div>
+</div>
+</div>
+<div class="menu-section-container rounded-2xl overflow-hidden mb-12 transition-all duration-500">
+<div class="p-8 md:p-12">
+<div class="text-center mb-12">
+<h2 class="font-serif text-3xl dark:text-white text-charcoal mb-2 italic">Primi Piatti</h2>
+<div class="h-px w-20 bg-slate-200 dark:bg-white/10 mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 gap-0">
+<div class="menu-item-card p-6 md:p-8 flex flex-col md:flex-row gap-6 bg-blue-50/30 dark:bg-white/5">
+<div class="flex-1">
+<div class="flex justify-between items-baseline mb-2">
+<div class="flex items-center gap-2">
+<h4 class="text-xl font-bold text-charcoal dark:text-white font-serif">Wild-Caught Scallops</h4>
+<span class="material-symbols-outlined text-primary text-base fill-primary">auto_awesome</span>
+</div>
+<span class="text-lg font-bold text-primary">$24</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium">Pan-seared Mediterranean scallops, silky cauliflower purée, herb-infused oil, and micro-sorrel.</p>
+<div class="mt-4 flex items-center gap-2">
+<span class="text-[10px] text-primary font-black uppercase tracking-widest bg-white dark:bg-primary/10 px-2 py-0.5 rounded-full border border-blue-100 dark:border-transparent">AI Match: 98%</span>
+<span class="text-[10px] text-slate-400 italic font-medium">Your usual favorite profile</span>
+</div>
+</div>
+</div>
+<div class="menu-item-card p-6 md:p-8 flex flex-col md:flex-row gap-6">
+<div class="flex-1">
+<div class="flex justify-between items-baseline mb-2">
+<h4 class="text-xl font-bold text-charcoal dark:text-white font-serif">Truffle Beef Carpaccio</h4>
+<span class="text-lg font-bold text-charcoal dark:text-slate-300">$22</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium">Thinly sliced Piedmontese beef, aged parmigiano shavings, wild arugula, and citrus zest.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-8 md:p-12 bg-slate-50/50 dark:bg-white/2 border-t border-slate-100 dark:border-white/5">
+<div class="text-center mb-12">
+<h2 class="font-serif text-3xl dark:text-white text-charcoal mb-2 italic">Entrées</h2>
+<div class="h-px w-20 bg-slate-200 dark:bg-white/10 mx-auto"></div>
+</div>
+<div class="flex flex-col gap-8">
+<div class="p-2 rounded-2xl bg-blue-50/30 dark:bg-white/5 border border-blue-100/50 dark:border-transparent overflow-hidden group">
+<div class="flex flex-col md:flex-row gap-6 bg-white dark:bg-transparent rounded-xl p-2 shadow-sm">
+<div class="w-full md:w-48 h-48 rounded-xl overflow-hidden food-photo-container shrink-0">
+<img alt="Seabass" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhFZMHRApnq38KnWV1e2iV7aDsUcVGHRNGl3ZPmJwcIjxO-dqZhboIC2m5YysiFqJguQebssLuPQ5inaNtl-S6e1QLTab5RnYV4uM6jBgr-MoRdZKFMscdQk64mABzkOQy4ni2F7B86c7_2uPyZrS_RC2hteY1bF_V53QeGM7KLndUcOkgHEOXawDCuCWPeB7eS0MxbPQmP75M20iDLHyg7JPg6_FZTKMvxaiIzwRCj3x4NSmytg3wnKnj-AEnvYcpDXz3ICFmaDY"/>
+</div>
+<div class="flex-1 py-2 pr-4">
+<div class="flex justify-between items-baseline mb-2">
+<div class="flex items-center gap-2">
+<h4 class="text-2xl font-bold text-charcoal dark:text-white font-serif">Mediterranean Grilled Seabass</h4>
+<span class="material-symbols-outlined text-primary text-base fill-primary">auto_awesome</span>
+</div>
+<span class="text-xl font-bold text-primary">$42</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-4">Line-caught local seabass served with blistered cherry tomatoes, kalamata olives, and a zesty lemon-caper reduction. Prepared with minimal salt.</p>
+<div class="p-3 rounded-lg bg-blue-50/50 dark:bg-primary/5 border border-blue-100 dark:border-primary/10">
+<p class="text-xs font-bold text-primary italic">"Perfectly aligns with your heart-healthy profile and recent interest in coastal cuisine."</p>
+</div>
+</div>
+</div>
+</div>
+<div class="menu-item-card p-6 md:p-8 flex flex-col md:flex-row gap-6">
+<div class="w-full md:w-32 h-32 rounded-xl overflow-hidden food-photo-container shrink-0 shadow-sm border border-slate-100">
+<img alt="Lamb" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUrOaEOoclXcrp82DqJleTbf_hMRtcm19HIwVcQ17J2bpXza3sgM0u8BpUBJUv9ehYkmMRG_JQ6fIyWroP0vV9fIK6F52AZR5KByDVG8xsWdmSCMfI135PYeTteLFJGZ02ir4VnG0Mr2HrU4rRBVxUXvN6UWPruzTT90PYsHWIVvRNRHPx295h5pLowXWusZo6PmH6Xq8s44QvyY9qvHrBxn5_-zKUdNqcQS6EId1hgEdn6dxUMc1NRVHiZbJDUCClBxcsR7A0Cf8"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-baseline mb-2">
+<h4 class="text-xl font-bold text-charcoal dark:text-white font-serif">Herb-Crusted Lamb Shank</h4>
+<span class="text-lg font-bold text-charcoal dark:text-slate-300">$38</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">Slow-braised for 12 hours, served over creamy polenta with a rich red wine reduction and roasted root vegetables.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-8">
+<div class="sticky top-24 p-8 bg-background-sidebar dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10 shadow-xl dark:shadow-none">
+<h3 class="text-charcoal dark:text-white text-2xl font-bold mb-6 font-serif">Table for Tonight?</h3>
+<div class="space-y-4 mb-8">
+<div class="space-y-2">
+<label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date &amp; Time</label>
+<button class="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">calendar_today</span>
+<span class="text-sm font-bold text-charcoal dark:text-white">Tonight, 7:30 PM</span>
+</div>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</button>
+</div>
+<div class="space-y-2">
+<label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Guests</label>
+<button class="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">group</span>
+<span class="text-sm font-bold text-charcoal dark:text-white">2 People</span>
+</div>
+<span class="material-symbols-outlined text-slate-400">expand_more</span>
+</button>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-xl transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 mb-4 group">
+                    Book Now
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<div class="flex justify-center items-center gap-4 py-2 border-t border-slate-200 dark:border-white/5 mt-6">
+<div class="flex flex-col items-center">
+<span class="text-xs font-black text-slate-400 uppercase tracking-tighter">Points</span>
+<span class="text-primary font-bold text-sm">+200</span>
+</div>
+<div class="w-px h-8 bg-slate-200 dark:bg-white/5"></div>
+<div class="flex flex-col items-center">
+<span class="text-xs font-black text-slate-400 uppercase tracking-tighter">Status</span>
+<span class="text-green-600 font-bold text-sm">Instant</span>
+</div>
+</div>
+</div>
+<div class="p-8 bg-background-sidebar dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-white/10">
+<h3 class="text-charcoal dark:text-white font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500">colors_spark</span>
+                    The Vibe
+                </h3>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="px-3 py-1 bg-white dark:bg-white/5 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 border border-slate-100 shadow-sm">Romantic</span>
+<span class="px-3 py-1 bg-white dark:bg-white/5 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 border border-slate-100 shadow-sm">Intimate Lighting</span>
+<span class="px-3 py-1 bg-white dark:bg-white/5 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300 border border-slate-100 shadow-sm">Live Jazz (Thu-Sat)</span>
+</div>
+<div class="aspect-video w-full rounded-xl bg-slate-200 dark:bg-white/5 relative overflow-hidden food-photo-container border border-slate-200">
+<img alt="Map" class="w-full h-full object-cover opacity-80 dark:opacity-30 grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ8F2Hv6XwuP8-Ow-MaWtxdca05REhdtO9nDZINSnQXqnSi7PYgodBPdRPDpO4IWwlJaJwXq2Jpcy6ZKJ190uifJugfKsL0F-umUEwVkU1ZExI8pf82zN6WPo_BDxiRrUzWp2j2Fd-u3E_kYdwswODGOTbS2dfmwqOlAW8xJ4u2OtL1nzx3b_EflDzUvqRwrIMo06_SvHi3SoYp3XNGQ_JiIcc3YtShixLVi98XfmyC3huX678xTObq_smFu2jEA2pOJajOHyZ-K4"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="size-12 rounded-full bg-white/90 dark:bg-primary/20 backdrop-blur-sm flex items-center justify-center shadow-2xl border border-slate-200">
+<span class="material-symbols-outlined text-primary text-3xl">location_on</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section class="mt-20 pb-32">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="text-3xl font-black text-charcoal dark:text-white mb-2 font-serif">Guest Whispers</h2>
+<p class="text-slate-500 dark:text-slate-400 font-medium italic">Validated experiences from our community</p>
+</div>
+<button class="text-primary font-black text-sm uppercase tracking-widest hover:underline decoration-2 underline-offset-8">Read all reviews</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm">
+<div class="flex items-center gap-4 mb-6">
+<div class="size-12 rounded-full ring-2 ring-primary/10 overflow-hidden">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzazTYJ2djtBOH8nwoL3Ox2FP0lJ_BDKvQyt-zemzwDCo_uIQ1qQoxHMVvP7PbeKyPesuYJ1hCta-13jR1MOWz15p3G-V3uvUmfId0js2GV_urjJ6X7kYY6pqCawJGfdNGgB5dnygBuDGDVTmQHNUYs5wbjq3IyUh2a-h2D0ad876YLBIf9l1M6fBcZ-oKlBFdWz3NcJLeOB2NP5SEUqEQx9Yf4iA-0Pq11pz0TItUI_tH9zIR-xlvkzAw76fQZPxY2KXWxnQOXKs"/>
+</div>
+<div>
+<p class="text-sm font-bold text-charcoal dark:text-white">Elena Rodriguez</p>
+<div class="flex items-center text-amber-500">
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+</div>
+</div>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">"The AI concierge actually remembered my preference for wild scallops! Truly a white-glove digital experience. The atmosphere is ethereal after dark."</p>
+</div>
+<div class="p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm">
+<div class="flex items-center gap-4 mb-6">
+<div class="size-12 rounded-full ring-2 ring-primary/10 overflow-hidden">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsN99uFGecbt6xnfU4rOmIi7dH0ZDq399SYdMsSQsMLwnUG_OLAMEJRXP8WZahd-cJkk2wYjzJBgAS6EWgBW3UcNaY4w-J-KTXTXH7U10B4b-2Ah_nqH1tuuSjiQgcHv0mWoKBidvqD6laYExoTctAwF_4QtT8nDm03A6er5Jr71eU0Wu-4Ca7mL8Cm-NsikxzA2krzgiv1QOM38p5tItjqJAExvLeYWbMuxkLqkX0EY6KXRv0e3SZzTURVSO1lYz7xZQ0oYs8wKk"/>
+</div>
+<div>
+<p class="text-sm font-bold text-charcoal dark:text-white">Marcus Chen</p>
+<div class="flex items-center text-amber-500">
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+</div>
+</div>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">"Impeccable curation. The menu feels like a work of art and the food tastes even better. A must-visit for business dinners or special occasions."</p>
+</div>
+<div class="p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm">
+<div class="flex items-center gap-4 mb-6">
+<div class="size-12 rounded-full ring-2 ring-primary/10 overflow-hidden">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCs98texxH9OlHliTQQhJpfksZoRUPxAvKAE3p92dY7XDv69nDmgMxwLZgp99Q9phLLPzEljivQxdYFcGXVrNXttbirqGkK9IbYTfdbK9yFkCL7OQ0ChbCZ4xfquKT_4WRzTqfAP9YhYg5TGkrXYes6dHSGJ6yVoQ6Wb9cY9N1dOIFU7NAtMyatHwSj-jyrJNGU0l7DvBlDAZtmVWlAgSYhD_0HzNGDDI632rrKpS8uNnGSJ31AZKX7DIY2Tbtv5diQLBWStJ88r18"/>
+</div>
+<div>
+<p class="text-sm font-bold text-charcoal dark:text-white">James Wilson</p>
+<div class="flex items-center text-amber-500">
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm fill-amber-500">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+</div>
+</div>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed italic">"Modern Mediterranean done right. The booking was seamless and the host was already aware of our anniversary thanks to the platform."</p>
+</div>
+</div>
+</section>
+</main>
+<div class="fixed bottom-8 right-8 z-[100]">
+<button class="size-16 rounded-full bg-primary text-white shadow-[0_10px_30px_rgba(19,91,236,0.3)] flex items-center justify-center hover:scale-110 transition-all group relative">
+<span class="material-symbols-outlined text-3xl">auto_awesome</span>
+<div class="absolute right-full mr-6 bg-white dark:bg-slate-900 text-charcoal dark:text-white px-5 py-3 rounded-2xl text-sm font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-2xl border border-slate-200 dark:border-white/10 flex items-center gap-3">
+<span class="text-primary material-symbols-outlined">chat_bubble</span>
+            Ask your AI Concierge
+            <div class="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white dark:bg-slate-900 rotate-45 border-r border-t border-slate-200 dark:border-white/10"></div>
+</div>
+</button>
+</div>
+
+</body></html>
