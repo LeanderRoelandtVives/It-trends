@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="Restaurant.Ai.Dto/Restaurant.Ai.Dto.csproj" />
+  <Project Path="RestaurantAi.Model/RestaurantAi.Model.csproj" />
   <Project Path="RestaurantAi.Mvc/RestaurantAi.Mvc.csproj" />
+  <Project Path="RestaurantAi.Repository/RestaurantAi.Repository.csproj" />
+  <Project Path="RestaurantAI.Services/RestaurantAI.Services.csproj" />
 </Solution>
