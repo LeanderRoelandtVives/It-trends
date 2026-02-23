@@ -2,6 +2,7 @@
   <Project Path="Restaurant.Ai.Dto/RestaurantAi.Dto.csproj" />
   <Project Path="RestaurantAi.Api/RestaurantAi.Api.csproj" Id="98089ee6-a1e6-46f1-9b4f-ef6d1e707495" />
   <Project Path="RestaurantAi.Model/RestaurantAi.Model.csproj" />
+  <Project Path="RestaurantAi.Mvc/RestaurantAi.Mvc.csproj" Id="76b9f052-73cd-47a0-b5a2-216f4c17c7c1" />
   <Project Path="RestaurantAi.Repository/RestaurantAi.Repository.csproj" />
   <Project Path="RestaurantAI.Services/RestaurantAI.Services.csproj" />
 </Solution>
