@@ -1,0 +1,217 @@
+﻿@model RestaurantAi.Mvc.Models.RegisterViewModel
+@{
+    ViewData["Title"] = "Sign Up | DineAI";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>@ViewData["Title"]</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: "#B08E21",
+                        charcoal: "#111827",
+                        "soft-gray": "#f9fafb"
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @@layer base {
+            :root {
+                --primary: #121212;
+                --accent: #B08E21;
+                --bg-light: #ffffff;
+                --bg-soft-gray: #f9fafb;
+                --text-main: #111827;
+                --text-muted: #6b7280;
+                --border: #e5e7eb;
+            }
+        }
+        .font-display {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #B08E21 0%, #D4AF37 100%);
+        }
+        .ai-glow {
+            box-shadow: 0 0 15px rgba(176,142,33,0.2)
+        }
+    </style>
+</head>
+<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] overflow-hidden">
+
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+        <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-12">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined font-bold">restaurant_menu</span>
+                    </div>
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">
+                        DineAI
+                    </h1>
+                </div>
+
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        EXPLORE
+                    </a>
+                    <a asp-controller="Home" asp-action="Dashboard"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        CONCIERGE
+                    </a>
+                    <a asp-controller="Booking" asp-action="Index"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        MY BOOKINGS
+                    </a>
+                    <a asp-controller="Home" asp-action="Privacy"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        PRIVACY
+                    </a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div class="h-6 w-px bg-[var(--border)]"></div>
+
+                <div class="flex items-center gap-4">
+                    <a asp-controller="Account" asp-action="Login"
+                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        Sign In
+                    </a>
+                    <a asp-controller="Account" asp-action="Register"
+                       class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-screen w-full pt-20">
+        <!-- Left Visual -->
+        <div class="hidden lg:flex w-1/2 relative">
+            <div class="absolute inset-0 bg-cover bg-center"
+                 style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuAfHCWUJ8QDmcSrfgdXgKcFaDG1XLm6bYF632LvR5uFyjp2TjJ6MfMKYIIHeucMz6gUNzVgFL9lug3UseJpN4VBL2_k0I8aMvvKzNf8fn5bfR0YoTOlHHQOqAIQJ1XJT8Y1pdnYJcT0njtPBe3Voh1O2xElZIFX076rdmVuZe4MTRBWXhC500hEqhAunL5wa4QCqJuS7qtDPJhTkUal2V1X2GpAG9R-rVNhg36CR-C4GfzXzQtB_f0T_UUz60BZSUC6dA5B618I1JY')">
+                <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-white"></div>
+            </div>
+            <div class="relative z-10 flex flex-col justify-between p-12 w-full">
+                <div class="max-w-md mt-auto mb-20">
+                    <h2 class="text-5xl font-extrabold leading-tight mb-6 text-charcoal">Redefining the art of discovery.</h2>
+                    <p class="text-xl text-[var(--text-muted)] font-light">Experience a world where every reservation is a masterpiece, curated specifically for your palate.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Form -->
+        <div class="w-full lg:w-1/2 h-full flex flex-col items-center justify-center p-8 md:p-16 bg-white overflow-y-auto">
+            <div class="w-full max-w-[480px]">
+                <div class="mb-10">
+                    <h2 class="text-4xl font-black tracking-tight mb-2">Join the Table</h2>
+                    <p class="text-[var(--text-muted)]">Discover your next favorite meal with our AI-powered concierge.</p>
+                </div>
+
+                <form asp-action="Register" asp-controller="Account" method="post" class="space-y-5">
+                    @Html.AntiForgeryToken()
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="flex flex-col gap-2">
+                            <span class="text-sm font-medium text-charcoal">First Name</span>
+                            <input asp-for="FirstName" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
+                                   placeholder="Alex" type="text" />
+                        </label>
+                        <label class="flex flex-col gap-2">
+                            <span class="text-sm font-medium text-charcoal">Last Name</span>
+                            <input asp-for="LastName" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
+                                   placeholder="Luxury" type="text" />
+                        </label>
+                    </div>
+                    <label class="flex flex-col gap-2">
+                        <span class="text-sm font-medium text-charcoal">Email Address</span>
+                        <input asp-for="Email" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
+                               placeholder="e.g., alex@luxury.com" type="email" />
+                    </label>
+                    <label class="flex flex-col gap-2">
+                        <span class="text-sm font-medium text-charcoal">Password</span>
+                        <input asp-for="Password" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
+                               placeholder="••••••••" type="password" />
+                    </label>
+
+                    <!-- AI Preference Box -->
+                    <div class="ai-glow bg-gold/10 border border-gold/30 rounded-xl p-5 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3">
+                            <span class="material-symbols-outlined text-gold opacity-50 text-3xl">auto_awesome</span>
+                        </div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="size-8 rounded-full bg-gold flex items-center justify-center">
+                                <span class="material-symbols-outlined text-white text-sm">smart_toy</span>
+                            </div>
+                            <span class="font-bold text-sm uppercase tracking-wider text-gold">AI Concierge Initialization</span>
+                        </div>
+                        <p class="text-sm text-charcoal mb-4">"Help your AI agent personalize your journey. Which flavors do you crave most?"</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach (var p in new[]{
+                                new { Icon="restaurant_menu", Label="Fine Dining", Active=true },
+                                new { Icon="local_cafe", Label="Casual", Active=false },
+                                new { Icon="ramen_dining", Label="Fusion", Active=false },
+                                new { Icon="diamond", Label="Hidden Gems", Active=false }
+                            })
+                            {
+                                <button type="button"
+                                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white text-xs font-medium transition-colors @(p.Active ? "border border-gold text-gold" : "border border-[var(--border)] text-[var(--text-muted)] hover:border-gold/40")">
+                                    <span class="material-symbols-outlined text-[16px]">@p.Icon</span> @p.Label
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <button class="w-full h-14 bg-gold hover:bg-gold/90 text-white font-bold rounded-lg transition-all active:scale-[0.98] shadow-lg shadow-gold/20" type="submit">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="mt-8">
+                    <div class="relative flex items-center justify-center mb-6">
+                        <div class="flex-grow border-t border-[var(--border)]"></div>
+                        <span class="px-4 text-xs font-medium text-[var(--text-muted)] uppercase tracking-widest">Or sign up with</span>
+                        <div class="flex-grow border-t border-[var(--border)]"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <a href="/signin-google" class="flex items-center justify-center gap-2 h-12 bg-[var(--bg-soft-gray)] border border-[var(--border)] rounded-lg hover:bg-gray-100 transition-colors">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.92 3.32-2.12 4.44-1.12.92-2.6 1.64-5.72 1.64-5.12 0-9.28-4.16-9.28-9.28s4.16-9.28 9.28-9.28c2.8 0 4.92 1.08 6.56 2.6l2.32-2.32C19.24 2.12 16.2 1 12.48 1 5.48 1 0 6.48 0 13.48s5.48 12.48 12.48 12.48c3.84 0 6.76-1.28 9.08-3.68 2.4-2.4 3.12-5.76 3.12-8.52 0-.84-.08-1.64-.24-2.44H12.48z" fill="#EA4335" />
+                            </svg>
+                            <span class="text-sm font-medium">Google</span>
+                        </a>
+                        <a href="/signin-apple" class="flex items-center justify-center gap-2 h-12 bg-[var(--bg-soft-gray)] border border-[var(--border)] rounded-lg hover:bg-gray-100 transition-colors">
+                            <span class="material-symbols-outlined text-lg">ios</span>
+                            <span class="text-sm font-medium">Apple</span>
+                        </a>
+                    </div>
+                </div>
+
+                <p class="mt-10 text-center text-[var(--text-muted)] text-sm">
+                    Already have an account?
+                    <a asp-action="Login" asp-controller="Account" class="text-gold font-bold hover:underline">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
