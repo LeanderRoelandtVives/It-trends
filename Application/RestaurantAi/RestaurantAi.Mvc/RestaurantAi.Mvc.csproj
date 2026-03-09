@@ -6,4 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Restaurant.Ai.Dto\RestaurantAi.Dto.csproj" />
+    <ProjectReference Include="..\RestaurantAi.Api\RestaurantAi.Api.csproj" />
+    <ProjectReference Include="..\RestaurantAi.Model\RestaurantAi.Model.csproj" />
+    <ProjectReference Include="..\RestaurantAi.Repository\RestaurantAi.Repository.csproj" />
+    <ProjectReference Include="..\RestaurantAI.Services\RestaurantAI.Services.csproj" />
+  </ItemGroup>
+
 </Project>
