@@ -55,6 +55,13 @@
             background-color: #e5e7eb;
             border-radius: 10px
         }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none
+        }
     </style>
 </head>
 <body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] transition-colors duration-500">
@@ -73,34 +80,51 @@
 
                 <nav class="hidden lg:flex items-center gap-8">
                     <a asp-controller="Home" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="explore">
                         EXPLORE
                     </a>
                     <a asp-controller="Home" asp-action="Dashboard"
-                       class="text-sm font-bold tracking-wide text-gold transition-colors">
+                       class="text-sm font-bold tracking-wide text-gold transition-colors" data-i18n="concierge">
                         CONCIERGE
                     </a>
                     <a asp-controller="Booking" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="myBookings">
                         MY BOOKINGS
                     </a>
                     <a asp-controller="Home" asp-action="Privacy"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="privacy">
                         PRIVACY
                     </a>
                 </nav>
             </div>
 
             <div class="flex items-center gap-6">
+                <!-- Language Switcher -->
+                <div class="relative">
+                    <button id="languageButton" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[var(--text-main)] hover:bg-gray-50 transition-all border border-[var(--border)] group">
+                        <span class="material-symbols-outlined text-lg">language</span>
+                        <span id="currentLanguage" class="text-sm font-bold">EN</span>
+                        <span class="material-symbols-outlined text-sm group-hover:rotate-180 transition-transform">expand_more</span>
+                    </button>
+                    <div id="languageMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-[var(--border)] overflow-hidden z-50">
+                        <button onclick="setLanguage('en')" class="w-full px-4 py-3 text-left text-sm font-semibold hover:bg-gold/10 hover:text-gold transition-colors flex items-center gap-3">
+                            <span class="text-lg">🇬🇧</span> English
+                        </button>
+                        <button onclick="setLanguage('nl')" class="w-full px-4 py-3 text-left text-sm font-semibold hover:bg-gold/10 hover:text-gold transition-colors flex items-center gap-3">
+                            <span class="text-lg">🇳🇱</span> Nederlands
+                        </button>
+                    </div>
+                </div>
+
                 <div class="h-6 w-px bg-[var(--border)]"></div>
 
                 <div class="flex items-center gap-4">
                     <a asp-controller="Account" asp-action="Login"
-                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="signIn">
                         Sign In
                     </a>
                     <a asp-controller="Account" asp-action="Register"
-                       class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">
+                       class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all" data-i18n="getStarted">
                         Get Started
                     </a>
                 </div>
@@ -109,58 +133,45 @@
     </header>
 
     <div class="flex h-screen w-full overflow-hidden pt-20">
-        <!-- Sidebar -->
         <aside class="w-80 flex flex-col bg-white border-r border-[var(--border)] overflow-y-auto shrink-0">
             <div class="p-6">
-                <h1 class="text-xl font-bold mb-1">DineAI Agent</h1>
-                <p class="text-[var(--text-muted)] text-sm mb-6">Your personal dining assistant</p>
+                <h1 class="text-xl font-bold mb-1" data-i18n="dineaiAgent">DineAI Agent</h1>
+                <p class="text-[var(--text-muted)] text-sm mb-6" data-i18n="personalAssistant">Your personal dining assistant</p>
                 <div class="mb-8">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] opacity-60">Taste Profile</h2>
-                        <button class="text-xs text-gold font-bold">Refine</button>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-[var,--text-muted)] opacity-60" data-i18n="quickActions">Quick Actions</h2>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-gold/10 text-gold text-xs font-semibold rounded-full border border-gold/20">Spicy Enthusiast</span>
-                        <span class="px-3 py-1 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)]">Vegan-friendly</span>
-                        <span class="px-3 py-1 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)]">Quiet Vibes</span>
-                        <span class="px-3 py-1 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)]">Umami</span>
+                        <button onclick="sendQuickMessage(getTranslation('quickItalian'))" class="px-3 py-1.5 bg-gold/10 text-gold text-xs font-semibold rounded-full border border-gold/20 hover:bg-gold/20 transition-colors">🍝 <span data-i18n="italian">Italian</span></button>
+                        <button onclick="sendQuickMessage(getTranslation('quickFrench'))" class="px-3 py-1.5 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)] hover:bg-gray-100 transition-colors">🥐 <span data-i18n="french">French</span></button>
+                        <button onclick="sendQuickMessage(getTranslation('quickJapanese'))" class="px-3 py-1.5 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var,--text-muted)] hover:bg-gray-100 transition-colors">🍣 <span data-i18n="japanese">Japanese</span></button>
+                        <button onclick="sendQuickMessage(getTranslation('quickMexican'))" class="px-3 py-1.5 bg-[var(--bg-soft-gray)] text-[var,--text-main)] text-xs font-semibold rounded-full border border-[var(--border)] hover:bg-gray-100 transition-colors">🌮 <span data-i18n="mexican">Mexican</span></button>
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] opacity-60 mb-4">My Bookings</h2>
-                    <div class="flex flex-col gap-4">
-                        <div class="p-4 rounded-xl bg-white border border-[var(--border)] shadow-sm">
-                            <div class="flex gap-3">
-                                <div class="size-12 rounded-lg bg-center bg-cover flex-shrink-0"
-                                     style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuDB5PnFsctL0DffbZvChcRKCiwvkGI7Px1bi3oMdUjpJsAJvCkpBNgWtnZ6Qzr9eE-5OjgIo4BQnDrJRLVvIZ3XApmzBQDus6PuV8vbmioO8dyHP3yk1N0IcJ3yIc--nNbyPAHy2lvZD7Qd3lYcAVn9dFKOu24xARPq00yCb4XnM5vkylrIJbpaBASomA8uJ9tGOTvPlLsagxGpS7sDn8Nnx4D0xXQ_fPz8eXbDX7rwG6Ad4oHSyoQXQ3p9PINCYWtCHz6yugARsbA')">
-                                </div>
-                                <div class="flex flex-col min-w-0">
-                                    <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider mb-0.5">Confirmed</p>
-                                    <h3 class="text-sm font-bold truncate">The Pasta House</h3>
-                                    <p class="text-[11px] text-[var(--text-muted)]">Fri, Oct 27 &bull; 7:00 PM</p>
-                                </div>
-                            </div>
-                            <button class="w-full mt-3 py-2 text-xs font-bold bg-[var(--bg-soft-gray)] hover:bg-gray-100 rounded-lg text-[var(--text-main)] transition-colors border border-[var(--border)]">Modify</button>
+                    <h2 class="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] opacity-60 mb-4" data-i18n="conversationTips">Conversation Tips</h2>
+                    <div class="space-y-3 text-xs text-[var(--text-muted)]">
+                        <div class="flex gap-2">
+                            <span class="text-gold">•</span>
+                            <p data-i18n="tip1">Start by telling me your location or neighborhood</p>
                         </div>
-                        <div class="p-4 rounded-xl bg-transparent border border-dashed border-[var(--border)] group">
-                            <div class="flex gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                                <div class="size-12 rounded-lg bg-center bg-cover flex-shrink-0 grayscale group-hover:grayscale-0 transition-all"
-                                     style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuA_D7mFbwxbgLy6hUqAqmC6B0crLwMdTNZ5XEWIdiuff0lj77wio9jZC5K3hjvrx4rlVfRXvd5Ii2Th4F6i2KG29xG9nOj2DOxCRxJWVn-nXNEGD9IJA8DYl1wwQL336HjO0C7xvd_J29ASfhd-P4JQ4aSu6fKpw6WaNOqflU2cmU57TemhuP30fyGWHFFu7OkIhiVaLSzzJxyCuP4d4WbHg_zFGM9DL0VY0DSEGuwOfdVHXC6c3upJcjTLX8BV2bsKLRTqSp-CMm4')">
-                                </div>
-                                <div class="flex flex-col min-w-0">
-                                    <p class="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-wider mb-0.5">Completed</p>
-                                    <h3 class="text-sm font-bold truncate">Sushi Zen</h3>
-                                    <p class="text-[11px] text-[var(--text-muted)]">Oct 20 &bull; 8:30 PM</p>
-                                </div>
-                            </div>
-                            <button class="w-full mt-3 py-2 text-xs font-bold border border-[var(--border)] hover:bg-white rounded-lg text-[var(--text-muted)] transition-colors">Rebook</button>
+                        <div class="flex gap-2">
+                            <span class="text-gold">•</span>
+                            <p data-i18n="tip2">Mention your preferred cuisine type</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="text-gold">•</span>
+                            <p data-i18n="tip3">I can filter by price range and distance</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <span class="text-gold">•</span>
+                            <p data-i18n="tip4">Reply with a number to select a restaurant</p>
                         </div>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Chat -->
         <main class="flex-1 flex flex-col bg-[var(--bg-soft-gray)] relative">
             <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-white/80 backdrop-blur-md z-10 sticky top-0">
                 <div class="flex items-center gap-3">
@@ -171,110 +182,338 @@
                         <div class="absolute bottom-0 right-0 size-3 bg-emerald-500 border-2 border-white rounded-full"></div>
                     </div>
                     <div>
-                        <h2 class="text-base font-bold">Concierge Session</h2>
-                        <p class="text-xs text-[var(--text-muted)] flex items-center gap-1">
-                            <span class="flex gap-0.5">
-                                <span class="size-1 bg-gold rounded-full animate-pulse"></span>
-                                <span class="size-1 bg-gold rounded-full animate-pulse delay-75"></span>
-                                <span class="size-1 bg-gold rounded-full animate-pulse delay-150"></span>
-                            </span>
-                            AI Assistant is typing...
-                        </p>
+                        <h2 class="text-base font-bold flex items-center gap-2">
+                            <span data-i18n="diningConcierge">Dining Concierge AI</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-wider">AI-Powered</span>
+                        </h2>
+                        <p id="onlineStatus" class="text-xs text-emerald-500 font-bold" data-i18n="onlineReady">Online & Ready</p>
+                        <p id="typingIndicator" class="text-xs text-gold font-bold hidden" data-i18n="searchingRestaurants">Searching restaurants...</p>
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <button class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]"><span class="material-symbols-outlined">search</span></button>
-                    <button class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]"><span class="material-symbols-outlined">more_horiz</span></button>
+                    <button onclick="clearChat()" class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" data-i18n-title="clearConversation" title="Clear conversation">
+                        <span class="material-symbols-outlined">refresh</span>
+                    </button>
                 </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-8 chat-container space-y-10 pb-40">
-                <!-- AI Message 1 -->
-                <div class="flex gap-5 max-w-4xl">
-                    <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
-                        <span class="material-symbols-outlined">smart_toy</span>
-                    </div>
-                    <div class="space-y-6 flex-1">
-                        <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
-                            <p class="text-sm leading-relaxed">
-                                Good evening, Marcus! I noticed you visited <strong>The Pasta House</strong> last week and gave it a great review.
-                                <br /><br />
-                                Would you like to try something similar tonight? A new authentic Trattoria called <strong>"L'Anima"</strong> just opened 2 blocks from your office.
-                            </p>
-                        </div>
-                        <div class="flex gap-4 overflow-x-auto pb-4 -mx-1 px-1">
-                            <div class="min-w-[300px] bg-white border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
-                                <div class="h-40 bg-center bg-cover relative" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuAc6UBg8woNfBPGRSGfbt33r9Mv8hmvJnLJveF8NyIixkXbnbQIgBJ11_L7CszYyDytnc6thStrCZ4o72TCbe82fg7vhpSVYf07ZzqSBrWKD4SU3ndAzK2syt5BU89fLvB2UQUmkcdnUEvUgY3bJIxuuQUiiyC1kaV7NdLnocA9_wMsF5xAd_rlNGK1TLOMkMJqAPpmHth_6krTrUPyayejbckxgFVLygCxyshVZwrRwKml49qmPosVOTuTlvAIOA9vOleQUkz08oA')">
-                                    <div class="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white border border-white/10">4.9 ★</div>
-                                </div>
-                                <div class="p-5">
-                                    <h4 class="font-bold text-sm mb-1">L'Anima Trattoria</h4>
-                                    <p class="text-xs text-[var(--text-muted)] mb-4">0.4 miles &bull; Italian &bull; $$$</p>
-                                    <button class="w-full py-2.5 bg-gold text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all">Book Now</button>
-                                </div>
-                            </div>
-                            <div class="min-w-[300px] bg-white border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
-                                <div class="h-40 bg-center bg-cover relative" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuDRysIZJEq2L4DD0dEPH2Rm2AYh7FoAnNziT-u3-DItlmG7RiL00upso1iKGgCnn0EmAXwrUsXlmP9FxupKMfXipdsttmYCr0oPp_LOAAZEzxjWO8jMe0s57pKX8ZiZy7MOXrnabNtEww6kUdmOwXX9gAGIpN7W21S9ng4YHhTwpU7DxsmtlbWjB1uR8WSiXX8IeooSq0aan21lMANWfXNqNFafTKAk0IoBUqABDSqpvwPgS--nfSxrVf14KlcpkBdmUrn5-IoKY6k')">
-                                    <div class="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white border border-white/10">4.7 ★</div>
-                                </div>
-                                <div class="p-5">
-                                    <h4 class="font-bold text-sm mb-1">Cucina Urbana</h4>
-                                    <p class="text-xs text-[var(--text-muted)] mb-4">1.2 miles &bull; Modern Italian &bull; $$</p>
-                                    <button class="w-full py-2.5 border border-gold text-gold text-xs font-bold rounded-xl hover:bg-gold/5 transition-all">View Details</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div id="chatContainer" class="flex-1 overflow-y-auto p-8 chat-container space-y-6 pb-40"></div>
 
-                <!-- User Message -->
-                <div class="flex gap-5 max-w-2xl ml-auto flex-row-reverse">
-                    <div class="size-10 rounded-xl bg-[var(--border)] flex-shrink-0 flex items-center justify-center text-[var(--text-main)] border border-[var(--border)]">
-                        <span class="material-symbols-outlined">person</span>
-                    </div>
-                    <div class="p-5 rounded-2xl rounded-tr-none bg-gold text-white shadow-lg shadow-gold/20">
-                        <p class="text-sm leading-relaxed">That sounds perfect! Do they have a table for 2 at 8:00 PM? Also, make sure it's a quiet area if possible.</p>
-                    </div>
-                </div>
-
-                <!-- AI Message 2 -->
-                <div class="flex gap-5 max-w-4xl">
-                    <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
-                        <span class="material-symbols-outlined">smart_toy</span>
-                    </div>
-                    <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
-                        <p class="text-sm leading-relaxed">
-                            Checking L'Anima for 8:00 PM...<br /><br />
-                            Yes! They have a booth available in their library section which is very quiet. Should I go ahead and secure this for you?
-                        </p>
-                        <div class="mt-5 flex gap-3">
-                            <button class="px-6 py-2.5 bg-gold text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all">Yes, book it</button>
-                            <button class="px-6 py-2.5 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-bold rounded-xl border border-[var(--border)] hover:bg-gray-100 transition-all">Maybe later</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Input Bar -->
             <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg-soft-gray)] via-[var(--bg-soft-gray)]/95 to-transparent">
                 <div class="max-w-4xl mx-auto relative">
-                    <div class="absolute inset-y-0 left-5 flex items-center gap-3">
-                        <button class="text-[var(--text-muted)] hover:text-gold transition-colors"><span class="material-symbols-outlined">add_circle</span></button>
-                        <div class="w-[1px] h-4 bg-[var(--border)]"></div>
-                        <button class="text-[var(--text-muted)] hover:text-gold transition-colors"><span class="material-symbols-outlined">image</span></button>
-                    </div>
-                    <input class="w-full bg-white border border-[var(--border)] rounded-2xl py-5 pl-28 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
-                           placeholder="Ask your concierge anything..." type="text" />
+                    <input id="aiMessageInput"
+                           class="w-full bg-white border border-[var(--border)] rounded-2xl py-5 px-6 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
+                           data-i18n-placeholder="inputPlaceholder"
+                           placeholder="e.g., 'I'm looking for Italian restaurants in Manhattan'"
+                           type="text" />
                     <div class="absolute inset-y-0 right-5 flex items-center gap-3">
-                        <button class="text-[var(--text-muted)] hover:text-gold transition-colors"><span class="material-symbols-outlined">mic</span></button>
-                        <button class="size-10 bg-gold rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-gold/20">
+                        <button id="aiSendButton" class="size-10 bg-gold rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-gold/20">
                             <span class="material-symbols-outlined text-xl">send</span>
                         </button>
                     </div>
                 </div>
-                <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Powered by DineAI Omni Intelligence</p>
+                <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60" data-i18n="poweredBy">Powered by DineAI Intelligence</p>
             </div>
         </main>
     </div>
+
+    <script>
+        // Translations
+        const translations = {
+            en: {
+                explore: 'EXPLORE',
+                concierge: 'CONCIERGE',
+                myBookings: 'MY BOOKINGS',
+                privacy: 'PRIVACY',
+                signIn: 'Sign In',
+                getStarted: 'Get Started',
+                dineaiAgent: 'DineAI Agent',
+                personalAssistant: 'Your personal dining assistant',
+                quickActions: 'Quick Actions',
+                italian: 'Italian',
+                french: 'French',
+                japanese: 'Japanese',
+                mexican: 'Mexican',
+                conversationTips: 'Conversation Tips',
+                tip1: 'Start by telling me your location or neighborhood',
+                tip2: 'Mention your preferred cuisine type',
+                tip3: 'I can filter by price range and distance',
+                tip4: 'Reply with a number to select a restaurant',
+                diningConcierge: 'Dining Concierge AI',
+                onlineReady: 'Online & Ready',
+                searchingRestaurants: 'Searching restaurants...',
+                clearConversation: 'Clear conversation',
+                inputPlaceholder: "e.g., 'I'm looking for Italian restaurants in Manhattan'",
+                poweredBy: 'Powered by DineAI Intelligence',
+                quickItalian: 'I want Italian food',
+                quickFrench: 'Show me French restaurants',
+                quickJapanese: 'Japanese cuisine please',
+                quickMexican: 'Mexican food'
+            },
+            nl: {
+                explore: 'VERKENNEN',
+                concierge: 'CONCIËRGE',
+                myBookings: 'MIJN RESERVERINGEN',
+                privacy: 'PRIVACY',
+                signIn: 'Inloggen',
+                getStarted: 'Aan de slag',
+                dineaiAgent: 'DineAI Agent',
+                personalAssistant: 'Jouw persoonlijke diner-assistent',
+                quickActions: 'Snelle acties',
+                italian: 'Italiaans',
+                french: 'Frans',
+                japanese: 'Japans',
+                mexican: 'Mexicaans',
+                conversationTips: 'Gesprekstips',
+                tip1: 'Begin met het vertellen van je locatie of buurt',
+                tip2: 'Vermeld je favoriete keuken',
+                tip3: 'Ik kan filteren op prijsklasse en afstand',
+                tip4: 'Antwoord met een nummer om een restaurant te selecteren',
+                diningConcierge: 'Diner Conciërge AI',
+                onlineReady: 'Online & Klaar',
+                searchingRestaurants: 'Restaurants zoeken...',
+                clearConversation: 'Gesprek wissen',
+                inputPlaceholder: "bijv., 'Ik zoek Italiaanse restaurants in Amsterdam'",
+                poweredBy: 'Aangedreven door DineAI Intelligence',
+                quickItalian: 'Ik wil Italiaans eten',
+                quickFrench: 'Toon me Franse restaurants',
+                quickJapanese: 'Japanse keuken alstublieft',
+                quickMexican: 'Mexicaans eten'
+            }
+        };
+
+        let currentLang = localStorage.getItem('language') || 'en';
+
+        function getTranslation(key) {
+            return translations[currentLang][key] || translations['en'][key] || key;
+        }
+
+        function updateTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = getTranslation(key);
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                el.placeholder = getTranslation(key);
+            });
+
+            document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                const key = el.getAttribute('data-i18n-title');
+                el.title = getTranslation(key);
+            });
+
+            document.getElementById('currentLanguage').textContent = currentLang.toUpperCase();
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+            updateTranslations();
+            
+            // Close language menu
+            document.getElementById('languageMenu').classList.add('hidden');
+            
+            // Clear and restart chat in new language
+            clearChat();
+        }
+
+        // Toggle language menu
+        document.getElementById('languageButton')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('languageMenu').classList.toggle('hidden');
+        });
+
+        // Close language menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('languageMenu');
+            const button = document.getElementById('languageButton');
+            if (menu && button && !menu.contains(e.target) && !button.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        // Expose setLanguage globally
+        window.setLanguage = setLanguage;
+
+        (function() {
+            const input = document.getElementById('aiMessageInput');
+            const btn = document.getElementById('aiSendButton');
+            const chat = document.getElementById('chatContainer');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const onlineStatus = document.getElementById('onlineStatus');
+            const languageButton = document.getElementById('languageButton');
+            const languageMenu = document.getElementById('languageMenu');
+            const currentLanguage = document.getElementById('currentLanguage');
+            
+            let sessionId = '';
+
+            function addUserMessage(text) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'flex gap-5 max-w-2xl ml-auto flex-row-reverse';
+                msgDiv.innerHTML = `
+                    <div class="size-10 rounded-xl bg-gold flex-shrink-0 flex items-center justify-center text-white border border-gold/20">
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                    <div class="p-5 rounded-2xl rounded-tr-none bg-gold text-white shadow-lg shadow-gold/20">
+                        <p class="text-sm leading-relaxed">${escapeHtml(text)}</p>
+                    </div>
+                `;
+                chat.appendChild(msgDiv);
+                chat.scrollTop = chat.scrollHeight;
+            }
+
+            function addAiMessage(text, data) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'flex gap-5 max-w-4xl';
+                
+                let htmlContent = `
+                    <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
+                        <span class="material-symbols-outlined">smart_toy</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
+                            <p class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text)}</p>
+                `;
+
+                if (data && Array.isArray(data) && data.length > 0) {
+                    htmlContent += `
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${data.map((place, idx) => `
+                                <div class="p-4 bg-[var(--bg-soft-gray)] rounded-xl border border-[var(--border)] hover:shadow-lg hover:border-gold/20 transition-all cursor-pointer group">
+                                    <div class="flex items-start justify-between gap-3 mb-2">
+                                        <h4 class="font-bold text-base text-charcoal">${idx + 1}. ${escapeHtml(place.Name)}</h4>
+                                        <span class="material-symbols-outlined text-gold text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                    </div>
+                                    ${place.Cuisine ? `<p class="text-xs text-[var(--text-muted)] flex items-center gap-1"><span>🍽️</span> ${escapeHtml(place.Cuisine)}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                htmlContent += `
+                        </div>
+                    </div>
+                `;
+
+                msgDiv.innerHTML = htmlContent;
+                chat.appendChild(msgDiv);
+                chat.scrollTop = chat.scrollHeight;
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function showTyping() {
+                typingIndicator.classList.remove('hidden');
+                onlineStatus.classList.add('hidden');
+            }
+
+            function hideTyping() {
+                typingIndicator.classList.add('hidden');
+                onlineStatus.classList.remove('hidden');
+            }
+
+            async function sendMessage(messageText) {
+                const val = messageText || input.value.trim();
+                if (!val) return;
+
+                addUserMessage(val);
+                if (input) input.value = '';
+                showTyping();
+
+                try {
+                    const response = await fetch('/api/AiChat/message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            Message: val,
+                            SessionId: sessionId,
+                            Language: currentLang
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const result = await response.json();
+                    sessionId = result.sessionId || sessionId;
+                    
+                    hideTyping();
+                    addAiMessage(result.reply, result.data);
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTyping();
+                    const errorMsg = currentLang === 'nl' 
+                        ? 'Sorry, er is een fout opgetreden. Probeer het opnieuw.' 
+                        : 'Sorry, I encountered an error. Please try again.';
+                    addAiMessage(errorMsg, null);
+                }
+            }
+
+            window.sendQuickMessage = function(msg) {
+                sendMessage(msg);
+            };
+
+            window.clearChat = function() {
+                sessionId = '';
+                chat.innerHTML = '';
+                initChat();
+            };
+
+            btn?.addEventListener('click', () => sendMessage());
+
+            input?.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            async function initChat() {
+                showTyping();
+                try {
+                    const response = await fetch('/api/AiChat/message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            Message: '',
+                            SessionId: '',
+                            Language: currentLang
+                        })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        sessionId = result.sessionId || '';
+                        hideTyping();
+                        addAiMessage(result.reply, null);
+                    }
+                } catch (error) {
+                    console.error('Init error:', error);
+                    hideTyping();
+                    const welcomeMsg = currentLang === 'nl'
+                        ? "Hoi! 👋 Ik ben je diner conciërge. Waar wil je naar restaurants zoeken?"
+                        : "Hi! 👋 I'm your dining concierge. Where would you like to look for restaurants?";
+                    addAiMessage(welcomeMsg, null);
+                }
+            }
+
+            updateTranslations();
+            initChat();
+            input?.focus();
+        })();
+    </script>
 </body>
-</html>
+</html></html>

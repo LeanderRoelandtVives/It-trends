@@ -1,7 +1,12 @@
+using RestaurantAi.Mvc.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register AI Service
+builder.Services.AddSingleton<AIService>();
 
 var app = builder.Build();
 
