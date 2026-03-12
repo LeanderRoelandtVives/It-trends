@@ -34,9 +34,13 @@ namespace RestaurantAI.Services.Services
 
         public async Task<string> LoginAsync(LoginRequest loginRequest)
         {
+            var a = userManager.Users.ToList();
+
             var user = await userManager.FindByEmailAsync(loginRequest.Email);
             if (user == null || !await userManager.CheckPasswordAsync(user, loginRequest.Password))
                 throw new Exception("Invalid credentials");
+
+
 
             return await GenerateJwt(user);
         }
