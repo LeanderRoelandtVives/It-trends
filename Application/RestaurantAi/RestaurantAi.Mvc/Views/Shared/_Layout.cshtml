@@ -8,45 +8,206 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestaurantAi.Mvc.styles.css" asp-append-version="true" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <style type="text/tailwindcss">
+        @@layer base {
+            :root {
+                --primary: #121212;
+                --accent: #B08E21;
+                --bg-light: #ffffff;
+                --bg-soft-gray: #f9fafb;
+                --text-main: #111827;
+                --text-muted: #6b7280;
+                --border: #e5e7eb;
+            }
+        }
+
+        .font-display {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .gold-gradient {
+            background: linear-gradient(135deg, #B08E21 0%, #D4AF37 100%);
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { gold: "#B08E21", charcoal: "#111827", "soft-gray": "#f9fafb" },
+                    fontFamily: { display: ["Manrope", "sans-serif"] }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RestaurantAi.Mvc</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+
+<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen">
+
+    @{
+        // Read JWT from Session and extract the username claim
+        string? loggedInUser = null;
+        var jwtToken = Context.Session.GetString("JWToken");
+        if (!string.IsNullOrEmpty(jwtToken))
+        {
+            try
+            {
+                var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+                var jwt = handler.ReadJwtToken(jwtToken);
+                // ClaimTypes.Name was set to user.UserName (email) in GenerateJwt
+                loggedInUser = jwt.Claims
+                .FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+                || c.Type == "name")
+                ?.Value;
+            }
+            catch { /* expired or invalid token — treat as logged out */ }
+        }
+    }
+
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+        <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-12">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined font-bold">restaurant_menu</span>
+                    </div>
+                    <a asp-controller="Home" asp-action="Index"
+                       class="text-2xl font-extrabold tracking-tight uppercase text-charcoal no-underline">
+                        DineAI
+                    </a>
+                </div>
+
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        EXPLORE
+                    </a>
+                    <a asp-controller="Home" asp-action="Dashboard"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        CONCIERGE
+                    </a>
+                    <a asp-controller="Booking" asp-action="Index"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        MY BOOKINGS
+                    </a>
+                    <a asp-controller="Home" asp-action="Privacy"
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                        PRIVACY
+                    </a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div class="h-6 w-px bg-[var(--border)]"></div>
+                <div class="flex items-center gap-4">
+                    @if (loggedInUser != null)
+                    {
+                        <span class="text-sm font-semibold text-charcoal">
+                            Hello, @loggedInUser
+                        </span>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit"
+                                    class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all cursor-pointer border-0">
+                                Sign Out
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login"
+                           class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                            Sign In
+                        </a>
+                        <a asp-controller="Account" asp-action="Register"
+                           class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">
+                            Get Started
+                        </a>
+                    }
                 </div>
             </div>
-        </nav>
+        </div>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - RestaurantAi.Mvc - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-t border-[var(--border)] py-16 bg-[var(--bg-soft-gray)]">
+        <div class="max-w-[1440px] mx-auto px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
+                            <span class="material-symbols-outlined font-bold">restaurant_menu</span>
+                        </div>
+                        <h2 class="text-2xl font-extrabold uppercase">DineAI</h2>
+                    </div>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                        AI-powered dining discovery and reservation platform for discerning food lovers.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Platform</h3>
+                    <ul class="space-y-3">
+                        <li><a asp-controller="Home" asp-action="Dashboard" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Explore</a></li>
+                        <li><a asp-controller="Booking" asp-action="Index" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">My Bookings</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Collections</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Favorites</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Company</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">About Us</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Careers</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Press</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Partners</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Legal</h3>
+                    <ul class="space-y-3">
+                        <li><a asp-controller="Home" asp-action="Privacy" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Cookie Policy</a></li>
+                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">
+                    © @DateTime.Now.Year DineAI Luxury Group. All rights reserved.
+                </p>
+                <div class="flex gap-6">
+                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
+                        <span class="material-symbols-outlined">language</span>
+                    </a>
+                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
+                        <span class="material-symbols-outlined">chat</span>
+                    </a>
+                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
+                        <span class="material-symbols-outlined">help</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    @RenderBody()
-    @RenderSection("Scripts", required: false)
 </body>
 </html>

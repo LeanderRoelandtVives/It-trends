@@ -1,21 +1,17 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantAi.Model;
 using RestaurantAi.Mvc.Models;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace RestaurantAi.Mvc.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly HttpClient _client;
 
-    public AccountController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+    public AccountController(IHttpClientFactory httpClientFactory)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
+        _client = httpClientFactory.CreateClient("RestaurantApi");
     }
 
     [HttpGet]
@@ -28,24 +24,25 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid) return View(model);
+
+        var response = await _client.PostAsJsonAsync("api/auth/login", new
         {
+            Email = model.Email,
+            Password = model.Password
+        });
+
+        if (!response.IsSuccessStatusCode)
+        {
+            ModelState.AddModelError("", "Ongeldige loginpoging.");
             return View(model);
         }
 
-        var result = await _signInManager.PasswordSignInAsync(
-            model.Email,
-            model.Password,
-            isPersistent: false,
-            lockoutOnFailure: false);
+        // Deserialize token
+        var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        HttpContext.Session.SetString("JWToken", result.Token);
 
-        if (result.Succeeded)
-        {
-            return RedirectToAction("Index", "Home");
-        }
-
-        ModelState.AddModelError(string.Empty, "Ongeldige loginpoging.");
-        return View(model);
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
@@ -58,32 +55,32 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid) return View(model);
+
+        var response = await _client.PostAsJsonAsync("api/auth/register", new
         {
+            Email = model.Email,
+            Password = model.Password,
+            FullName = model.FirstName + " " + model.LastName
+        });
+
+        if (!response.IsSuccessStatusCode)
+        {
+            ModelState.AddModelError("", "Registratie mislukt.");
             return View(model);
         }
 
-        var user = new ApplicationUser
-        {
-            UserName = model.Email,
-            Email = model.Email,
-            FullName = model.FirstName + " " + model.LastName
-        };
+        var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        HttpContext.Session.SetString("JWToken", result.Token);
 
-        var result = await _userManager.CreateAsync(user, model.Password);
+        return RedirectToAction("Index", "Home");
+    }
 
-        if (result.Succeeded)
-        {
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return RedirectToAction("Index", "Home");
-        }
-
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
-
-        return View(model);
+    [HttpPost]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Remove("JWToken");
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
@@ -91,11 +88,10 @@ public class AccountController : Controller
     {
         return View();
     }
+}
 
-    [HttpPost]
-    public async Task<IActionResult> Logout()
-    {
-        await _signInManager.SignOutAsync();
-        return RedirectToAction("Index", "Home");
-    }
+// Helper class to deserialize API token response
+public class TokenResponse
+{
+    public string Token { get; set; }
 }
