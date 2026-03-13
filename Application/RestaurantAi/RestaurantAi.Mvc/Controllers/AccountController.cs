@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAi.Mvc.Models;
 using System.Net.Http.Headers;
@@ -87,6 +88,57 @@ public class AccountController : Controller
     public IActionResult ForgotPassword()
     {
         return View();
+    }
+
+    // Redirects the browser to Google's login page
+    [HttpGet]
+    public IActionResult LoginWithGoogle()
+    {
+        var redirectUrl = Url.Action("GoogleCallback", "Account");
+        var properties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties
+        {
+            RedirectUri = redirectUrl
+        };
+        return Challenge(properties, "Google");
+    }
+
+    // Google redirects back here after the user logs in
+    [HttpGet]
+    public async Task<IActionResult> GoogleCallback()
+    {
+        // Read the Google identity from the cookie set by the middleware
+        var result = await HttpContext.AuthenticateAsync(
+            Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+
+        if (!result.Succeeded)
+        {
+            ModelState.AddModelError("", "Google login failed.");
+            return RedirectToAction("Login");
+        }
+
+        var email = result.Principal.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+        var fullName = result.Principal.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+
+        if (string.IsNullOrEmpty(email))
+            return RedirectToAction("Login");
+
+        // Call your own API to get a JWT (same as normal login)
+        var response = await _client.PostAsJsonAsync("api/auth/google-login", new
+        {
+            Email = email,
+            FullName = fullName
+        });
+
+        if (!response.IsSuccessStatusCode)
+        {
+            ModelState.AddModelError("", "Could not complete Google login.");
+            return RedirectToAction("Login");
+        }
+
+        var tokenResult = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        HttpContext.Session.SetString("JWToken", tokenResult!.Token);
+
+        return RedirectToAction("Index", "Home");
     }
 }
 

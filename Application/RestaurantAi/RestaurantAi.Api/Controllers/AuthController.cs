@@ -21,5 +21,12 @@ namespace RestaurantAi.Api.Controllers
             var token = await authService.LoginAsync(loginRequest);
             return Ok(new { token });
         }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest request)
+        {
+            var token = await authService.GoogleLoginAsync(request.Email, request.FullName);
+            return Ok(new { token });
+        }
     }
 }

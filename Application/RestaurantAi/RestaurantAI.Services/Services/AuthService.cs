@@ -62,5 +62,25 @@ namespace RestaurantAI.Services.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        public async Task<string> GoogleLoginAsync(string email, string fullName)
+        {
+            // Find existing user or create new one
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    FullName = fullName ?? email,
+                    EmailConfirmed = true // Google already verified the email
+                };
+                var result = await userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                    throw new Exception(string.Join(",", result.Errors.Select(e => e.Description)));
+            }
+            return await GenerateJwt(user); // reuses your existing method
+        }
     }
 }

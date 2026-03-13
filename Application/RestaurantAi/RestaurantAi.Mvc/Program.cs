@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using RestaurantAi.Model;
 using RestaurantAi.Mvc.Handlers;
 using System.Net.Http.Headers;
@@ -13,6 +14,18 @@ builder.Services.AddHttpClient("RestaurantApi", client =>
     client.BaseAddress = new Uri("https://localhost:7179");
 })
 .AddHttpMessageHandler<JwtHandler>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+    options.CallbackPath = "/signin-google";
+});
 
 builder.Services.AddSession();
 
@@ -30,6 +43,7 @@ app.UseSession();
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
