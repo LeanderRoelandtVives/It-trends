@@ -8,11 +8,17 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestaurantAi.Mvc.styles.css" asp-append-version="true" />
-
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-
+    <script>
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <style type="text/tailwindcss">
         @@layer base {
             :root {
@@ -23,6 +29,14 @@
                 --text-main: #111827;
                 --text-muted: #6b7280;
                 --border: #e5e7eb;
+            }
+
+            .dark {
+                --bg-light: #0f0f0f;
+                --bg-soft-gray: #1a1a1a;
+                --text-main: #f3f4f6;
+                --text-muted: #9ca3af;
+                --border: #2d2d2d;
             }
         }
 
@@ -38,9 +52,9 @@
             background: linear-gradient(135deg, #B08E21 0%, #D4AF37 100%);
         }
     </style>
-
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: { gold: "#B08E21", charcoal: "#111827", "soft-gray": "#f9fafb" },
@@ -50,11 +64,8 @@
         }
     </script>
 </head>
-
-<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen">
-
+<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen transition-colors duration-300">
     @{
-        // Read JWT from Session and extract the username claim
         string? loggedInUser = null;
         var jwtToken = Context.Session.GetString("JWToken");
         if (!string.IsNullOrEmpty(jwtToken))
@@ -63,17 +74,15 @@
             {
                 var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
                 var jwt = handler.ReadJwtToken(jwtToken);
-                // ClaimTypes.Name was set to user.UserName (email) in GenerateJwt
                 loggedInUser = jwt.Claims
                 .FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
                 || c.Type == "name")
                 ?.Value;
             }
-            catch { /* expired or invalid token — treat as logged out */ }
+            catch { }
         }
     }
-
-    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg-light)]/95 backdrop-blur-md transition-colors duration-300">
         <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-12">
                 <div class="flex items-center gap-3">
@@ -81,37 +90,43 @@
                         <span class="material-symbols-outlined font-bold">restaurant_menu</span>
                     </div>
                     <a asp-controller="Home" asp-action="Index"
-                       class="text-2xl font-extrabold tracking-tight uppercase text-charcoal no-underline">
+                       class="text-2xl font-extrabold tracking-tight uppercase text-[var(--text-main)] no-underline transition-colors duration-300">
                         DineAI
                     </a>
                 </div>
-
                 <nav class="hidden lg:flex items-center gap-8">
                     <a asp-controller="Home" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         EXPLORE
                     </a>
                     <a asp-controller="Home" asp-action="Dashboard"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         CONCIERGE
                     </a>
                     <a asp-controller="Booking" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         MY BOOKINGS
                     </a>
                     <a asp-controller="Home" asp-action="Privacy"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         PRIVACY
                     </a>
                 </nav>
             </div>
-
-            <div class="flex items-center gap-6">
+            <div class="flex items-center gap-4">
+                <div class="h-6 w-px bg-[var(--border)]"></div>
+                <button id="theme-toggle"
+                        onclick="toggleTheme()"
+                        class="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-gold transition-all"
+                        title="Toggle dark mode">
+                    <span id="icon-light" class="material-symbols-outlined hidden dark:block text-gold">light_mode</span>
+                    <span id="icon-dark" class="material-symbols-outlined block dark:hidden">dark_mode</span>
+                </button>
                 <div class="h-6 w-px bg-[var(--border)]"></div>
                 <div class="flex items-center gap-4">
                     @if (loggedInUser != null)
                     {
-                        <span class="text-sm font-semibold text-charcoal">
+                        <span class="text-sm font-semibold text-[var(--text-main)]">
                             Hello, @loggedInUser
                         </span>
                         <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
@@ -125,7 +140,7 @@
                     else
                     {
                         <a asp-controller="Account" asp-action="Login"
-                           class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                           class="text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                             Sign In
                         </a>
                         <a asp-controller="Account" asp-action="Register"
@@ -137,14 +152,12 @@
             </div>
         </div>
     </header>
-
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-t border-[var(--border)] py-16 bg-[var(--bg-soft-gray)]">
+    <footer class="border-t border-[var(--border)] py-16 bg-[var(--bg-soft-gray)] transition-colors duration-300">
         <div class="max-w-[1440px] mx-auto px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1">
@@ -152,14 +165,14 @@
                         <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
                             <span class="material-symbols-outlined font-bold">restaurant_menu</span>
                         </div>
-                        <h2 class="text-2xl font-extrabold uppercase">DineAI</h2>
+                        <h2 class="text-2xl font-extrabold uppercase text-[var(--text-main)]">DineAI</h2>
                     </div>
                     <p class="text-sm text-[var(--text-muted)] leading-relaxed">
                         AI-powered dining discovery and reservation platform for discerning food lovers.
                     </p>
                 </div>
                 <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Platform</h3>
+                    <h3 class="font-black text-sm uppercase tracking-widest mb-4 text-[var(--text-main)]">Platform</h3>
                     <ul class="space-y-3">
                         <li><a asp-controller="Home" asp-action="Dashboard" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Explore</a></li>
                         <li><a asp-controller="Booking" asp-action="Index" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">My Bookings</a></li>
@@ -168,7 +181,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Company</h3>
+                    <h3 class="font-black text-sm uppercase tracking-widest mb-4 text-[var(--text-main)]">Company</h3>
                     <ul class="space-y-3">
                         <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">About Us</a></li>
                         <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Careers</a></li>
@@ -177,7 +190,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Legal</h3>
+                    <h3 class="font-black text-sm uppercase tracking-widest mb-4 text-[var(--text-main)]">Legal</h3>
                     <ul class="space-y-3">
                         <li><a asp-controller="Home" asp-action="Privacy" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Privacy Policy</a></li>
                         <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Terms of Service</a></li>
@@ -204,10 +217,21 @@
             </div>
         </div>
     </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
 </body>
 </html>
