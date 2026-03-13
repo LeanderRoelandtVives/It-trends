@@ -1,306 +1,143 @@
 @{
     ViewData["Title"] = "Privacy Policy - DineAI";
-    Layout = null;
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>@ViewData["Title"]</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-    <script id="tailwind-config">
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: "#B08E21",
-                        charcoal: "#111827",
-                        "soft-gray": "#f9fafb"
-                    },
-                    fontFamily: {
-                        display: ["Manrope", "sans-serif"]
-                    }
-                }
-            }
-        }
-    </script>
-    <style type="text/tailwindcss">
-        @@layer base {
-            :root {
-                --primary: #121212;
-                --accent: #B08E21;
-                --bg-light: #ffffff;
-                --bg-soft-gray: #f9fafb;
-                --text-main: #111827;
-                --text-muted: #6b7280;
-                --border: #e5e7eb;
-            }
-        }
-        .font-display {
-            font-family: 'Manrope', sans-serif;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24
-        }
-        .gold-gradient {
-            background: linear-gradient(135deg, #B08E21 0%, #D4AF37 100%);
-        }
-    </style>
-</head>
-<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen">
-    
-    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
-        <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-12">
-                <div class="flex items-center gap-3">
-                    <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
-                        <span class="material-symbols-outlined font-bold">restaurant_menu</span>
-                    </div>
-                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">
-                        DineAI
-                    </h1>
-                </div>
 
-                <nav class="hidden lg:flex items-center gap-8">
-                    <a asp-controller="Home" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
-                        EXPLORE
-                    </a>
-                    <a asp-controller="Home" asp-action="Dashboard"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
-                        CONCIERGE
-                    </a>
-                    <a asp-controller="Booking" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
-                        MY BOOKINGS
-                    </a>
-                    <a asp-controller="Home" asp-action="Privacy"
-                       class="text-sm font-bold tracking-wide text-gold transition-colors">
-                        PRIVACY
-                    </a>
-                </nav>
-            </div>
-
-            <div class="flex items-center gap-6">
-                <div class="h-6 w-px bg-[var(--border)]"></div>
-
-                <div class="flex items-center gap-4">
-                    <a asp-controller="Account" asp-action="Login"
-                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">
-                        Sign In
-                    </a>
-                    <a asp-controller="Account" asp-action="Register"
-                       class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">
-                        Get Started
-                    </a>
-                </div>
-            </div>
+<main class="max-w-5xl mx-auto px-6 lg:px-10 py-16">
+    <div class="flex flex-col gap-8">
+        <div class="flex items-center gap-3 text-gold">
+            <span class="material-symbols-outlined">policy</span>
+            <span class="text-xs font-black uppercase tracking-widest">Legal Information</span>
         </div>
-    </header>
 
-    <main class="max-w-5xl mx-auto px-6 lg:px-10 py-16">
-        <div class="flex flex-col gap-8">
-            <div class="flex items-center gap-3 text-gold">
-                <span class="material-symbols-outlined">policy</span>
-                <span class="text-xs font-black uppercase tracking-widest">Legal Information</span>
-            </div>
-            
-            <h1 class="text-5xl md:text-6xl font-black leading-tight tracking-tight">Privacy Policy</h1>
-            
-            <p class="text-lg text-[var(--text-muted)] leading-relaxed">
-                Last updated: @DateTime.Now.ToString("MMMM dd, yyyy")
-            </p>
+        <h1 class="text-5xl md:text-6xl font-black leading-tight tracking-tight">Privacy Policy</h1>
 
-            <div class="bg-gold/5 border border-gold/20 rounded-2xl p-8">
-                <div class="flex items-start gap-4">
-                    <div class="size-12 rounded-xl bg-gold/20 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-gold">security</span>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold mb-2">Your Privacy Matters</h2>
-                        <p class="text-sm text-[var(--text-muted)] leading-relaxed">
-                            At DineAI, we take your privacy seriously. This policy outlines how we collect, use, and protect your personal information.
-                        </p>
-                    </div>
+        <p class="text-lg text-[var(--text-muted)] leading-relaxed">
+            Last updated: @DateTime.Now.ToString("MMMM dd, yyyy")
+        </p>
+
+        <div class="bg-gold/5 border border-gold/20 rounded-2xl p-8">
+            <div class="flex items-start gap-4">
+                <div class="size-12 rounded-xl bg-gold/20 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-gold">security</span>
                 </div>
-            </div>
-
-            <div class="prose prose-slate max-w-none">
-                <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">1. Information We Collect</h2>
-                    <p class="text-[var(--text-muted)] leading-relaxed mb-4">
-                        We collect information you provide directly to us, including:
-                    </p>
-                    <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
-                        <li>Account information (name, email, phone number)</li>
-                        <li>Dining preferences and dietary restrictions</li>
-                        <li>Reservation history and booking details</li>
-                        <li>Payment information (processed securely through third-party providers)</li>
-                        <li>Communication preferences and feedback</li>
-                    </ul>
-                </div>
-
-                <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">2. How We Use Your Information</h2>
-                    <p class="text-[var(--text-muted)] leading-relaxed mb-4">
-                        We use the information we collect to:
-                    </p>
-                    <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
-                        <li>Process and manage your restaurant reservations</li>
-                        <li>Provide personalized dining recommendations through our AI concierge</li>
-                        <li>Send booking confirmations and reminders</li>
-                        <li>Improve our services and user experience</li>
-                        <li>Communicate with you about updates, promotions, and special offers</li>
-                    </ul>
-                </div>
-
-                <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">3. Data Security</h2>
-                    <p class="text-[var(--text-muted)] leading-relaxed">
-                        We implement industry-standard security measures to protect your personal information. This includes encryption, 
-                        secure servers, and regular security audits. However, no method of transmission over the internet is 100% secure, 
-                        and we cannot guarantee absolute security.
-                    </p>
-                </div>
-
-                <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">4. Sharing Your Information</h2>
-                    <p class="text-[var(--text-muted)] leading-relaxed mb-4">
-                        We may share your information with:
-                    </p>
-                    <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
-                        <li>Restaurants where you make reservations</li>
-                        <li>Payment processors to complete transactions</li>
-                        <li>Service providers who assist in operating our platform</li>
-                        <li>Law enforcement when required by law</li>
-                    </ul>
-                    <p class="text-[var(--text-muted)] leading-relaxed mt-4">
-                        We do not sell your personal information to third parties.
-                    </p>
-                </div>
-
-                <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">5. Your Rights</h2>
-                    <p class="text-[var(--text-muted)] leading-relaxed mb-4">
-                        You have the right to:
-                    </p>
-                    <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
-                        <li>Access and review your personal information</li>
-                        <li>Request corrections to your data</li>
-                        <li>Delete your account and associated data</li>
-                        <li>Opt-out of marketing communications</li>
-                        <li>Export your data in a portable format</li>
-                    </ul>
-                </div>
-
-                <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">6. Cookies and Tracking</h2>
-                    <p class="text-[var(--text-muted)] leading-relaxed">
-                        We use cookies and similar tracking technologies to enhance your experience, analyze usage patterns, and 
-                        deliver personalized content. You can control cookie settings through your browser preferences.
-                    </p>
-                </div>
-
-                <div class="bg-white border border-[var(--border)] rounded-2xl p-8 shadow-sm">
-                    <h2 class="text-2xl font-bold mb-4">7. Contact Us</h2>
-                    <p class="text-[var(--text-muted)] leading-relaxed mb-4">
-                        If you have questions about this Privacy Policy or wish to exercise your rights, please contact us:
-                    </p>
-                    <div class="flex flex-col gap-2 text-[var(--text-muted)]">
-                        <p class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-gold">mail</span>
-                            <strong>Email:</strong> privacy@dineai.com
-                        </p>
-                        <p class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-gold">phone</span>
-                            <strong>Phone:</strong> 1-800-DINE-AI1
-                        </p>
-                        <p class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-gold">location_on</span>
-                            <strong>Address:</strong> 123 Tech Boulevard, San Francisco, CA 94102
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mt-8">
-                <div class="flex items-start gap-4">
-                    <span class="material-symbols-outlined text-amber-600">info</span>
-                    <div>
-                        <h3 class="font-bold text-amber-900 mb-2">Policy Updates</h3>
-                        <p class="text-sm text-amber-800 leading-relaxed">
-                            We may update this Privacy Policy from time to time. We will notify you of any significant changes 
-                            by posting the new policy on this page and updating the "Last updated" date.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="border-t border-[var(--border)] py-16 bg-[var(--bg-soft-gray)] mt-20">
-        <div class="max-w-[1440px] mx-auto px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
-                            <span class="material-symbols-outlined font-bold">restaurant_menu</span>
-                        </div>
-                        <h2 class="text-2xl font-extrabold uppercase">DineAI</h2>
-                    </div>
+                <div>
+                    <h2 class="text-xl font-bold mb-2">Your Privacy Matters</h2>
                     <p class="text-sm text-[var(--text-muted)] leading-relaxed">
-                        AI-powered dining discovery and reservation platform for discerning food lovers.
+                        At DineAI, we take your privacy seriously. This policy outlines how we collect, use, and protect your personal information.
                     </p>
-                </div>
-                <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Platform</h3>
-                    <ul class="space-y-3">
-                        <li><a asp-controller="Home" asp-action="Index" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Explore</a></li>
-                        <li><a asp-controller="Home" asp-action="Dashboard" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Concierge</a></li>
-                        <li><a asp-controller="Booking" asp-action="Index" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">My Bookings</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Favorites</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Company</h3>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">About Us</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Careers</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Press</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Partners</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4">Legal</h3>
-                    <ul class="space-y-3">
-                        <li><a asp-controller="Home" asp-action="Privacy" class="text-sm text-gold font-semibold hover:underline transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Cookie Policy</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Support</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">
-                    © @DateTime.Now.Year DineAI Luxury Group. All rights reserved.
-                </p>
-                <div class="flex gap-6">
-                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
-                        <span class="material-symbols-outlined">language</span>
-                    </a>
-                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
-                        <span class="material-symbols-outlined">chat</span>
-                    </a>
-                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
-                        <span class="material-symbols-outlined">help</span>
-                    </a>
                 </div>
             </div>
         </div>
-    </footer>
 
-</body>
-</html>
+        <div class="prose prose-slate max-w-none">
+            <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-4">1. Information We Collect</h2>
+                <p class="text-[var(--text-muted)] leading-relaxed mb-4">
+                    We collect information you provide directly to us, including:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
+                    <li>Account information (name, email, phone number)</li>
+                    <li>Dining preferences and dietary restrictions</li>
+                    <li>Reservation history and booking details</li>
+                    <li>Payment information (processed securely through third-party providers)</li>
+                    <li>Communication preferences and feedback</li>
+                </ul>
+            </div>
+
+            <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-4">2. How We Use Your Information</h2>
+                <p class="text-[var(--text-muted)] leading-relaxed mb-4">
+                    We use the information we collect to:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
+                    <li>Process and manage your restaurant reservations</li>
+                    <li>Provide personalized dining recommendations through our AI concierge</li>
+                    <li>Send booking confirmations and reminders</li>
+                    <li>Improve our services and user experience</li>
+                    <li>Communicate with you about updates, promotions, and special offers</li>
+                </ul>
+            </div>
+
+            <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-4">3. Data Security</h2>
+                <p class="text-[var(--text-muted)] leading-relaxed">
+                    We implement industry-standard security measures to protect your personal information. This includes encryption,
+                    secure servers, and regular security audits. However, no method of transmission over the internet is 100% secure,
+                    and we cannot guarantee absolute security.
+                </p>
+            </div>
+
+            <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-4">4. Sharing Your Information</h2>
+                <p class="text-[var(--text-muted)] leading-relaxed mb-4">
+                    We may share your information with:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
+                    <li>Restaurants where you make reservations</li>
+                    <li>Payment processors to complete transactions</li>
+                    <li>Service providers who assist in operating our platform</li>
+                    <li>Law enforcement when required by law</li>
+                </ul>
+                <p class="text-[var(--text-muted)] leading-relaxed mt-4">
+                    We do not sell your personal information to third parties.
+                </p>
+            </div>
+
+            <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-4">5. Your Rights</h2>
+                <p class="text-[var(--text-muted)] leading-relaxed mb-4">
+                    You have the right to:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-[var(--text-muted)]">
+                    <li>Access and review your personal information</li>
+                    <li>Request corrections to your data</li>
+                    <li>Delete your account and associated data</li>
+                    <li>Opt-out of marketing communications</li>
+                    <li>Export your data in a portable format</li>
+                </ul>
+            </div>
+
+            <div class="bg-white border border-[var(--border)] rounded-2xl p-8 mb-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-4">6. Cookies and Tracking</h2>
+                <p class="text-[var(--text-muted)] leading-relaxed">
+                    We use cookies and similar tracking technologies to enhance your experience, analyze usage patterns, and
+                    deliver personalized content. You can control cookie settings through your browser preferences.
+                </p>
+            </div>
+
+            <div class="bg-white border border-[var(--border)] rounded-2xl p-8 shadow-sm">
+                <h2 class="text-2xl font-bold mb-4">7. Contact Us</h2>
+                <p class="text-[var(--text-muted)] leading-relaxed mb-4">
+                    If you have questions about this Privacy Policy or wish to exercise your rights, please contact us:
+                </p>
+                <div class="flex flex-col gap-2 text-[var(--text-muted)]">
+                    <p class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gold">mail</span>
+                        <strong>Email:</strong> privacy@dineai.com
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gold">phone</span>
+                        <strong>Phone:</strong> 1-800-DINE-AI1
+                    </p>
+                    <p class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-gold">location_on</span>
+                        <strong>Address:</strong> 123 Tech Boulevard, San Francisco, CA 94102
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 mt-8">
+            <div class="flex items-start gap-4">
+                <span class="material-symbols-outlined text-amber-600">info</span>
+                <div>
+                    <h3 class="font-bold text-amber-900 mb-2">Policy Updates</h3>
+                    <p class="text-sm text-amber-800 leading-relaxed">
+                        We may update this Privacy Policy from time to time. We will notify you of any significant changes
+                        by posting the new policy on this page and updating the "Last updated" date.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
