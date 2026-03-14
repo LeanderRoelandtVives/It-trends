@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using RestaurantAi.Model;
 
-namespace RestaurantAi.Repository
+public class RestaurantAiDbContext : IdentityDbContext<ApplicationUser>
 {
-    public class RestaurantAiDbContext(DbContextOptions<RestaurantAiDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+    public RestaurantAiDbContext(DbContextOptions<RestaurantAiDbContext> options)
+        : base(options)
     {
-
     }
+
+    public DbSet<MenuItem> MenuItems { get; set; }
 }

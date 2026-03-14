@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -67,6 +68,7 @@
 <body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen transition-colors duration-300">
     @{
         string? loggedInUser = null;
+        bool isAdmin = false;
         var jwtToken = Context.Session.GetString("JWToken");
         if (!string.IsNullOrEmpty(jwtToken))
         {
@@ -74,10 +76,17 @@
             {
                 var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
                 var jwt = handler.ReadJwtToken(jwtToken);
+
                 loggedInUser = jwt.Claims
                 .FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
                 || c.Type == "name")
                 ?.Value;
+
+                isAdmin = jwt.Claims
+                .Any(c => (c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                || c.Type == ClaimTypes.Role
+                || c.Type == "role")
+                && c.Value == "Admin");
             }
             catch { }
         }
@@ -103,6 +112,13 @@
                        class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         CONCIERGE
                     </a>
+                    @if (loggedInUser != null)
+                    {
+                        <a asp-controller="Menu" asp-action="Index"
+                           class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
+                            MENU
+                        </a>
+                    }
                     <a asp-controller="Booking" asp-action="Index"
                        class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         MY BOOKINGS
@@ -111,6 +127,13 @@
                        class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         PRIVACY
                     </a>
+                    @if (isAdmin)
+                    {
+                        <a asp-controller="Admin" asp-action="Users"
+                           class="text-sm font-medium text-gold hover:text-[var(--text-main)] transition-colors">
+                            ADMIN
+                        </a>
+                    }
                 </nav>
             </div>
             <div class="flex items-center gap-4">

@@ -2,16 +2,19 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace RestaurantAi.Repository.Migrations
+namespace RestaurantAi.Repository.Migrations.MenuItems
 {
     [DbContext(typeof(RestaurantAiDbContext))]
-    partial class RestaurantAiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260314164630_AddMenuItems")]
+    partial class AddMenuItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.5");

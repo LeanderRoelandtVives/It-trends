@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RestaurantAi.Mvc.Controllers;
 
-public class SearchController : Controller
+public class SearchController : BaseController
 {
     [HttpGet]
     public IActionResult Index()
