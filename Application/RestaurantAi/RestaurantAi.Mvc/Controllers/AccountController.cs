@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 
 namespace RestaurantAi.Mvc.Controllers;
 
-public class AccountController : Controller
+public class AccountController : BaseController
 {
     private readonly HttpClient _client;
 

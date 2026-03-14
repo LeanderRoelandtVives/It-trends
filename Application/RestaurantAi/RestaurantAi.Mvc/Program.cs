@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<JwtHandler>();
+builder.Services.AddTransient<JwtHandler>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient("RestaurantApi", client =>

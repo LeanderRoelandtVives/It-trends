@@ -43,6 +43,8 @@ namespace RestaurantAI.Services.Services
 
         private async Task<string> GenerateJwt(ApplicationUser user)
         {
+            var roles = await userManager.GetRolesAsync(user);
+
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
@@ -50,9 +52,11 @@ namespace RestaurantAI.Services.Services
             new Claim(ClaimTypes.Name, user.UserName)
         };
 
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtsettings.Value.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
             var token = new JwtSecurityToken(
                 issuer: jwtsettings.Value.Issuer,
                 audience: jwtsettings.Value.Audience,

@@ -4,7 +4,7 @@ using RestaurantAi.Mvc.Models;
 
 namespace RestaurantAi.Mvc.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public IActionResult Index()
         {
