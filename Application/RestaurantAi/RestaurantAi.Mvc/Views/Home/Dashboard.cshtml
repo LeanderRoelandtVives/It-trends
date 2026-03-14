@@ -55,13 +55,6 @@
             background-color: #e5e7eb;
             border-radius: 10px
         }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none
-        }
     </style>
 </head>
 <body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] transition-colors duration-500">
@@ -73,28 +66,14 @@
                     <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
                         <span class="material-symbols-outlined font-bold">restaurant_menu</span>
                     </div>
-                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">
-                        DineAI
-                    </h1>
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">DineAI</h1>
                 </div>
 
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a asp-controller="Home" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="explore">
-                        EXPLORE
-                    </a>
-                    <a asp-controller="Home" asp-action="Dashboard"
-                       class="text-sm font-bold tracking-wide text-gold transition-colors" data-i18n="concierge">
-                        CONCIERGE
-                    </a>
-                    <a asp-controller="Booking" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="myBookings">
-                        MY BOOKINGS
-                    </a>
-                    <a asp-controller="Home" asp-action="Privacy"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="privacy">
-                        PRIVACY
-                    </a>
+                    <a asp-controller="Home" asp-action="Index" class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">EXPLORE</a>
+                    <a asp-controller="Home" asp-action="Dashboard" class="text-sm font-bold tracking-wide text-gold transition-colors">CONCIERGE</a>
+                    <a asp-controller="Booking" asp-action="Index" class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">MY BOOKINGS</a>
+                    <a asp-controller="Home" asp-action="Privacy" class="text-sm font-medium text-[var,--text-muted)] hover:text-charcoal transition-colors">PRIVACY</a>
                 </nav>
             </div>
 
@@ -119,59 +98,14 @@
                 <div class="h-6 w-px bg-[var(--border)]"></div>
 
                 <div class="flex items-center gap-4">
-                    <a asp-controller="Account" asp-action="Login"
-                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors" data-i18n="signIn">
-                        Sign In
-                    </a>
-                    <a asp-controller="Account" asp-action="Register"
-                       class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all" data-i18n="getStarted">
-                        Get Started
-                    </a>
+                    <a asp-controller="Account" asp-action="Login" class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">Sign In</a>
+                    <a asp-controller="Account" asp-action="Register" class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">Get Started</a>
                 </div>
             </div>
         </div>
     </header>
 
     <div class="flex h-screen w-full overflow-hidden pt-20">
-        <aside class="w-80 flex flex-col bg-white border-r border-[var(--border)] overflow-y-auto shrink-0">
-            <div class="p-6">
-                <h1 class="text-xl font-bold mb-1" data-i18n="dineaiAgent">DineAI Agent</h1>
-                <p class="text-[var(--text-muted)] text-sm mb-6" data-i18n="personalAssistant">Your personal dining assistant</p>
-                <div class="mb-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xs font-bold uppercase tracking-widest text-[var,--text-muted)] opacity-60" data-i18n="quickActions">Quick Actions</h2>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="sendQuickMessage(getTranslation('quickItalian'))" class="px-3 py-1.5 bg-gold/10 text-gold text-xs font-semibold rounded-full border border-gold/20 hover:bg-gold/20 transition-colors">🍝 <span data-i18n="italian">Italian</span></button>
-                        <button onclick="sendQuickMessage(getTranslation('quickFrench'))" class="px-3 py-1.5 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)] hover:bg-gray-100 transition-colors">🥐 <span data-i18n="french">French</span></button>
-                        <button onclick="sendQuickMessage(getTranslation('quickJapanese'))" class="px-3 py-1.5 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var,--text-muted)] hover:bg-gray-100 transition-colors">🍣 <span data-i18n="japanese">Japanese</span></button>
-                        <button onclick="sendQuickMessage(getTranslation('quickMexican'))" class="px-3 py-1.5 bg-[var(--bg-soft-gray)] text-[var,--text-main)] text-xs font-semibold rounded-full border border-[var(--border)] hover:bg-gray-100 transition-colors">🌮 <span data-i18n="mexican">Mexican</span></button>
-                    </div>
-                </div>
-                <div>
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] opacity-60 mb-4" data-i18n="conversationTips">Conversation Tips</h2>
-                    <div class="space-y-3 text-xs text-[var(--text-muted)]">
-                        <div class="flex gap-2">
-                            <span class="text-gold">•</span>
-                            <p data-i18n="tip1">Start by telling me your location or neighborhood</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <span class="text-gold">•</span>
-                            <p data-i18n="tip2">Mention your preferred cuisine type</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <span class="text-gold">•</span>
-                            <p data-i18n="tip3">I can filter by price range and distance</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <span class="text-gold">•</span>
-                            <p data-i18n="tip4">Reply with a number to select a restaurant</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
         <main class="flex-1 flex flex-col bg-[var(--bg-soft-gray)] relative">
             <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-white/80 backdrop-blur-md z-10 sticky top-0">
                 <div class="flex items-center gap-3">
@@ -183,15 +117,15 @@
                     </div>
                     <div>
                         <h2 class="text-base font-bold flex items-center gap-2">
-                            <span data-i18n="diningConcierge">Dining Concierge AI</span>
-                            <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-wider">AI-Powered</span>
+                            <span id="headerTitle">Restaurant Concierge AI</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-wider">OpenAI Powered</span>
                         </h2>
                         <p id="onlineStatus" class="text-xs text-emerald-500 font-bold" data-i18n="onlineReady">Online & Ready</p>
-                        <p id="typingIndicator" class="text-xs text-gold font-bold hidden" data-i18n="searchingRestaurants">Searching restaurants...</p>
+                        <p id="typingIndicator" class="text-xs text-gold font-bold hidden" data-i18n="searchingRestaurants">AI is thinking...</p>
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="clearChat()" class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" data-i18n-title="clearConversation" title="Clear conversation">
+                    <button onclick="clearChat()" class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" title="Clear conversation">
                         <span class="material-symbols-outlined">refresh</span>
                     </button>
                 </div>
@@ -203,8 +137,7 @@
                 <div class="max-w-4xl mx-auto relative">
                     <input id="aiMessageInput"
                            class="w-full bg-white border border-[var(--border)] rounded-2xl py-5 px-6 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
-                           data-i18n-placeholder="inputPlaceholder"
-                           placeholder="e.g., 'I'm looking for Italian restaurants in Manhattan'"
+                           placeholder="Ask me anything about restaurants..."
                            type="text" />
                     <div class="absolute inset-y-0 right-5 flex items-center gap-3">
                         <button id="aiSendButton" class="size-10 bg-gold rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-gold/20">
@@ -212,120 +145,53 @@
                         </button>
                     </div>
                 </div>
-                <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60" data-i18n="poweredBy">Powered by DineAI Intelligence</p>
+                <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Powered by OpenAI GPT-4o-mini</p>
             </div>
         </main>
     </div>
 
     <script>
-        // Translations
+        let currentLang = localStorage.getItem('language') || 'en';
+        let sessionId = '';
+
         const translations = {
             en: {
-                explore: 'EXPLORE',
-                concierge: 'CONCIERGE',
-                myBookings: 'MY BOOKINGS',
-                privacy: 'PRIVACY',
-                signIn: 'Sign In',
-                getStarted: 'Get Started',
-                dineaiAgent: 'DineAI Agent',
-                personalAssistant: 'Your personal dining assistant',
-                quickActions: 'Quick Actions',
-                italian: 'Italian',
-                french: 'French',
-                japanese: 'Japanese',
-                mexican: 'Mexican',
-                conversationTips: 'Conversation Tips',
-                tip1: 'Start by telling me your location or neighborhood',
-                tip2: 'Mention your preferred cuisine type',
-                tip3: 'I can filter by price range and distance',
-                tip4: 'Reply with a number to select a restaurant',
-                diningConcierge: 'Dining Concierge AI',
+                headerTitle: 'Restaurant Concierge AI',
                 onlineReady: 'Online & Ready',
-                searchingRestaurants: 'Searching restaurants...',
-                clearConversation: 'Clear conversation',
-                inputPlaceholder: "e.g., 'I'm looking for Italian restaurants in Manhattan'",
-                poweredBy: 'Powered by DineAI Intelligence',
-                quickItalian: 'I want Italian food',
-                quickFrench: 'Show me French restaurants',
-                quickJapanese: 'Japanese cuisine please',
-                quickMexican: 'Mexican food'
+                typingIndicator: 'AI is thinking...',
+                placeholder: 'Ask me anything about restaurants...',
+                errorMsg: 'Sorry, an error occurred. Please try again.'
             },
             nl: {
-                explore: 'VERKENNEN',
-                concierge: 'CONCIËRGE',
-                myBookings: 'MIJN RESERVERINGEN',
-                privacy: 'PRIVACY',
-                signIn: 'Inloggen',
-                getStarted: 'Aan de slag',
-                dineaiAgent: 'DineAI Agent',
-                personalAssistant: 'Jouw persoonlijke diner-assistent',
-                quickActions: 'Snelle acties',
-                italian: 'Italiaans',
-                french: 'Frans',
-                japanese: 'Japans',
-                mexican: 'Mexicaans',
-                conversationTips: 'Gesprekstips',
-                tip1: 'Begin met het vertellen van je locatie of buurt',
-                tip2: 'Vermeld je favoriete keuken',
-                tip3: 'Ik kan filteren op prijsklasse en afstand',
-                tip4: 'Antwoord met een nummer om een restaurant te selecteren',
-                diningConcierge: 'Diner Conciërge AI',
+                headerTitle: 'Restaurant Conciërge AI',
                 onlineReady: 'Online & Klaar',
-                searchingRestaurants: 'Restaurants zoeken...',
-                clearConversation: 'Gesprek wissen',
-                inputPlaceholder: "bijv., 'Ik zoek Italiaanse restaurants in Amsterdam'",
-                poweredBy: 'Aangedreven door DineAI Intelligence',
-                quickItalian: 'Ik wil Italiaans eten',
-                quickFrench: 'Toon me Franse restaurants',
-                quickJapanese: 'Japanse keuken alstublieft',
-                quickMexican: 'Mexicaans eten'
+                typingIndicator: 'AI denkt na...',
+                placeholder: 'Vraag me alles over restaurants...',
+                errorMsg: 'Sorry, er is een fout opgetreden. Probeer het opnieuw.'
             }
         };
 
-        let currentLang = localStorage.getItem('language') || 'en';
-
-        function getTranslation(key) {
-            return translations[currentLang][key] || translations['en'][key] || key;
-        }
-
-        function updateTranslations() {
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                el.textContent = getTranslation(key);
-            });
-
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                el.placeholder = getTranslation(key);
-            });
-
-            document.querySelectorAll('[data-i18n-title]').forEach(el => {
-                const key = el.getAttribute('data-i18n-title');
-                el.title = getTranslation(key);
-            });
-
+        function updateLanguageUI() {
             document.getElementById('currentLanguage').textContent = currentLang.toUpperCase();
+            document.getElementById('headerTitle').textContent = translations[currentLang].headerTitle;
+            document.getElementById('onlineStatus').textContent = translations[currentLang].onlineReady;
+            document.getElementById('typingIndicator').textContent = translations[currentLang].typingIndicator;
+            document.getElementById('aiMessageInput').placeholder = translations[currentLang].placeholder;
         }
 
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('language', lang);
-            updateTranslations();
-            
-            // Close language menu
+            updateLanguageUI();
             document.getElementById('languageMenu').classList.add('hidden');
-            
-            // Clear and restart chat in new language
             clearChat();
         }
 
-        // Toggle language menu
         document.getElementById('languageButton')?.addEventListener('click', function(e) {
             e.stopPropagation();
             document.getElementById('languageMenu').classList.toggle('hidden');
         });
 
-        // Close language menu when clicking outside
         document.addEventListener('click', function(e) {
             const menu = document.getElementById('languageMenu');
             const button = document.getElementById('languageButton');
@@ -334,186 +200,140 @@
             }
         });
 
-        // Expose setLanguage globally
-        window.setLanguage = setLanguage;
+        const input = document.getElementById('aiMessageInput');
+        const btn = document.getElementById('aiSendButton');
+        const chat = document.getElementById('chatContainer');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const onlineStatus = document.getElementById('onlineStatus');
 
-        (function() {
-            const input = document.getElementById('aiMessageInput');
-            const btn = document.getElementById('aiSendButton');
-            const chat = document.getElementById('chatContainer');
-            const typingIndicator = document.getElementById('typingIndicator');
-            const onlineStatus = document.getElementById('onlineStatus');
-            const languageButton = document.getElementById('languageButton');
-            const languageMenu = document.getElementById('languageMenu');
-            const currentLanguage = document.getElementById('currentLanguage');
-            
-            let sessionId = '';
+        function addUserMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex gap-5 max-w-2xl ml-auto flex-row-reverse';
+            msgDiv.innerHTML = `
+                <div class="size-10 rounded-xl bg-gold flex-shrink-0 flex items-center justify-center text-white border border-gold/20">
+                    <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="p-5 rounded-2xl rounded-tr-none bg-gold text-white shadow-lg shadow-gold/20">
+                    <p class="text-sm leading-relaxed">${escapeHtml(text)}</p>
+                </div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-            function addUserMessage(text) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'flex gap-5 max-w-2xl ml-auto flex-row-reverse';
-                msgDiv.innerHTML = `
-                    <div class="size-10 rounded-xl bg-gold flex-shrink-0 flex items-center justify-center text-white border border-gold/20">
-                        <span class="material-symbols-outlined">person</span>
+        function addAiMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex gap-5 max-w-4xl';
+            msgDiv.innerHTML = `
+                <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                </div>
+                <div class="flex-1">
+                    <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
+                        <p class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text)}</p>
                     </div>
-                    <div class="p-5 rounded-2xl rounded-tr-none bg-gold text-white shadow-lg shadow-gold/20">
-                        <p class="text-sm leading-relaxed">${escapeHtml(text)}</p>
-                    </div>
-                `;
-                chat.appendChild(msgDiv);
-                chat.scrollTop = chat.scrollHeight;
-            }
+                </div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-            function addAiMessage(text, data) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'flex gap-5 max-w-4xl';
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showTyping() {
+            typingIndicator.classList.remove('hidden');
+            onlineStatus.classList.add('hidden');
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.add('hidden');
+            onlineStatus.classList.remove('hidden');
+        }
+
+        async function sendMessage(messageText) {
+            const val = messageText || input.value.trim();
+            if (!val) return;
+
+            addUserMessage(val);
+            if (input) input.value = '';
+            showTyping();
+
+            try {
+                const response = await fetch('/api/AiChat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        Message: val,
+                        SessionId: sessionId,
+                        Language: currentLang
+                    })
+                });
+
+                if (!response.ok) throw new Error('Network error');
+
+                const result = await response.json();
+                sessionId = result.sessionId || sessionId;
                 
-                let htmlContent = `
-                    <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
-                        <span class="material-symbols-outlined">smart_toy</span>
-                    </div>
-                    <div class="flex-1">
-                        <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
-                            <p class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text)}</p>
-                `;
-
-                if (data && Array.isArray(data) && data.length > 0) {
-                    htmlContent += `
-                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            ${data.map((place, idx) => `
-                                <div class="p-4 bg-[var(--bg-soft-gray)] rounded-xl border border-[var(--border)] hover:shadow-lg hover:border-gold/20 transition-all cursor-pointer group">
-                                    <div class="flex items-start justify-between gap-3 mb-2">
-                                        <h4 class="font-bold text-base text-charcoal">${idx + 1}. ${escapeHtml(place.Name)}</h4>
-                                        <span class="material-symbols-outlined text-gold text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                    </div>
-                                    ${place.Cuisine ? `<p class="text-xs text-[var(--text-muted)] flex items-center gap-1"><span>🍽️</span> ${escapeHtml(place.Cuisine)}</p>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-
-                htmlContent += `
-                        </div>
-                    </div>
-                `;
-
-                msgDiv.innerHTML = htmlContent;
-                chat.appendChild(msgDiv);
-                chat.scrollTop = chat.scrollHeight;
+                hideTyping();
+                addAiMessage(result.reply);
+            } catch (error) {
+                console.error('Error:', error);
+                hideTyping();
+                addAiMessage(translations[currentLang].errorMsg);
             }
+        }
 
-            function escapeHtml(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            function showTyping() {
-                typingIndicator.classList.remove('hidden');
-                onlineStatus.classList.add('hidden');
-            }
-
-            function hideTyping() {
-                typingIndicator.classList.add('hidden');
-                onlineStatus.classList.remove('hidden');
-            }
-
-            async function sendMessage(messageText) {
-                const val = messageText || input.value.trim();
-                if (!val) return;
-
-                addUserMessage(val);
-                if (input) input.value = '';
-                showTyping();
-
-                try {
-                    const response = await fetch('/api/AiChat/message', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            Message: val,
-                            SessionId: sessionId,
-                            Language: currentLang
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-
-                    const result = await response.json();
-                    sessionId = result.sessionId || sessionId;
-                    
-                    hideTyping();
-                    addAiMessage(result.reply, result.data);
-                } catch (error) {
-                    console.error('Error:', error);
-                    hideTyping();
-                    const errorMsg = currentLang === 'nl' 
-                        ? 'Sorry, er is een fout opgetreden. Probeer het opnieuw.' 
-                        : 'Sorry, I encountered an error. Please try again.';
-                    addAiMessage(errorMsg, null);
-                }
-            }
-
-            window.sendQuickMessage = function(msg) {
-                sendMessage(msg);
-            };
-
-            window.clearChat = function() {
-                sessionId = '';
-                chat.innerHTML = '';
-                initChat();
-            };
-
-            btn?.addEventListener('click', () => sendMessage());
-
-            input?.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-
-            async function initChat() {
-                showTyping();
-                try {
-                    const response = await fetch('/api/AiChat/message', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            Message: '',
-                            SessionId: '',
-                            Language: currentLang
-                        })
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        sessionId = result.sessionId || '';
-                        hideTyping();
-                        addAiMessage(result.reply, null);
-                    }
-                } catch (error) {
-                    console.error('Init error:', error);
-                    hideTyping();
-                    const welcomeMsg = currentLang === 'nl'
-                        ? "Hoi! 👋 Ik ben je diner conciërge. Waar wil je naar restaurants zoeken?"
-                        : "Hi! 👋 I'm your dining concierge. Where would you like to look for restaurants?";
-                    addAiMessage(welcomeMsg, null);
-                }
-            }
-
-            updateTranslations();
+        function clearChat() {
+            sessionId = '';
+            chat.innerHTML = '';
             initChat();
-            input?.focus();
-        })();
+        }
+
+        async function initChat() {
+            showTyping();
+            try {
+                const response = await fetch('/api/AiChat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        Message: '',
+                        SessionId: '',
+                        Language: currentLang
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    sessionId = result.sessionId || '';
+                    hideTyping();
+                    addAiMessage(result.reply);
+                }
+            } catch (error) {
+                console.error('Init error:', error);
+                hideTyping();
+                const welcomeMsg = currentLang === 'nl'
+                    ? "Hoi! 👋 Ik ben je restaurant conciërge AI. Waar kan ik je mee helpen?"
+                    : "Hi! 👋 I'm your restaurant concierge AI. How can I help you?";
+                addAiMessage(welcomeMsg);
+            }
+        }
+
+        btn?.addEventListener('click', () => sendMessage());
+        input?.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        updateLanguageUI();
+        initChat();
+        input?.focus();
     </script>
 </body>
-</html></html>
+</html>
