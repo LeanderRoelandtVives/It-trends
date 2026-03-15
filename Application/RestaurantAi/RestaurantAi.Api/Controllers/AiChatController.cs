@@ -38,6 +38,16 @@ namespace RestaurantAi.Api.Controllers
             try
             {
                 var message = request.Message.Trim();
+                
+                // Check if user is asking for more details about restaurants
+                bool wantsMoreDetails = IsMoreDetailsQuery(message);
+                
+                if (wantsMoreDetails)
+                {
+                    // Get restaurants from cache and provide details via AI
+                    var restaurantDetails = await GetRestaurantDetailsWithAI(message, request.Language);
+                    return Ok(new ChatResponse(restaurantDetails, sessionId));
+                }
 
                 // Determine if this is a search for restaurants
                 bool wantsRestaurantSearch = IsRestaurantQuery(message);
@@ -50,6 +60,9 @@ namespace RestaurantAi.Api.Controllers
                     
                     if (places != null && places.Count > 0)
                     {
+                        // Store restaurants in cache for later detail requests
+                        StoreRestaurantsInCache(sessionId, places);
+                        
                         var summary = BuildPlacesSummary(places, request.Language);
                         return Ok(new ChatResponse(summary, sessionId));
                     }
@@ -71,6 +84,166 @@ namespace RestaurantAi.Api.Controllers
             }
         }
 
+        // In-memory cache for restaurant results per session
+        private static readonly Dictionary<string, List<PlaceResult>> RestaurantCache = new();
+
+        private void StoreRestaurantsInCache(string sessionId, List<PlaceResult> restaurants)
+        {
+            RestaurantCache[sessionId] = restaurants;
+            _logger.LogInformation("Stored {Count} restaurants in cache for session {SessionId}", restaurants.Count, sessionId);
+        }
+
+        private static bool IsMoreDetailsQuery(string message)
+        {
+            var lower = message.ToLowerInvariant();
+            return lower.Contains("more details", StringComparison.OrdinalIgnoreCase)
+                   || lower.Contains("more info", StringComparison.OrdinalIgnoreCase)
+                   || lower.Contains("tell me more", StringComparison.InvariantCultureIgnoreCase)
+                   || lower.Contains("details about", StringComparison.InvariantCultureIgnoreCase)
+                   || lower.Contains("information about", StringComparison.InvariantCultureIgnoreCase)
+                   || lower.Contains("what about", StringComparison.InvariantCultureIgnoreCase)
+                   || (lower.Contains("yes") && (lower.Contains("details") || lower.Contains("info")));
+        }
+
+        private async Task<string> GetRestaurantDetailsWithAI(string userQuery, string language)
+        {
+            try
+            {
+                var apiKey = _config["Groq:ApiKey"];
+                _logger.LogInformation("Checking Groq API key - Key present: {KeyPresent}", !string.IsNullOrWhiteSpace(apiKey));
+                _logger.LogInformation("Configuration source - Groq:ApiKey value: {ApiKeyLength} chars", apiKey?.Length ?? 0);
+                
+                if (string.IsNullOrWhiteSpace(apiKey))
+                {
+                    _logger.LogError("Groq API key is not configured in user secrets or environment variables");
+                    _logger.LogInformation("Available configuration keys: {Keys}", 
+                        string.Join(", ", _config.AsEnumerable().Select(x => x.Key).Where(k => k.Contains("Groq", StringComparison.OrdinalIgnoreCase) || k.Contains("Api", StringComparison.OrdinalIgnoreCase))));
+                    
+                    return language == "nl"
+                        ? "AI-service is niet geconfigureerd. Please check if the Groq API key is set in user secrets."
+                        : "AI service is not configured. Please check if the Groq API key is set in user secrets.";
+                }
+
+                var systemPrompt = language == "nl"
+                    ? "Je bent een behulpzame restaurant-expert AI. De gebruiker wil meer informatie over restaurants. Geef relevante informatie over restauranttypen, cuisines, wat te verwachten, tips voor reserveringen, etc. Antwoord in Nederlands."
+                    : "You are a helpful restaurant expert AI. The user wants more information about restaurants. Provide relevant information about restaurant types, cuisines, what to expect, booking tips, etc. Answer in English.";
+
+                var payload = new
+                {
+                    model = "mixtral-8x7b-32768",
+                    messages = new[]
+                    {
+                        new { role = "system", content = systemPrompt },
+                        new { role = "user", content = userQuery }
+                    },
+                    max_tokens = 750,
+                    temperature = 0.7
+                };
+
+                var client = _httpClientFactory.CreateClient();
+                var request = new HttpRequestMessage(HttpMethod.Post, "https://api.groq.com/openai/v1/chat/completions")
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+                };
+                request.Headers.Add("Authorization", $"Bearer {apiKey}");
+
+                _logger.LogInformation("Sending request to Groq API for restaurant details");
+                using var response = await client.SendAsync(request);
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("Groq API error: {Status}", response.StatusCode);
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("Groq error response: {Response}", errorContent);
+                    
+                    // Return helpful fallback information instead of error
+                    return GetFallbackRestaurantDetails(language);
+                }
+
+                using var stream = await response.Content.ReadAsStreamAsync();
+                using var doc = await JsonDocument.ParseAsync(stream);
+
+                var choices = doc.RootElement.GetProperty("choices");
+                if (choices.GetArrayLength() > 0)
+                {
+                    var firstChoice = choices[0];
+                    var content = firstChoice.GetProperty("message").GetProperty("content").GetString();
+                    _logger.LogInformation("Successfully retrieved restaurant details from Groq");
+                    return content ?? (language == "nl" ? "Geen informatie beschikbaar." : "No information available.");
+                }
+
+                return language == "nl" ? "Geen informatie beschikbaar." : "No information available.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to get restaurant details");
+                return GetFallbackRestaurantDetails(language);
+            }
+        }
+
+        private static string GetFallbackRestaurantDetails(string language)
+        {
+            if (language == "nl")
+            {
+                return @"Hier zijn enkele tips bij het bezoeken van restaurants:
+
+??? **Voor je reservering:**
+• Bel of boek online van tevoren
+• Vermeld dieetwensen of allergieën
+• Vraag naar speciale aangelegenheden (verjaardagen, bruiloften)
+• Check de dresscode
+
+?? **Bij aankomst:**
+• Kom op tijd aan
+• Zeg je naam tegen de host
+• Laat je jass achter als er een garderobe is
+
+?? **Tijdens het eten:**
+• Neem je tijd om van je maaltijd te genieten
+• Wees voorzichtig met je bestek (van buiten naar binnen)
+• Stel vragen aan de ober over schotels
+
+?? **Betalen:**
+• Fooien zijn meestal 10-15% van de rekening
+• Vraag naar de rekening wanneer je klaar bent
+• Veel restaurants accepteren creditcards
+
+?? **Veiligheid & Genot:**
+• Controleer allergie-informatie
+• Zeg tegen de ober als er iets niet goed is
+• Geniet van het sociale aspect van eten!";
+            }
+            else
+            {
+                return @"Here are some tips when visiting restaurants:
+
+??? **Before your reservation:**
+• Call or book online in advance
+• Mention dietary restrictions or allergies
+• Ask about special occasions (birthdays, anniversaries)
+• Check the dress code
+
+?? **Upon arrival:**
+• Arrive on time
+• State your name to the host
+• Leave your coat at the coat check if available
+
+?? **During the meal:**
+• Take your time to enjoy your food
+• Be careful with your utensils (work from outside to inside)
+• Ask the server about dishes you're curious about
+
+?? **Paying:**
+• Tips are usually 10-15% of the bill
+• Ask for the check when you're ready
+• Most restaurants accept credit cards
+
+?? **Safety & Enjoyment:**
+• Check allergy information
+• Tell the server if something isn't right
+• Enjoy the social aspect of dining!";
+            }
+        }
         private static bool IsRestaurantQuery(string message)
         {
             return message.Contains("restaurant", StringComparison.OrdinalIgnoreCase)
@@ -93,11 +266,13 @@ namespace RestaurantAi.Api.Controllers
             try
             {
                 var apiKey = _config["Groq:ApiKey"];
+                _logger.LogInformation("GetGroqResponse - Groq API key present: {KeyPresent}", !string.IsNullOrWhiteSpace(apiKey));
+                
                 if (string.IsNullOrWhiteSpace(apiKey))
                 {
-                    _logger.LogWarning("Groq API key not configured");
+                    _logger.LogError("Groq API key not configured");
                     return language == "nl" 
-                        ? "AI-servic is niet geconfigureerd." 
+                        ? "AI-service is niet geconfigureerd." 
                         : "AI service is not configured.";
                 }
 
