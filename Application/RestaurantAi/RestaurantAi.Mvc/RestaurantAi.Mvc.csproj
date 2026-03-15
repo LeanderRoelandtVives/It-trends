@@ -19,7 +19,4 @@
     <ProjectReference Include="..\RestaurantAI.Services\RestaurantAI.Services.csproj" />
   </ItemGroup>
 
-    <UserSecretsId>e66efa96-db2e-40e7-bef9-87fd8b3f3a19</UserSecretsId>
-  </PropertyGroup>
-
 </Project>
