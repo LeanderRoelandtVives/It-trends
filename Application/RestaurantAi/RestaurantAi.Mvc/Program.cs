@@ -3,6 +3,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// HTTP client for backend API
+builder.Services.AddHttpClient("api", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? "https://localhost:5001/");
+});
+
+// Register auth api client
+builder.Services.AddScoped<RestaurantAi.Mvc.Services.AuthApiClient>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

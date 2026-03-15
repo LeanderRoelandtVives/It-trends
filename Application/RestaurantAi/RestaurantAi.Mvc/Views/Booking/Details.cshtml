@@ -1,0 +1,28 @@
+@model RestaurantAi.Mvc.Models.ReservationViewModel
+@{
+    ViewData["Title"] = "Reservation Details";
+    Layout = "_Layout";
+}
+
+<div class="container py-8">
+    <h1 class="mb-4">Reservation Details</h1>
+
+    <dl class="row">
+        <dt class="col-sm-3">Date</dt>
+        <dd class="col-sm-9">@Model.Date.ToString("MMMM d, yyyy")</dd>
+
+        <dt class="col-sm-3">Time</dt>
+        <dd class="col-sm-9">@Model.Time</dd>
+
+        <dt class="col-sm-3">Party Size</dt>
+        <dd class="col-sm-9">@Model.PartySize</dd>
+
+        <dt class="col-sm-3">Special Requests</dt>
+        <dd class="col-sm-9">@Model.SpecialRequests</dd>
+    </dl>
+
+    <div class="mt-4">
+        <a asp-action="List" asp-controller="Booking" class="btn btn-secondary">Back to Bookings</a>
+        <a asp-action="Index" asp-controller="Booking" class="btn btn-primary ms-2">Make Another</a>
+    </div>
+</div>

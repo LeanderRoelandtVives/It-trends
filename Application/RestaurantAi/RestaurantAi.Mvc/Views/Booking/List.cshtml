@@ -1,0 +1,50 @@
+@model List<RestaurantAi.Mvc.Models.ReservationViewModel>
+@{
+    ViewData["Title"] = "My Bookings";
+    Layout = "_Layout";
+}
+
+<div class="container py-8">
+    <h1 class="mb-4">My Bookings</h1>
+
+    <a class="btn btn-primary mb-3" asp-controller="Booking" asp-action="New">Make a Reservation</a>
+
+    @if (Model == null || Model.Count == 0)
+    {
+        <div class="alert alert-info">No bookings yet.</div>
+        <a class="btn btn-primary" asp-controller="Booking" asp-action="Index">Make a Reservation</a>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Party</th>
+                    <th>Requests</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var r = Model[i];
+                    <tr>
+                        <td>@i</td>
+                        <td>@r.Date.ToString("MMM d, yyyy")</td>
+                        <td>@r.Time</td>
+                        <td>@r.PartySize</td>
+                        <td>@r.SpecialRequests</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary" asp-controller="Booking" asp-action="Details" asp-route-id="@i">View</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <a class="btn btn-primary" asp-controller="Booking" asp-action="Index">Make Another</a>
+    }
+</div>
