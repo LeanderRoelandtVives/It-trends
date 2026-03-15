@@ -1,183 +1,428 @@
 ﻿@{
     ViewData["Title"] = "DineAI Concierge Dashboard";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>@ViewData["Title"]</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: "#B08E21",
+                        charcoal: "#111827",
+                        "soft-gray": "#f9fafb"
+                    },
+                    fontFamily: {
+                        display: ["Manrope", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @@layer base {
+            :root {
+                --primary: #121212;
+                --accent: #B08E21;
+                --bg-light: #ffffff;
+                --bg-soft-gray: #f9fafb;
+                --text-main: #111827;
+                --text-muted: #6b7280;
+                --border: #e5e7eb;
+            }
+        }
+        .font-display {
+            font-family: 'Manrope', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #B08E21 0%, #D4AF37 100%);
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 6px
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #e5e7eb;
+            border-radius: 10px
+        }
+    </style>
+</head>
+<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] transition-colors duration-500">
 
-<style>
-    .chat-container::-webkit-scrollbar {
-        width: 6px
-    }
-
-    .chat-container::-webkit-scrollbar-thumb {
-        background-color: #e5e7eb;
-        border-radius: 10px
-    }
-</style>
-
-<div class="flex h-[calc(100vh-5rem)] w-full overflow-hidden">
-    <!-- Sidebar -->
-    <aside class="w-80 flex flex-col bg-white border-r border-[var(--border)] overflow-y-auto shrink-0">
-        <div class="p-6">
-            <h1 class="text-xl font-bold mb-1">DineAI Agent</h1>
-            <p class="text-[var(--text-muted)] text-sm mb-6">Your personal dining assistant</p>
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] opacity-60">Taste Profile</h2>
-                    <button class="text-xs text-gold font-bold">Refine</button>
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+        <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-12">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined font-bold">restaurant_menu</span>
+                    </div>
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">DineAI</h1>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <span class="px-3 py-1 bg-gold/10 text-gold text-xs font-semibold rounded-full border border-gold/20">Spicy Enthusiast</span>
-                    <span class="px-3 py-1 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)]">Vegan-friendly</span>
-                    <span class="px-3 py-1 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)]">Quiet Vibes</span>
-                    <span class="px-3 py-1 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-semibold rounded-full border border-[var(--border)]">Umami</span>
-                </div>
+
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a asp-controller="Home" asp-action="Index" class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">EXPLORE</a>
+                    <a asp-controller="Home" asp-action="Dashboard" class="text-sm font-bold tracking-wide text-gold transition-colors">CONCIERGE</a>
+                    <a asp-controller="Booking" asp-action="Index" class="text-sm font-medium text-[var,--text-muted)] hover:text-charcoal transition-colors">MY BOOKINGS</a>
+                    <a asp-controller="Home" asp-action="Privacy" class="text-sm font-medium text-[var,--text-muted)] hover:text-charcoal transition-colors">PRIVACY</a>
+                </nav>
             </div>
-            <div>
-                <h2 class="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)] opacity-60 mb-4">My Bookings</h2>
-                <div class="flex flex-col gap-4">
-                    <div class="p-4 rounded-xl bg-white border border-[var(--border)] shadow-sm">
-                        <div class="flex gap-3">
-                            <div class="size-12 rounded-lg bg-center bg-cover flex-shrink-0"
-                                 style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuDB5PnFsctL0DffbZvChcRKCiwvkGI7Px1bi3oMdUjpJsAJvCkpBNgWtnZ6Qzr9eE-5OjgIo4BQnDrJRLVvIZ3XApmzBQDus6PuV8vbmioO8dyHP3yk1N0IcJ3yIc--nNbyPAHy2lvZD7Qd3lYcAVn9dFKOu24xARPq00yCb4XnM5vkylrIJbpaBASomA8uJ9tGOTvPlLsagxGpS7sDn8Nnx4D0xXQ_fPz8eXbDX7rwG6Ad4oHSyoQXQ3p9PINCYWtCHz6yugARsbA')">
-                            </div>
-                            <div class="flex flex-col min-w-0">
-                                <p class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider mb-0.5">Confirmed</p>
-                                <h3 class="text-sm font-bold truncate">The Pasta House</h3>
-                                <p class="text-[11px] text-[var(--text-muted)]">Fri, Oct 27 &bull; 7:00 PM</p>
-                            </div>
-                        </div>
-                        <button class="w-full mt-3 py-2 text-xs font-bold bg-[var(--bg-soft-gray)] hover:bg-gray-100 rounded-lg text-[var(--text-main)] transition-colors border border-[var(--border)]">Modify</button>
+
+            <div class="flex items-center gap-6">
+                <!-- Language Switcher -->
+                <div class="relative">
+                    <button id="languageButton" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[var(--text-main)] hover:bg-gray-50 transition-all border border-[var(--border)] group">
+                        <span class="material-symbols-outlined text-lg">language</span>
+                        <span id="currentLanguage" class="text-sm font-bold">EN</span>
+                        <span class="material-symbols-outlined text-sm group-hover:rotate-180 transition-transform">expand_more</span>
+                    </button>
+                    <div id="languageMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-[var(--border)] overflow-hidden z-50">
+                        <button onclick="setLanguage('en')" class="w-full px-4 py-3 text-left text-sm font-semibold hover:bg-gold/10 hover:text-gold transition-colors flex items-center gap-3">
+                            <span class="text-lg">🇬🇧</span> English
+                        </button>
+                        <button onclick="setLanguage('nl')" class="w-full px-4 py-3 text-left text-sm font-semibold hover:bg-gold/10 hover:text-gold transition-colors flex items-center gap-3">
+                            <span class="text-lg">🇳🇱</span> Nederlands
+                        </button>
                     </div>
-                    <div class="p-4 rounded-xl bg-transparent border border-dashed border-[var(--border)] group">
-                        <div class="flex gap-3 opacity-60 group-hover:opacity-100 transition-opacity">
-                            <div class="size-12 rounded-lg bg-center bg-cover flex-shrink-0 grayscale group-hover:grayscale-0 transition-all"
-                                 style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuA_D7mFbwxbgLy6hUqAqmC6B0crLwMdTNZ5XEWIdiuff0lj77wio9jZC5K3hjvrx4rlVfRXvd5Ii2Th4F6i2KG29xG9nOj2DOxCRxJWVn-nXNEGD9IJA8DYl1wwQL336HjO0C7xvd_J29ASfhd-P4JQ4aSu6fKpw6WaNOqflU2cmU57TemhuP30fyGWHFFu7OkIhiVaLSzzJxyCuP4d4WbHg_zFGM9DL0VY0DSEGuwOfdVHXC6c3upJcjTLX8BV2bsKLRTqSp-CMm4')">
-                            </div>
-                            <div class="flex flex-col min-w-0">
-                                <p class="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-wider mb-0.5">Completed</p>
-                                <h3 class="text-sm font-bold truncate">Sushi Zen</h3>
-                                <p class="text-[11px] text-[var(--text-muted)]">Oct 20 &bull; 8:30 PM</p>
-                            </div>
-                        </div>
-                        <button class="w-full mt-3 py-2 text-xs font-bold border border-[var(--border)] hover:bg-white rounded-lg text-[var(--text-muted)] transition-colors">Rebook</button>
-                    </div>
+                </div>
+
+                <div class="h-6 w-px bg-[var(--border)]"></div>
+
+                <div class="flex items-center gap-4">
+                    <a asp-controller="Account" asp-action="Login" class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">Sign In</a>
+                    <a asp-controller="Account" asp-action="Register" class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">Get Started</a>
                 </div>
             </div>
         </div>
-    </aside>
+    </header>
 
-    <!-- Main Chat -->
-    <div class="flex-1 flex flex-col bg-[var(--bg-soft-gray)] relative overflow-hidden">
-        <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-white/80 backdrop-blur-md z-10 sticky top-0">
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <div class="size-10 rounded-full bg-gold/20 flex items-center justify-center text-gold ring-2 ring-gold/10 ring-offset-2 ring-offset-white">
-                        <span class="material-symbols-outlined">smart_toy</span>
-                    </div>
-                    <div class="absolute bottom-0 right-0 size-3 bg-emerald-500 border-2 border-white rounded-full"></div>
-                </div>
-                <div>
-                    <h2 class="text-base font-bold">Concierge Session</h2>
-                    <p class="text-xs text-[var(--text-muted)] flex items-center gap-1">
-                        <span class="flex gap-0.5">
-                            <span class="size-1 bg-gold rounded-full animate-pulse"></span>
-                            <span class="size-1 bg-gold rounded-full animate-pulse delay-75"></span>
-                            <span class="size-1 bg-gold rounded-full animate-pulse delay-150"></span>
-                        </span>
-                        AI Assistant is typing...
-                    </p>
-                </div>
-            </div>
-            <div class="flex gap-3">
-                <button class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]"><span class="material-symbols-outlined">search</span></button>
-                <button class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]"><span class="material-symbols-outlined">more_horiz</span></button>
-            </div>
-        </header>
-
-        <div class="flex-1 overflow-y-auto p-8 chat-container space-y-10 pb-40">
-            <!-- AI Message 1 -->
-            <div class="flex gap-5 max-w-4xl">
-                <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
-                    <span class="material-symbols-outlined">smart_toy</span>
-                </div>
-                <div class="space-y-6 flex-1">
-                    <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
-                        <p class="text-sm leading-relaxed">
-                            Good evening, Marcus! I noticed you visited <strong>The Pasta House</strong> last week and gave it a great review.
-                            <br /><br />
-                            Would you like to try something similar tonight? A new authentic Trattoria called <strong>"L'Anima"</strong> just opened 2 blocks from your office.
-                        </p>
-                    </div>
-                    <div class="flex gap-4 overflow-x-auto pb-4 -mx-1 px-1">
-                        <div class="min-w-[300px] bg-white border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
-                            <div class="h-40 bg-center bg-cover relative" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuAc6UBg8woNfBPGRSGfbt33r9Mv8hmvJnLJveF8NyIixkXbnbQIgBJ11_L7CszYyDytnc6thStrCZ4o72TCbe82fg7vhpSVYf07ZzqSBrWKD4SU3ndAzK2syt5BU89fLvB2UQUmkcdnUEvUgY3bJIxuuQUiiyC1kaV7NdLnocA9_wMsF5xAd_rlNGK1TLOMkMJqAPpmHth_6krTrUPyayejbckxgFVLygCxyshVZwrRwKml49qmPosVOTuTlvAIOA9vOleQUkz08oA')">
-                                <div class="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white border border-white/10">4.9 ★</div>
-                            </div>
-                            <div class="p-5">
-                                <h4 class="font-bold text-sm mb-1">L'Anima Trattoria</h4>
-                                <p class="text-xs text-[var(--text-muted)] mb-4">0.4 miles &bull; Italian &bull; $$$</p>
-                                <button class="w-full py-2.5 bg-gold text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all">Book Now</button>
-                            </div>
+    <div class="flex h-screen w-full overflow-hidden pt-20">
+        <main class="flex-1 flex flex-col bg-[var(--bg-soft-gray)] relative">
+            <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-white/80 backdrop-blur-md z-10 sticky top-0">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <div class="size-10 rounded-full bg-gold/20 flex items-center justify-center text-gold ring-2 ring-gold/10 ring-offset-2 ring-offset-white">
+                            <span class="material-symbols-outlined">smart_toy</span>
                         </div>
-                        <div class="min-w-[300px] bg-white border border-[var(--border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer">
-                            <div class="h-40 bg-center bg-cover relative" style="background-image:url('https://lh3.googleusercontent.com/aida-public/AB6AXuDRysIZJEq2L4DD0dEPH2Rm2AYh7FoAnNziT-u3-DItlmG7RiL00upso1iKGgCnn0EmAXwrUsXlmP9FxupKMfXipdsttmYCr0oPp_LOAAZEzxjWO8jMe0s57pKX8ZiZy7MOXrnabNtEww6kUdmOwXX9gAGIpN7W21S9ng4YHhTwpU7DxsmtlbWjB1uR8WSiXX8IeooSq0aan21lMANWfXNqNFafTKAk0IoBUqABDSqpvwPgS--nfSxrVf14KlcpkBdmUrn5-IoKY6k')">
-                                <div class="absolute top-3 right-3 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg text-[10px] font-bold text-white border border-white/10">4.7 ★</div>
-                            </div>
-                            <div class="p-5">
-                                <h4 class="font-bold text-sm mb-1">Cucina Urbana</h4>
-                                <p class="text-xs text-[var(--text-muted)] mb-4">1.2 miles &bull; Modern Italian &bull; $$</p>
-                                <button class="w-full py-2.5 border border-gold text-gold text-xs font-bold rounded-xl hover:bg-gold/5 transition-all">View Details</button>
-                            </div>
-                        </div>
+                        <div class="absolute bottom-0 right-0 size-3 bg-emerald-500 border-2 border-white rounded-full"></div>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold flex items-center gap-2">
+                            <span id="headerTitle">Restaurant Concierge AI</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-wider">Groq-Free Mode</span>
+                        </h2>
+                        <p id="onlineStatus" class="text-xs text-emerald-500 font-bold" data-i18n="onlineReady">Online & Ready</p>
+                        <p id="typingIndicator" class="text-xs text-gold font-bold hidden" data-i18n="searchingRestaurants">AI is thinking...</p>
                     </div>
                 </div>
-            </div>
+                <div class="flex gap-3">
+                    <button onclick="clearChat()" class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" title="Clear conversation">
+                        <span class="material-symbols-outlined">refresh</span>
+                    </button>
+                </div>
+            </header>
 
-            <!-- User Message -->
-            <div class="flex gap-5 max-w-2xl ml-auto flex-row-reverse">
-                <div class="size-10 rounded-xl bg-[var(--border)] flex-shrink-0 flex items-center justify-center text-[var(--text-main)] border border-[var(--border)]">
+            <div id="chatContainer" class="flex-1 overflow-y-auto p-8 chat-container space-y-6 pb-40"></div>
+
+            <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg-soft-gray)] via-[var(--bg-soft-gray)]/95 to-transparent">
+                <div class="max-w-4xl mx-auto relative">
+                    <input id="aiMessageInput"
+                           class="w-full bg-white border border-[var(--border)] rounded-2xl py-5 px-6 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
+                           placeholder="Ask me anything about restaurants..."
+                           type="text" />
+                    <div class="absolute inset-y-0 right-5 flex items-center gap-3">
+                        <button id="aiSendButton" class="size-10 bg-gold rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-gold/20">
+                            <span class="material-symbols-outlined text-xl">send</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Free & Open Restaurant Search Powered by Overpass API</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentLang = localStorage.getItem('language') || 'en';
+        let sessionId = '';
+        let currentCoords = null; // { latitude, longitude }
+
+        const translations = {
+            en: {
+                headerTitle: 'Restaurant Concierge AI',
+                onlineReady: 'Online & Ready',
+                typingIndicator: 'AI is thinking...',
+                placeholder: 'Ask me anything about restaurants...',
+                errorMsg: 'Sorry, an error occurred. Please try again.'
+            },
+            nl: {
+                headerTitle: 'Restaurant Conciërge AI',
+                onlineReady: 'Online & Klaar',
+                typingIndicator: 'AI denkt na...',
+                placeholder: 'Vraag me alles over restaurants...',
+                errorMsg: 'Sorry, er is een fout opgetreden. Probeer het opnieuw.'
+            }
+        };
+
+        function updateLanguageUI() {
+            document.getElementById('currentLanguage').textContent = currentLang.toUpperCase();
+            document.getElementById('headerTitle').textContent = translations[currentLang].headerTitle;
+            document.getElementById('onlineStatus').textContent = translations[currentLang].onlineReady;
+            document.getElementById('typingIndicator').textContent = translations[currentLang].typingIndicator;
+            document.getElementById('aiMessageInput').placeholder = translations[currentLang].placeholder;
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('language', lang);
+            updateLanguageUI();
+            document.getElementById('languageMenu').classList.add('hidden');
+            clearChat();
+        }
+
+        document.getElementById('languageButton')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('languageMenu').classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('languageMenu');
+            const button = document.getElementById('languageButton');
+            if (menu && button && !menu.contains(e.target) && !button.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        const input = document.getElementById('aiMessageInput');
+        const btn = document.getElementById('aiSendButton');
+        const chat = document.getElementById('chatContainer');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const onlineStatus = document.getElementById('onlineStatus');
+
+        function addUserMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex gap-5 max-w-2xl ml-auto flex-row-reverse';
+            msgDiv.innerHTML = `
+                <div class="size-10 rounded-xl bg-gold flex-shrink-0 flex items-center justify-center text-white border border-gold/20">
                     <span class="material-symbols-outlined">person</span>
                 </div>
                 <div class="p-5 rounded-2xl rounded-tr-none bg-gold text-white shadow-lg shadow-gold/20">
-                    <p class="text-sm leading-relaxed">That sounds perfect! Do they have a table for 2 at 8:00 PM? Also, make sure it's a quiet area if possible.</p>
+                    <p class="text-sm leading-relaxed">${escapeHtml(text)}</p>
                 </div>
-            </div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-            <!-- AI Message 2 -->
-            <div class="flex gap-5 max-w-4xl">
+        function addAiMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex gap-5 max-w-4xl';
+            msgDiv.innerHTML = `
                 <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
                     <span class="material-symbols-outlined">smart_toy</span>
                 </div>
-                <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
-                    <p class="text-sm leading-relaxed">
-                        Checking L'Anima for 8:00 PM...<br /><br />
-                        Yes! They have a booth available in their library section which is very quiet. Should I go ahead and secure this for you?
-                    </p>
-                    <div class="mt-5 flex gap-3">
-                        <button class="px-6 py-2.5 bg-gold text-white text-xs font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all">Yes, book it</button>
-                        <button class="px-6 py-2.5 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-xs font-bold rounded-xl border border-[var(--border)] hover:bg-gray-100 transition-all">Maybe later</button>
+                <div class="flex-1">
+                    <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
+                        <p class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text)}</p>
                     </div>
                 </div>
-            </div>
-        </div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-        <!-- Input Bar -->
-        <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg-soft-gray)] via-[var(--bg-soft-gray)]/95 to-transparent">
-            <div class="max-w-4xl mx-auto relative">
-                <div class="absolute inset-y-0 left-5 flex items-center gap-3">
-                    <button class="text-[var(--text-muted)] hover:text-gold transition-colors"><span class="material-symbols-outlined">add_circle</span></button>
-                    <div class="w-[1px] h-4 bg-[var(--border)]"></div>
-                    <button class="text-[var(--text-muted)] hover:text-gold transition-colors"><span class="material-symbols-outlined">image</span></button>
-                </div>
-                <input class="w-full bg-white border border-[var(--border)] rounded-2xl py-5 pl-28 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
-                       placeholder="Ask your concierge anything..." type="text" />
-                <div class="absolute inset-y-0 right-5 flex items-center gap-3">
-                    <button class="text-[var(--text-muted)] hover:text-gold transition-colors"><span class="material-symbols-outlined">mic</span></button>
-                    <button class="size-10 bg-gold rounded-xl flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-gold/20">
-                        <span class="material-symbols-outlined text-xl">send</span>
-                    </button>
-                </div>
-            </div>
-            <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Powered by DineAI Omni Intelligence</p>
-        </div>
-    </div>
-</div>
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showTyping() {
+            typingIndicator.classList.remove('hidden');
+            onlineStatus.classList.add('hidden');
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.add('hidden');
+            onlineStatus.classList.remove('hidden');
+        }
+
+        async function sendMessage(messageText) {
+            const val = messageText || input.value.trim();
+            if (!val) return;
+
+            addUserMessage(val);
+            if (input) input.value = '';
+            showTyping();
+
+            try {
+                // Only request geolocation if user says "near me"
+                let lat = null;
+                let lng = null;
+
+                if ((val.toLowerCase().includes('near me') || 
+                     val.toLowerCase().includes('nearby') || 
+                     val.toLowerCase().includes('close to me')) && 
+                    !currentCoords) {
+                    // Request geolocation only when needed
+                    const coords = await requestGeolocationIfNeeded();
+                    if (coords) {
+                        lat = coords.latitude;
+                        lng = coords.longitude;
+                    }
+                } else if (currentCoords) {
+                    // Use cached coordinates if available
+                    lat = currentCoords.latitude;
+                    lng = currentCoords.longitude;
+                }
+
+                const payload = {
+                    Message: val,
+                    SessionId: sessionId,
+                    Language: currentLang,
+                    Latitude: lat,
+                    Longitude: lng
+                };
+
+                const response = await fetch('https://localhost:7179/api/AiChat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('Network error');
+
+                const result = await response.json();
+                sessionId = result.sessionId || sessionId;
+
+                hideTyping();
+                addAiMessage(result.reply);
+            } catch (error) {
+                console.error('Error:', error);
+                hideTyping();
+                addAiMessage(translations[currentLang].errorMsg);
+            }
+        }
+
+        // Request geolocation only when user needs it
+        function requestGeolocationIfNeeded() {
+            return new Promise((resolve) => {
+                if (!navigator || !navigator.geolocation) {
+                    console.log('Geolocation not supported, trying IP-based location');
+                    // Fallback to IP-based geolocation
+                    getLocationFromIP().then(resolve);
+                    return;
+                }
+                
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 300000
+                };
+                
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const coords = {
+                            latitude: pos.coords.latitude,
+                            longitude: pos.coords.longitude
+                        };
+                        currentCoords = coords;
+                        console.log('✓ GPS Geolocation captured:', coords);
+                        resolve(coords);
+                    },
+                    (err) => {
+                        console.warn('⚠ GPS Geolocation error:', err.code, err.message);
+                        console.log('Falling back to IP-based location...');
+                        // Fallback to IP-based geolocation
+                        getLocationFromIP().then(resolve);
+                    },
+                    options
+                );
+            });
+        }
+
+        // IP-based geolocation (no browser permission needed)
+        async function getLocationFromIP() {
+            try {
+                console.log('Attempting IP-based geolocation...');
+                const response = await fetch('https://ipapi.co/json/');
+                if (!response.ok) {
+                    console.warn('IP geolocation service unavailable');
+                    return null;
+                }
+                
+                const data = await response.json();
+                const coords = {
+                    latitude: data.latitude,
+                    longitude: data.longitude
+                };
+                currentCoords = coords;
+                console.log('✓ IP-based location obtained:', coords, '(City:', data.city, ')');
+                return coords;
+            } catch (error) {
+                console.warn('⚠ IP geolocation failed:', error.message);
+                return null;
+            }
+        }
+
+        async function initChat() {
+            showTyping();
+            try {
+                const payload = {
+                    Message: '',
+                    SessionId: '',
+                    Language: currentLang,
+                    Latitude: null,
+                    Longitude: null
+                };
+
+                const response = await fetch('https://localhost:7179/api/AiChat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    sessionId = result.sessionId || '';
+                    hideTyping();
+                    addAiMessage(result.reply);
+                } else {
+                    hideTyping();
+                    addAiMessage(translations[currentLang].errorMsg);
+                }
+            } catch (error) {
+                console.error('Init error:', error);
+                hideTyping();
+                const welcomeMsg = currentLang === 'nl'
+                    ? "Hoi! 👋 Ik ben je restaurant conciërge AI. Waar kan ik je mee helpen?"
+                    : "Hi! 👋 I'm your restaurant concierge AI. How can I help you?";
+                addAiMessage(welcomeMsg);
+            }
+        }
+
+        btn?.addEventListener('click', () => sendMessage());
+        input?.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        updateLanguageUI();
+        // Don't request geolocation at startup - only when user needs it
+        // initGeolocation(); ← REMOVED
+        initChat();
+        input?.focus();
+    </script>
+</body>
+</html>
