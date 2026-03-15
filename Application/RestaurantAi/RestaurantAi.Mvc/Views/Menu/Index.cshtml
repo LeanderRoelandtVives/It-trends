@@ -1,0 +1,99 @@
+﻿@model Dictionary<string, List<RestaurantAi.Mvc.Models.MenuItemViewModel>>
+@{
+    ViewData["Title"] = "Our Menu";
+    var isAdmin = ViewData["IsAdmin"] is true;
+}
+
+<main class="max-w-[1440px] mx-auto px-8 py-10">
+
+    <div class="flex items-center justify-between mb-12">
+        <div>
+            <div class="flex items-center gap-2 text-gold font-bold text-sm uppercase tracking-widest mb-3">
+                <span class="material-symbols-outlined text-[18px]">restaurant_menu</span>
+                DineAI
+            </div>
+            <h1 class="text-5xl font-black text-[var(--text-main)]">Our Menu</h1>
+            <p class="text-[var(--text-muted)] mt-2 font-medium">Freshly curated dishes for every taste</p>
+        </div>
+        @if (isAdmin)
+        {
+            <a asp-controller="Menu" asp-action="Create"
+               class="px-6 py-3 bg-gold text-white font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined">add</span>
+                Add Item
+            </a>
+        }
+    </div>
+
+    @foreach (var category in Model)
+    {
+        <section class="mb-16">
+            <div class="flex items-center gap-4 mb-8">
+                <h2 class="text-3xl font-black text-[var(--text-main)]">@category.Key</h2>
+                <div class="flex-1 h-px bg-[var(--border)]"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach (var item in category.Value)
+                {
+                    <div class="group bg-[var(--bg-light)] rounded-2xl overflow-hidden border border-[var(--border)] hover:shadow-xl transition-all duration-300">
+                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                        {
+                            <div class="aspect-[4/3] overflow-hidden">
+                                <img src="@item.ImageUrl" alt="@item.Name"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="aspect-[4/3] bg-[var(--bg-soft-gray)] flex items-center justify-center">
+                                <span class="material-symbols-outlined text-6xl text-[var(--text-muted)]">restaurant</span>
+                            </div>
+                        }
+
+                        <div class="p-6">
+                            <div class="flex items-start justify-between mb-2">
+                                <h3 class="text-xl font-black text-[var(--text-main)]">@item.Name</h3>
+                                <span class="text-gold font-black text-lg ml-2 shrink-0">€@item.Price.ToString("0.00")</span>
+                            </div>
+                            <p class="text-sm text-[var(--text-muted)] leading-relaxed mb-4">@item.Description</p>
+
+                            @if (isAdmin)
+                            {
+                                <div class="flex gap-2 pt-4 border-t border-[var(--border)]">
+                                    <a asp-controller="Menu" asp-action="Edit" asp-route-id="@item.Id"
+                                       class="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--text-main)] text-sm font-bold rounded-lg hover:border-gold hover:text-gold transition-colors text-center">
+                                        Edit
+                                    </a>
+                                    <form asp-controller="Menu" asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                onclick="return confirm('Delete @item.Name?')"
+                                                class="px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 text-sm font-bold rounded-lg hover:bg-red-100 transition-colors border border-red-200">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-32">
+            <span class="material-symbols-outlined text-6xl text-[var(--text-muted)] mb-4 block">restaurant_menu</span>
+            <p class="text-xl text-[var(--text-muted)] font-medium">No menu items yet.</p>
+            @if (isAdmin)
+            {
+                <a asp-controller="Menu" asp-action="Create"
+                   class="mt-6 inline-flex px-6 py-3 bg-gold text-white font-bold rounded-xl hover:shadow-lg transition-all items-center gap-2">
+                    <span class="material-symbols-outlined">add</span> Add your first item
+                </a>
+            }
+        </div>
+    }
+</main>

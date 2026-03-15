@@ -43,6 +43,8 @@ namespace RestaurantAI.Services.Services
 
         private async Task<string> GenerateJwt(ApplicationUser user)
         {
+            var roles = await userManager.GetRolesAsync(user);
+
             var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
@@ -50,9 +52,11 @@ namespace RestaurantAI.Services.Services
             new Claim(ClaimTypes.Name, user.UserName)
         };
 
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtsettings.Value.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
             var token = new JwtSecurityToken(
                 issuer: jwtsettings.Value.Issuer,
                 audience: jwtsettings.Value.Audience,
@@ -61,6 +65,26 @@ namespace RestaurantAI.Services.Services
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<string> GoogleLoginAsync(string email, string fullName)
+        {
+            // Find existing user or create new one
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    FullName = fullName ?? email,
+                    EmailConfirmed = true // Google already verified the email
+                };
+                var result = await userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                    throw new Exception(string.Join(",", result.Errors.Select(e => e.Description)));
+            }
+            return await GenerateJwt(user); // reuses your existing method
         }
     }
 }

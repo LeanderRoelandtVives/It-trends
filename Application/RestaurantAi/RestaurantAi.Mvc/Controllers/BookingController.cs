@@ -4,7 +4,7 @@ using RestaurantAi.Mvc.Models;
 
 namespace RestaurantAi.Mvc.Controllers;
 
-public class BookingController : Controller
+public class BookingController : BaseController
 {
     // Simple in-memory store for demo purposes
     private static readonly List<ReservationViewModel> _store = new List<ReservationViewModel>();

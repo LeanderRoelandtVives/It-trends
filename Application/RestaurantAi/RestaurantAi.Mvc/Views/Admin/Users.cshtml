@@ -1,0 +1,70 @@
+﻿@model List<RestaurantAi.Mvc.Models.UserViewModel>
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<main class="max-w-[1440px] mx-auto px-8 py-16">
+    <div class="mb-12">
+        <div class="flex items-center gap-2 text-gold font-bold text-sm uppercase tracking-widest mb-3">
+            <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+            Admin Panel
+        </div>
+        <h1 class="text-5xl font-black text-[var(--text-main)]">User Management</h1>
+        <p class="text-[var(--text-muted)] mt-2 font-medium">Promote users to Admin role</p>
+    </div>
+
+    <div class="bg-[var(--bg-light)] border border-[var(--border)] rounded-2xl overflow-hidden">
+        <div class="grid grid-cols-4 px-8 py-4 bg-[var(--bg-soft-gray)] border-b border-[var(--border)]">
+            <p class="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Name</p>
+            <p class="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Email</p>
+            <p class="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Role</p>
+            <p class="text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Action</p>
+        </div>
+
+        @foreach (var user in Model)
+        {
+            <div class="grid grid-cols-4 px-8 py-5 border-b border-[var(--border)] items-center hover:bg-[var(--bg-soft-gray)] transition-colors last:border-0">
+                <p class="font-semibold text-[var(--text-main)]">@user.FullName</p>
+                <p class="text-[var(--text-muted)] text-sm">@user.Email</p>
+                <div>
+                    @if (user.IsAdmin)
+                    {
+                        <span class="px-3 py-1 bg-gold/10 text-gold text-xs font-black rounded-full border border-gold/20 uppercase tracking-widest">
+                            Admin
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="px-3 py-1 bg-[var(--bg-soft-gray)] text-[var(--text-muted)] text-xs font-bold rounded-full border border-[var(--border)] uppercase tracking-widest">
+                            User
+                        </span>
+                    }
+                </div>
+                <div>
+                    @if (!user.IsAdmin)
+                    {
+                        <form asp-controller="Admin" asp-action="AssignAdmin" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <button type="submit"
+                                    class="px-4 py-2 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">
+                                Make Admin
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-sm text-[var(--text-muted)] font-medium">Already admin</span>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <div class="px-8 py-16 text-center">
+                <p class="text-[var(--text-muted)] font-medium">No users found.</p>
+            </div>
+        }
+    </div>
+</main>

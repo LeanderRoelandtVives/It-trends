@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RestaurantAi.Mvc.Controllers;
 
-public class RestaurantController : Controller
+public class RestaurantController : BaseController
 {
     [HttpGet]
     public IActionResult Details(int id)

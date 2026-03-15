@@ -19,8 +19,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<AuthService>();
 
-builder.Services.AddDbContext<RestaurantAiDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantAiDbContext")));
+builder.Services.AddDbContext<RestaurantAiDbContext>(options => options.UseSqlite("Data Source=restaurantAi.db"));
+
 
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings"));
@@ -51,6 +51,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization();
+
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -79,6 +81,12 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await RoleSeeder.SeedAsync(roleManager);
 }
 
 app.UseHttpsRedirection();
