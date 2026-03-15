@@ -11,6 +11,25 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add User Secrets for development
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowMvcLocal", policy =>
+    {
+        policy.WithOrigins("http://localhost:5217", "https://localhost:7227",
+                          "http://localhost:5221", "https://localhost:7179")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -18,6 +37,9 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<AuthService>();
+
+// Add HttpClient factory for external API calls (Google Places / OpenAI)
+builder.Services.AddHttpClient();
 
 builder.Services.AddDbContext<RestaurantAiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantAiDbContext")));
@@ -82,6 +104,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Use CORS
+app.UseCors("AllowMvcLocal");
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -7,8 +7,4 @@
     <UserSecretsId>e66efa96-db2e-40e7-bef9-87fd8b3f3a19</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="OpenAI" Version="2.1.0" />
-  </ItemGroup>
-
 </Project>

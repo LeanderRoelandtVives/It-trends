@@ -72,7 +72,7 @@
                 <nav class="hidden lg:flex items-center gap-8">
                     <a asp-controller="Home" asp-action="Index" class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">EXPLORE</a>
                     <a asp-controller="Home" asp-action="Dashboard" class="text-sm font-bold tracking-wide text-gold transition-colors">CONCIERGE</a>
-                    <a asp-controller="Booking" asp-action="Index" class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">MY BOOKINGS</a>
+                    <a asp-controller="Booking" asp-action="Index" class="text-sm font-medium text-[var,--text-muted)] hover:text-charcoal transition-colors">MY BOOKINGS</a>
                     <a asp-controller="Home" asp-action="Privacy" class="text-sm font-medium text-[var,--text-muted)] hover:text-charcoal transition-colors">PRIVACY</a>
                 </nav>
             </div>
@@ -118,7 +118,7 @@
                     <div>
                         <h2 class="text-base font-bold flex items-center gap-2">
                             <span id="headerTitle">Restaurant Concierge AI</span>
-                            <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-wider">OpenAI Powered</span>
+                            <span class="text-[10px] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-black uppercase tracking-wider">Groq-Free Mode</span>
                         </h2>
                         <p id="onlineStatus" class="text-xs text-emerald-500 font-bold" data-i18n="onlineReady">Online & Ready</p>
                         <p id="typingIndicator" class="text-xs text-gold font-bold hidden" data-i18n="searchingRestaurants">AI is thinking...</p>
@@ -145,7 +145,7 @@
                         </button>
                     </div>
                 </div>
-                <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Powered by OpenAI GPT-4o-mini</p>
+                <p class="text-center text-[10px] text-[var(--text-muted)] mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Free & Open Restaurant Search Powered by Overpass API</p>
             </div>
         </main>
     </div>
@@ -153,6 +153,7 @@
     <script>
         let currentLang = localStorage.getItem('language') || 'en';
         let sessionId = '';
+        let currentCoords = null; // { latitude, longitude }
 
         const translations = {
             en: {
@@ -264,21 +265,25 @@
             showTyping();
 
             try {
-                const response = await fetch('/api/AiChat/message', {
+                const payload = {
+                    Message: val,
+                    SessionId: sessionId,
+                    Language: currentLang,
+                    Latitude: currentCoords?.latitude || null,
+                    Longitude: currentCoords?.longitude || null
+                };
+
+                const response = await fetch('https://localhost:7179/api/AiChat/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        Message: val,
-                        SessionId: sessionId,
-                        Language: currentLang
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) throw new Error('Network error');
 
                 const result = await response.json();
                 sessionId = result.sessionId || sessionId;
-                
+
                 hideTyping();
                 addAiMessage(result.reply);
             } catch (error) {
@@ -297,14 +302,18 @@
         async function initChat() {
             showTyping();
             try {
-                const response = await fetch('/api/AiChat/message', {
+                const payload = {
+                    Message: '',
+                    SessionId: '',
+                    Language: currentLang,
+                    Latitude: currentCoords?.latitude || null,
+                    Longitude: currentCoords?.longitude || null
+                };
+
+                const response = await fetch('https://localhost:7179/api/AiChat/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        Message: '',
-                        SessionId: '',
-                        Language: currentLang
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 if (response.ok) {
@@ -312,6 +321,9 @@
                     sessionId = result.sessionId || '';
                     hideTyping();
                     addAiMessage(result.reply);
+                } else {
+                    hideTyping();
+                    addAiMessage(translations[currentLang].errorMsg);
                 }
             } catch (error) {
                 console.error('Init error:', error);
@@ -323,6 +335,36 @@
             }
         }
 
+        // Obtain geolocation once at startup (ask user permission) — graceful fallback if denied.
+        function initGeolocation() {
+            if (!navigator || !navigator.geolocation) {
+                console.log('Geolocation not supported');
+                return;
+            }
+            
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000 // 5 minutes
+            };
+            
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    currentCoords = {
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude
+                    };
+                    console.log('✓ Geolocation captured:', currentCoords);
+                },
+                (err) => {
+                    console.warn('⚠ Geolocation error:', err.code, err.message);
+                    // Error codes: 1=PERMISSION_DENIED, 2=POSITION_UNAVAILABLE, 3=TIMEOUT
+                    currentCoords = null;
+                },
+                options
+            );
+        }
+
         btn?.addEventListener('click', () => sendMessage());
         input?.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -332,6 +374,7 @@
         });
 
         updateLanguageUI();
+        initGeolocation();
         initChat();
         input?.focus();
     </script>
