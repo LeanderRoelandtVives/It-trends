@@ -38,8 +38,6 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<AuthService>();
 
-builder.Services.AddDbContext<RestaurantAiDbContext>(options => options.UseSqlite("Data Source=restaurantAi.db"));
-
 // Add HttpClient factory for external API calls (Google Places / OpenAI)
 builder.Services.AddHttpClient();
 
@@ -95,8 +93,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -109,11 +105,18 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await RoleSeeder.SeedAsync(roleManager);
+    try
+    {
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        await RoleSeeder.SeedAsync(roleManager);
+    }
+    catch (Exception ex)
+    {
+        // Log the error but don't crash the application
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding roles. Make sure SQL Server is running and the connection string is correct.");
+    }
 }
-
-app.UseHttpsRedirection();
 
 app.UseHttpsRedirection();
 

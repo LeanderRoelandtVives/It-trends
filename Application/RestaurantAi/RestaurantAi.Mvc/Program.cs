@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RestaurantAi.Model;
 using RestaurantAi.Mvc.Handlers;
+using RestaurantAi.Mvc.Services;
 using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddSession();
 
+// Register AI Service
+builder.Services.AddSingleton<AIService>();
 
 var app = builder.Build();
 
@@ -44,29 +47,6 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthentication();
-using RestaurantAi.Mvc.Services;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
-// Register AI Service
-builder.Services.AddSingleton<AIService>();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapStaticAssets();

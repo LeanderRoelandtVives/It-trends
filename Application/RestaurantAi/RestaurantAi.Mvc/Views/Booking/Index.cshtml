@@ -225,19 +225,6 @@
     </main>
 </div>
 
-                    <div class="text-center">
-                        <p class="text-sm text-[var(--text-muted)] mb-4">Need help finding a restaurant?</p>
-                        <a asp-controller="Home" asp-action="Dashboard"
-                           class="inline-flex items-center gap-2 px-6 py-3 bg-gold/10 text-gold font-bold rounded-xl hover:bg-gold/20 transition-all border border-gold/20">
-                            <span class="material-symbols-outlined">smart_toy</span>
-                            Ask AI Concierge
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-</body>
 <script>
     // Simple language switcher for Booking page
     let currentLang = localStorage.getItem('language') || 'en';
@@ -247,7 +234,6 @@
         localStorage.setItem('language', lang);
         document.getElementById('currentLanguage').textContent = lang.toUpperCase();
         document.getElementById('languageMenu').classList.add('hidden');
-        // In a full implementation, you would reload content or redirect
     }
     
     // Set initial language
@@ -270,4 +256,3 @@
     
     window.setLanguage = setLanguage;
 </script>
-</html
