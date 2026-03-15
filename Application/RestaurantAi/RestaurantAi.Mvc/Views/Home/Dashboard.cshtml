@@ -265,12 +265,32 @@
             showTyping();
 
             try {
+                // Only request geolocation if user says "near me"
+                let lat = null;
+                let lng = null;
+
+                if ((val.toLowerCase().includes('near me') || 
+                     val.toLowerCase().includes('nearby') || 
+                     val.toLowerCase().includes('close to me')) && 
+                    !currentCoords) {
+                    // Request geolocation only when needed
+                    const coords = await requestGeolocationIfNeeded();
+                    if (coords) {
+                        lat = coords.latitude;
+                        lng = coords.longitude;
+                    }
+                } else if (currentCoords) {
+                    // Use cached coordinates if available
+                    lat = currentCoords.latitude;
+                    lng = currentCoords.longitude;
+                }
+
                 const payload = {
                     Message: val,
                     SessionId: sessionId,
                     Language: currentLang,
-                    Latitude: currentCoords?.latitude || null,
-                    Longitude: currentCoords?.longitude || null
+                    Latitude: lat,
+                    Longitude: lng
                 };
 
                 const response = await fetch('https://localhost:7179/api/AiChat/message', {
@@ -293,10 +313,65 @@
             }
         }
 
-        function clearChat() {
-            sessionId = '';
-            chat.innerHTML = '';
-            initChat();
+        // Request geolocation only when user needs it
+        function requestGeolocationIfNeeded() {
+            return new Promise((resolve) => {
+                if (!navigator || !navigator.geolocation) {
+                    console.log('Geolocation not supported, trying IP-based location');
+                    // Fallback to IP-based geolocation
+                    getLocationFromIP().then(resolve);
+                    return;
+                }
+                
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 300000
+                };
+                
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const coords = {
+                            latitude: pos.coords.latitude,
+                            longitude: pos.coords.longitude
+                        };
+                        currentCoords = coords;
+                        console.log('✓ GPS Geolocation captured:', coords);
+                        resolve(coords);
+                    },
+                    (err) => {
+                        console.warn('⚠ GPS Geolocation error:', err.code, err.message);
+                        console.log('Falling back to IP-based location...');
+                        // Fallback to IP-based geolocation
+                        getLocationFromIP().then(resolve);
+                    },
+                    options
+                );
+            });
+        }
+
+        // IP-based geolocation (no browser permission needed)
+        async function getLocationFromIP() {
+            try {
+                console.log('Attempting IP-based geolocation...');
+                const response = await fetch('https://ipapi.co/json/');
+                if (!response.ok) {
+                    console.warn('IP geolocation service unavailable');
+                    return null;
+                }
+                
+                const data = await response.json();
+                const coords = {
+                    latitude: data.latitude,
+                    longitude: data.longitude
+                };
+                currentCoords = coords;
+                console.log('✓ IP-based location obtained:', coords, '(City:', data.city, ')');
+                return coords;
+            } catch (error) {
+                console.warn('⚠ IP geolocation failed:', error.message);
+                return null;
+            }
         }
 
         async function initChat() {
@@ -306,8 +381,8 @@
                     Message: '',
                     SessionId: '',
                     Language: currentLang,
-                    Latitude: currentCoords?.latitude || null,
-                    Longitude: currentCoords?.longitude || null
+                    Latitude: null,
+                    Longitude: null
                 };
 
                 const response = await fetch('https://localhost:7179/api/AiChat/message', {
@@ -335,36 +410,6 @@
             }
         }
 
-        // Obtain geolocation once at startup (ask user permission) — graceful fallback if denied.
-        function initGeolocation() {
-            if (!navigator || !navigator.geolocation) {
-                console.log('Geolocation not supported');
-                return;
-            }
-            
-            const options = {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 300000 // 5 minutes
-            };
-            
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    currentCoords = {
-                        latitude: pos.coords.latitude,
-                        longitude: pos.coords.longitude
-                    };
-                    console.log('✓ Geolocation captured:', currentCoords);
-                },
-                (err) => {
-                    console.warn('⚠ Geolocation error:', err.code, err.message);
-                    // Error codes: 1=PERMISSION_DENIED, 2=POSITION_UNAVAILABLE, 3=TIMEOUT
-                    currentCoords = null;
-                },
-                options
-            );
-        }
-
         btn?.addEventListener('click', () => sendMessage());
         input?.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
@@ -374,7 +419,8 @@
         });
 
         updateLanguageUI();
-        initGeolocation();
+        // Don't request geolocation at startup - only when user needs it
+        // initGeolocation(); ← REMOVED
         initChat();
         input?.focus();
     </script>
