@@ -10,4 +10,5 @@ public class RestaurantAiDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<MenuItem> MenuItems { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
 }

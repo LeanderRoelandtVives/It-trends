@@ -11,8 +11,7 @@
 
     @if (Model == null || Model.Count == 0)
     {
-        <div class="alert alert-info">No bookings yet.</div>
-        <a class="btn btn-primary" asp-controller="Booking" asp-action="Index">Make a Reservation</a>
+        <div class="alert alert-info">You have no bookings yet.</div>
     }
     else
     {
@@ -32,19 +31,17 @@
                 {
                     var r = Model[i];
                     <tr>
-                        <td>@i</td>
+                        <td>@(i+1)</td>
                         <td>@r.Date.ToString("MMM d, yyyy")</td>
                         <td>@r.Time</td>
                         <td>@r.PartySize</td>
                         <td>@r.SpecialRequests</td>
                         <td>
-                            <a class="btn btn-sm btn-outline-primary" asp-controller="Booking" asp-action="Details" asp-route-id="@i">View</a>
+                            <a class="btn btn-sm btn-outline-primary" asp-controller="Booking" asp-action="Details" asp-route-id="@r.Id">View</a>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-
-        <a class="btn btn-primary" asp-controller="Booking" asp-action="Index">Make Another</a>
     }
 </div>

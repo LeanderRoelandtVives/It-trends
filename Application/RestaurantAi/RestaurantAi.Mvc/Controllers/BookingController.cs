@@ -1,26 +1,56 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAi.Mvc.Models;
+using System.Security.Claims;
+using RestaurantAi.Mvc.Services;
 
 namespace RestaurantAi.Mvc.Controllers;
 
 public class BookingController : BaseController
 {
-    // Simple in-memory store for demo purposes
-    private static readonly List<ReservationViewModel> _store = new List<ReservationViewModel>();
-    private static readonly object _lock = new object();
+    private readonly AuthApiClient _api;
+    private readonly ILogger<BookingController> _log;
+
+    public BookingController(AuthApiClient api, ILogger<BookingController> log)
+    {
+        _api = api;
+        _log = log;
+    }
+
+    private string? GetCurrentUserId()
+    {
+        var token = HttpContext.Session.GetString("JWToken");
+        if (string.IsNullOrEmpty(token)) return null;
+
+        try
+        {
+            var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(token);
+            return jwt.Claims.FirstOrDefault(c => c.Type == System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        // Show bookings list by default when visiting /Booking
         return RedirectToAction("List");
     }
 
     [HttpGet]
     public IActionResult New()
     {
-        // Render the reservation form (reuse Views/Booking/Index.cshtml)
+        var userId = GetCurrentUserId();
+        if (userId == null)
+        {
+            // Not logged in — redirect to login and come back
+            var returnUrl = Url.Action("New", "Booking");
+            return RedirectToAction("Login", "Account", new { returnUrl });
+        }
+
         var model = new ReservationViewModel
         {
             Date = DateTime.Today,
@@ -32,72 +62,152 @@ public class BookingController : BaseController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(ReservationViewModel model)
+    public async Task<IActionResult> Create(ReservationViewModel model)
     {
+        _log.LogInformation("BookingController.Create called with model: {@Model}", model);
+
         if (!ModelState.IsValid)
         {
+            _log.LogWarning("ModelState invalid: {@Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
             return View("Index", model);
         }
 
-        int id;
-        lock (_lock)
+        var userId = GetCurrentUserId();
+        if (userId == null) return RedirectToAction("Login", "Account");
+
+        var r = new Reservation
         {
-            _store.Add(model);
-            id = _store.Count - 1;
+            OwnerId = userId,
+            Date = model.Date,
+            Time = model.Time,
+            PartySize = model.PartySize,
+            SpecialRequests = model.SpecialRequests
+        };
+
+        var created = await _api.CreateReservationAsync(r);
+        if (created == null)
+        {
+            _log.LogWarning("CreateReservationAsync returned null for model {@Model}", model);
+            ModelState.AddModelError(string.Empty, "Could not create reservation. Controleer of de API draait en je ingelogd bent.");
+            TempData["Error"] = "Could not create reservation. Controleer of de API bereikbaar is en je ingelogd bent.";
+            return View("Index", model);
         }
 
-        // Store reservation in TempData for immediate display fallback
-        TempData["Reservation"] = JsonSerializer.Serialize(model);
+        TempData["Success"] = "Reservation created.";
+        _log.LogInformation("Reservation created with id {Id}", created.Id);
+        return RedirectToAction("Details", new { id = created.Id });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Details(int id)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null) return RedirectToAction("Login", "Account");
+
+        var response = await _api.GetReservationsAsync();
+        if (response == null) return NotFound();
+
+        var item = response.FirstOrDefault(r => r.Id == id);
+        if (item == null) return NotFound();
+
+        var model = new ReservationViewModel
+        {
+            Id = item.Id.ToString(),
+            OwnerId = item.OwnerId,
+            Date = item.Date,
+            Time = item.Time,
+            PartySize = item.PartySize,
+            SpecialRequests = item.SpecialRequests
+        };
+
+        if (model.OwnerId != userId) return Forbid();
+
+        return View(model);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> List()
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null) return RedirectToAction("Login", "Account");
+
+        var reservations = await _api.GetReservationsAsync();
+        var mine = reservations?.Where(r => r.OwnerId == userId)
+            .Select(r => new ReservationViewModel
+            {
+                Id = r.Id.ToString(),
+                OwnerId = r.OwnerId,
+                Date = r.Date,
+                Time = r.Time,
+                PartySize = r.PartySize,
+                SpecialRequests = r.SpecialRequests
+            })
+            .ToList() ?? new List<ReservationViewModel>();
+
+        return View(mine);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var userId = GetCurrentUserId();
+        if (userId == null) return RedirectToAction("Login", "Account");
+
+        var reservations = await _api.GetReservationsAsync();
+        var r = reservations?.FirstOrDefault(x => x.Id == id);
+        if (r == null) return NotFound();
+        if (r.OwnerId != userId) return Forbid();
+
+        var model = new ReservationViewModel
+        {
+            Id = r.Id.ToString(),
+            OwnerId = r.OwnerId,
+            Date = r.Date,
+            Time = r.Time,
+            PartySize = r.PartySize,
+            SpecialRequests = r.SpecialRequests
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, ReservationViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var userId = GetCurrentUserId();
+        if (userId == null) return RedirectToAction("Login", "Account");
+
+        var update = new Reservation
+        {
+            Date = model.Date,
+            Time = model.Time,
+            PartySize = model.PartySize,
+            SpecialRequests = model.SpecialRequests
+        };
+
+        var ok = await _api.UpdateReservationAsync(id, update);
+        if (!ok)
+        {
+            ModelState.AddModelError(string.Empty, "Could not update reservation.");
+            return View(model);
+        }
 
         return RedirectToAction("Details", new { id });
     }
 
-    [HttpGet]
-    public IActionResult Details(int? id)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
     {
-        ReservationViewModel? model = null;
+        var userId = GetCurrentUserId();
+        if (userId == null) return RedirectToAction("Login", "Account");
 
-        if (id.HasValue)
-        {
-            lock (_lock)
-            {
-                if (id.Value >= 0 && id.Value < _store.Count)
-                {
-                    model = _store[id.Value];
-                }
-            }
-        }
+        var ok = await _api.DeleteReservationAsync(id);
+        if (!ok) return BadRequest();
 
-        // fallback to TempData payload (recently created reservation)
-        if (model == null && TempData.TryGetValue("Reservation", out var obj) && obj is string json)
-        {
-            try
-            {
-                model = JsonSerializer.Deserialize<ReservationViewModel>(json);
-            }
-            catch
-            {
-                // ignore
-            }
-        }
-
-        if (model != null)
-        {
-            return View(model);
-        }
-
-        // If no reservation data available, redirect back to index
-        return RedirectToAction("Index");
-    }
-
-    [HttpGet]
-    public IActionResult List()
-    {
-        List<ReservationViewModel> snapshot;
-        lock (_lock)
-        {
-            snapshot = _store.ToList();
-        }
-        return View(snapshot);
+        return RedirectToAction("List");
     }
 }

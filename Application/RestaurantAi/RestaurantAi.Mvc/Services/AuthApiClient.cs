@@ -23,7 +23,8 @@ public class AuthApiClient
             var res = await _http.PostAsJsonAsync("api/auth/register", req);
             if (!res.IsSuccessStatusCode)
             {
-                _log.LogWarning("Register request failed with status {Status}", res.StatusCode);
+                var body = await res.Content.ReadAsStringAsync();
+                _log.LogWarning("Register request failed with status {Status}. Response: {Body}", res.StatusCode, body);
                 return null;
             }
 
@@ -50,7 +51,8 @@ public class AuthApiClient
             var res = await _http.PostAsJsonAsync("api/auth/login", req);
             if (!res.IsSuccessStatusCode)
             {
-                _log.LogWarning("Login request failed with status {Status}", res.StatusCode);
+                var body = await res.Content.ReadAsStringAsync();
+                _log.LogWarning("Login request failed with status {Status}. Response: {Body}", res.StatusCode, body);
                 return null;
             }
 
@@ -69,4 +71,99 @@ public class AuthApiClient
             return null;
         }
     }
+
+    // Reservations API wrappers
+    public async Task<List<Reservation>?> GetReservationsAsync()
+    {
+        try
+        {
+            _log.LogInformation("Calling GET {Url}", _http.BaseAddress + "api/reservations");
+            var res = await _http.GetAsync("api/reservations");
+            if (!res.IsSuccessStatusCode)
+            {
+                var body = await res.Content.ReadAsStringAsync();
+                _log.LogWarning("GetReservations failed with status {Status}. Response: {Body}", res.StatusCode, body);
+                return null;
+            }
+            return await res.Content.ReadFromJsonAsync<List<Reservation>>();
+        }
+        catch (Exception ex)
+        {
+            _log.LogWarning(ex, "GetReservations failed");
+            return null;
+        }
+    }
+
+    public async Task<Reservation?> CreateReservationAsync(Reservation r)
+    {
+        try
+        {
+            var url = "api/reservations";
+            var payload = JsonSerializer.Serialize(r);
+            _log.LogInformation("Creating reservation. POST {Url} Payload: {Payload}", _http.BaseAddress + url, payload);
+
+            var res = await _http.PostAsJsonAsync(url, r);
+            if (!res.IsSuccessStatusCode)
+            {
+                var body = await res.Content.ReadAsStringAsync();
+                _log.LogWarning("CreateReservation failed with status {Status}. Response: {Body}", res.StatusCode, body);
+                return null;
+            }
+            var created = await res.Content.ReadFromJsonAsync<Reservation>();
+            _log.LogInformation("CreateReservation succeeded. Created id: {Id}", created?.Id);
+            return created;
+        }
+        catch (Exception ex)
+        {
+            _log.LogWarning(ex, "CreateReservation failed");
+            return null;
+        }
+    }
+
+    public async Task<bool> UpdateReservationAsync(int id, Reservation r)
+    {
+        try
+        {
+            var url = $"api/reservations/{id}";
+            _log.LogInformation("Updating reservation. PUT {Url} Payload: {Payload}", _http.BaseAddress + url, JsonSerializer.Serialize(r));
+            var res = await _http.PutAsJsonAsync(url, r);
+            if (!res.IsSuccessStatusCode)
+                _log.LogWarning("UpdateReservation failed with status {Status}", res.StatusCode);
+            return res.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _log.LogWarning(ex, "UpdateReservation failed");
+            return false;
+        }
+    }
+
+    public async Task<bool> DeleteReservationAsync(int id)
+    {
+        try
+        {
+            var url = $"api/reservations/{id}";
+            _log.LogInformation("Deleting reservation. DELETE {Url}", _http.BaseAddress + url);
+            var res = await _http.DeleteAsync(url);
+            if (!res.IsSuccessStatusCode)
+                _log.LogWarning("DeleteReservation failed with status {Status}", res.StatusCode);
+            return res.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _log.LogWarning(ex, "DeleteReservation failed");
+            return false;
+        }
+    }
+}
+
+// Local lightweight Reservation DTO for MVC client
+public class Reservation
+{
+    public int Id { get; set; }
+    public string OwnerId { get; set; }
+    public DateTime Date { get; set; }
+    public string Time { get; set; }
+    public int PartySize { get; set; }
+    public string? SpecialRequests { get; set; }
 }
