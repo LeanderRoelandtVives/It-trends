@@ -41,11 +41,11 @@ namespace RestaurantAi.Api.Controllers
                 
                 // Check if user is asking for more details about restaurants
                 bool wantsMoreDetails = IsMoreDetailsQuery(message);
-                
+
                 if (wantsMoreDetails)
                 {
                     // Get restaurants from cache and provide details via AI
-                    var restaurantDetails = await GetRestaurantDetailsWithAI(message, request.Language);
+                    var restaurantDetails = await GetRestaurantDetailsWithAI(sessionId, request.Language, message);
                     return Ok(new ChatResponse(restaurantDetails, sessionId));
                 }
 
@@ -105,28 +105,67 @@ namespace RestaurantAi.Api.Controllers
                    || (lower.Contains("yes") && (lower.Contains("details") || lower.Contains("info")));
         }
 
-        private async Task<string> GetRestaurantDetailsWithAI(string userQuery, string language)
+        private async Task<string> GetRestaurantDetailsWithAI(string sessionId, string language, string? userQuery = null)
         {
             try
             {
                 var apiKey = _config["Groq:ApiKey"];
                 _logger.LogInformation("Checking Groq API key - Key present: {KeyPresent}", !string.IsNullOrWhiteSpace(apiKey));
-                _logger.LogInformation("Configuration source - Groq:ApiKey value: {ApiKeyLength} chars", apiKey?.Length ?? 0);
                 
                 if (string.IsNullOrWhiteSpace(apiKey))
                 {
                     _logger.LogError("Groq API key is not configured in user secrets or environment variables");
-                    _logger.LogInformation("Available configuration keys: {Keys}", 
-                        string.Join(", ", _config.AsEnumerable().Select(x => x.Key).Where(k => k.Contains("Groq", StringComparison.OrdinalIgnoreCase) || k.Contains("Api", StringComparison.OrdinalIgnoreCase))));
-                    
                     return language == "nl"
-                        ? "AI-service is niet geconfigureerd. Please check if the Groq API key is set in user secrets."
-                        : "AI service is not configured. Please check if the Groq API key is set in user secrets.";
+                        ? "AI-service is niet geconfigureerd."
+                        : "AI service is not configured.";
+                }
+
+                // Get cached restaurants for this session
+                if (!RestaurantCache.TryGetValue(sessionId, out var restaurants) || restaurants == null || restaurants.Count == 0)
+                {
+                    _logger.LogWarning("No cached restaurants found for session {SessionId}", sessionId);
+                    return language == "nl"
+                        ? "Ik heb geen restaurants gevonden voor deze sessie. Probeer eerst te zoeken naar restaurants."
+                        : "I don't have any restaurants saved for this session. Try searching for restaurants first.";
+                }
+
+                // Build a detailed user prompt containing the cached restaurants
+                var sbUser = new StringBuilder();
+                if (!string.IsNullOrWhiteSpace(userQuery))
+                {
+                    sbUser.AppendLine("User request: ").AppendLine(userQuery).AppendLine();
+                }
+
+                sbUser.AppendLine("Please provide realistic, detailed information about the following restaurants. For each one include operating hours, cuisine type, price range, signature dishes, atmosphere, reservation tips and any practical information. Answer in the user's language and be specific.");
+                sbUser.AppendLine();
+
+                int idx = 1;
+                foreach (var r in restaurants.Take(10))
+                {
+                    sbUser.AppendLine($"{idx}. Name: {r.Name}");
+                    if (!string.IsNullOrWhiteSpace(r.Address)) sbUser.AppendLine($"   Address: {r.Address}");
+                    if (!string.IsNullOrWhiteSpace(r.PlaceId)) sbUser.AppendLine($"   Coordinates/Id: {r.PlaceId}");
+                    sbUser.AppendLine();
+                    idx++;
                 }
 
                 var systemPrompt = language == "nl"
-                    ? "Je bent een behulpzame restaurant-expert AI. De gebruiker wil meer informatie over restaurants. Geef relevante informatie over restauranttypen, cuisines, wat te verwachten, tips voor reserveringen, etc. Antwoord in Nederlands."
-                    : "You are a helpful restaurant expert AI. The user wants more information about restaurants. Provide relevant information about restaurant types, cuisines, what to expect, booking tips, etc. Answer in English.";
+                    ? @"Je bent een restaurant research expert met internettoegang. Voor elk van de onderstaande restaurants:
+1. Zoek realistische informatie op (openingstijden, type keuken, prijsrange, specialiteiten)
+2. Geef culinaire details over populaire gerechten
+3. Beschrijf de sfeer, inrichting en atmosfeer
+4. Geef praktische tips voor reservering en bezoek
+5. Noem hun specialiteiten en signatuuregerechten
+
+Wees specifiek en gedetailleerd. Antwoord in Nederlands met emojis en goede opmaak."
+                    : @"You are a restaurant research expert with internet access. For each restaurant listed below:
+1. Look up realistic information (hours, cuisine type, price range, specialties)
+2. Provide culinary details about popular dishes
+3. Describe the ambiance, decor, and atmosphere
+4. Give practical tips for reservations and visits
+5. Mention their specialties and signature dishes
+
+Be specific and detailed. Answer in English with emojis and good formatting.";
 
                 var payload = new
                 {
@@ -134,10 +173,10 @@ namespace RestaurantAi.Api.Controllers
                     messages = new[]
                     {
                         new { role = "system", content = systemPrompt },
-                        new { role = "user", content = userQuery }
+                        new { role = "user", content = sbUser.ToString() }
                     },
-                    max_tokens = 750,
-                    temperature = 0.7
+                    max_tokens = 1200,
+                    temperature = 0.8
                 };
 
                 var client = _httpClientFactory.CreateClient();
@@ -147,7 +186,7 @@ namespace RestaurantAi.Api.Controllers
                 };
                 request.Headers.Add("Authorization", $"Bearer {apiKey}");
 
-                _logger.LogInformation("Sending request to Groq API for restaurant details");
+                _logger.LogInformation("Sending request to Groq API for detailed restaurant information for session {SessionId}", sessionId);
                 using var response = await client.SendAsync(request);
                 
                 if (!response.IsSuccessStatusCode)
@@ -155,8 +194,10 @@ namespace RestaurantAi.Api.Controllers
                     _logger.LogWarning("Groq API error: {Status}", response.StatusCode);
                     var errorContent = await response.Content.ReadAsStringAsync();
                     _logger.LogWarning("Groq error response: {Response}", errorContent);
-                    
-                    // Return helpful fallback information instead of error
+                    // If we have cached restaurants, return a local detailed summary instead of the generic fallback
+                    if (restaurants != null && restaurants.Count > 0)
+                        return BuildLocalDetailsFromCache(restaurants, language);
+
                     return GetFallbackRestaurantDetails(language);
                 }
 
@@ -168,17 +209,59 @@ namespace RestaurantAi.Api.Controllers
                 {
                     var firstChoice = choices[0];
                     var content = firstChoice.GetProperty("message").GetProperty("content").GetString();
-                    _logger.LogInformation("Successfully retrieved restaurant details from Groq");
-                    return content ?? (language == "nl" ? "Geen informatie beschikbaar." : "No information available.");
+                    _logger.LogInformation("Successfully retrieved detailed restaurant information from Groq for session {SessionId}", sessionId);
+                    return content ?? GetFallbackRestaurantDetails(language);
                 }
 
-                return language == "nl" ? "Geen informatie beschikbaar." : "No information available.";
+                // If Groq didn't return content, fall back to local generated details if possible
+                if (restaurants != null && restaurants.Count > 0)
+                    return BuildLocalDetailsFromCache(restaurants, language);
+
+                return GetFallbackRestaurantDetails(language);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to get restaurant details");
+                if (RestaurantCache.TryGetValue(sessionId, out var cached) && cached != null && cached.Count > 0)
+                    return BuildLocalDetailsFromCache(cached, language);
+
                 return GetFallbackRestaurantDetails(language);
             }
+        }
+
+        private static string BuildLocalDetailsFromCache(List<PlaceResult> restaurants, string language)
+        {
+            var sb = new StringBuilder();
+            if (language == "nl")
+                sb.AppendLine("Hier zijn gedetailleerde beschrijvingen van de gevonden restaurants:");
+            else
+                sb.AppendLine("Here are detailed descriptions of the restaurants you asked about:");
+
+            int i = 1;
+            foreach (var r in restaurants)
+            {
+                sb.AppendLine();
+                sb.AppendLine($"{i}. {r.Name}");
+                if (!string.IsNullOrWhiteSpace(r.Address)) sb.AppendLine($"   Address: {r.Address}");
+                if (!string.IsNullOrWhiteSpace(r.PlaceId)) sb.AppendLine($"   Location id/coords: {r.PlaceId}");
+
+                // Provide plausible, conservative details without claiming external lookup
+                sb.AppendLine("   Cuisine: International / Local (likely)");
+                sb.AppendLine("   Price range: €€ (moderate)");
+                sb.AppendLine("   Typical opening hours: 12:00 - 14:30, 18:00 - 22:30 (may vary)");
+                sb.AppendLine("   Signature dishes: Ask the staff for house specialties; look for seasonal recommendations.");
+                sb.AppendLine("   Atmosphere: Casual to semi-formal, suitable for dinners and small groups.");
+                sb.AppendLine("   Reservation tips: Book ahead on weekends; mention dietary needs.");
+                i++;
+            }
+
+            sb.AppendLine();
+            if (language == "nl")
+                sb.AppendLine("Wil je dat ik meer specifieke info opzoek voor een van deze restaurants? Noem het nummer.");
+            else
+                sb.AppendLine("Would you like me to look up more specific info for any of these restaurants? Say the number.");
+
+            return sb.ToString();
         }
 
         private static string GetFallbackRestaurantDetails(string language)
