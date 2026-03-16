@@ -41,8 +41,9 @@ builder.Services.AddScoped<AuthService>();
 // Add HttpClient factory for external API calls (Google Places / OpenAI)
 builder.Services.AddHttpClient();
 
-builder.Services.AddDbContext<RestaurantAiDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantAiDbContext")));
+builder.Services.AddDbContext<RestaurantAiDbContext>(options => options.UseSqlite("Data Source=restaurantAi.db"));
+
+
 
 builder.Services.Configure<JwtSettings>(
     builder.Configuration.GetSection("JwtSettings"));
