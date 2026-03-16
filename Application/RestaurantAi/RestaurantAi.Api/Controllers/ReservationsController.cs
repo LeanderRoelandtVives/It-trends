@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestaurantAi.Model;
+using RestaurantAi.Api.Models; // add DTO namespace
+using Microsoft.Extensions.Logging;
 
 namespace RestaurantAi.Api.Controllers;
 
@@ -11,10 +13,12 @@ namespace RestaurantAi.Api.Controllers;
 public class ReservationsController : ControllerBase
 {
     private readonly RestaurantAiDbContext _db;
+    private readonly ILogger<ReservationsController> _log;
 
-    public ReservationsController(RestaurantAiDbContext db)
+    public ReservationsController(RestaurantAiDbContext db, ILogger<ReservationsController> log)
     {
         _db = db;
+        _log = log;
     }
 
     // GET api/reservations - list user's reservations
@@ -23,6 +27,8 @@ public class ReservationsController : ControllerBase
     {
         var userId = User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value
             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        _log.LogInformation("GET /api/reservations called by user {UserId}", userId ?? "(anonymous)");
 
         if (userId == null) return Unauthorized();
 
@@ -36,6 +42,8 @@ public class ReservationsController : ControllerBase
     {
         var userId = User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value
             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        _log.LogInformation("GET /api/reservations/{Id} called by user {UserId}", id, userId ?? "(anonymous)");
+
         var r = await _db.Reservations.FindAsync(id);
         if (r == null) return NotFound();
         if (r.OwnerId != userId) return Forbid();
@@ -48,23 +56,36 @@ public class ReservationsController : ControllerBase
     {
         var userId = User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value
             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        _log.LogInformation("POST /api/reservations called by user {UserId} with model {@Model}", userId ?? "(anonymous)", model);
+
         if (userId == null) return Unauthorized();
 
         model.OwnerId = userId;
         _db.Reservations.Add(model);
         await _db.SaveChangesAsync();
+        _log.LogInformation("Reservation created with id {Id} for user {UserId}", model.Id, userId);
         return CreatedAtAction(nameof(Get), new { id = model.Id }, model);
     }
 
     // PUT api/reservations/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] Reservation update)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateReservationRequest update)
     {
         var userId = User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value
             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        _log.LogInformation("PUT /api/reservations/{Id} called by user {UserId} with update {@Update}", id, userId ?? "(anonymous)", update);
+
         var r = await _db.Reservations.FindAsync(id);
-        if (r == null) return NotFound();
-        if (r.OwnerId != userId) return Forbid();
+        if (r == null)
+        {
+            _log.LogWarning("Reservation {Id} not found", id);
+            return NotFound();
+        }
+        if (r.OwnerId != userId)
+        {
+            _log.LogWarning("User {UserId} attempted to update reservation {Id} owned by {Owner}", userId, id, r.OwnerId);
+            return Forbid();
+        }
 
         r.Date = update.Date;
         r.Time = update.Time;
@@ -72,6 +93,7 @@ public class ReservationsController : ControllerBase
         r.SpecialRequests = update.SpecialRequests;
 
         await _db.SaveChangesAsync();
+        _log.LogInformation("Reservation {Id} updated by user {UserId}", id, userId);
         return NoContent();
     }
 
@@ -81,12 +103,15 @@ public class ReservationsController : ControllerBase
     {
         var userId = User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value
             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        _log.LogInformation("DELETE /api/reservations/{Id} called by user {UserId}", id, userId ?? "(anonymous)");
+
         var r = await _db.Reservations.FindAsync(id);
         if (r == null) return NotFound();
         if (r.OwnerId != userId) return Forbid();
 
         _db.Reservations.Remove(r);
         await _db.SaveChangesAsync();
+        _log.LogInformation("Reservation {Id} deleted by user {UserId}", id, userId);
         return NoContent();
     }
 }

@@ -120,21 +120,35 @@ public class AuthApiClient
         }
     }
 
-    public async Task<bool> UpdateReservationAsync(int id, Reservation r)
+    public class UpdateResult
+    {
+        public bool Success { get; set; }
+        public int StatusCode { get; set; }
+        public string? Body { get; set; }
+    }
+
+    public async Task<UpdateResult> UpdateReservationAsync(int id, Reservation r)
     {
         try
         {
             var url = $"api/reservations/{id}";
             _log.LogInformation("Updating reservation. PUT {Url} Payload: {Payload}", _http.BaseAddress + url, JsonSerializer.Serialize(r));
             var res = await _http.PutAsJsonAsync(url, r);
+            var body = await res.Content.ReadAsStringAsync();
             if (!res.IsSuccessStatusCode)
-                _log.LogWarning("UpdateReservation failed with status {Status}", res.StatusCode);
-            return res.IsSuccessStatusCode;
+            {
+                _log.LogWarning("UpdateReservation failed with status {Status}. Response: {Body}", res.StatusCode, body);
+            }
+            else
+            {
+                _log.LogInformation("UpdateReservation succeeded for id {Id}", id);
+            }
+            return new UpdateResult { Success = res.IsSuccessStatusCode, StatusCode = (int)res.StatusCode, Body = body };
         }
         catch (Exception ex)
         {
             _log.LogWarning(ex, "UpdateReservation failed");
-            return false;
+            return new UpdateResult { Success = false, StatusCode = 0, Body = ex.Message };
         }
     }
 
@@ -153,6 +167,28 @@ public class AuthApiClient
         {
             _log.LogWarning(ex, "DeleteReservation failed");
             return false;
+        }
+    }
+
+    public async Task<Reservation?> GetReservationAsync(int id)
+    {
+        try
+        {
+            var url = $"api/reservations/{id}";
+            _log.LogInformation("Calling GET {Url}", _http.BaseAddress + url);
+            var res = await _http.GetAsync(url);
+            if (!res.IsSuccessStatusCode)
+            {
+                var body = await res.Content.ReadAsStringAsync();
+                _log.LogWarning("GetReservation failed with status {Status}. Response: {Body}", res.StatusCode, body);
+                return null;
+            }
+            return await res.Content.ReadFromJsonAsync<Reservation>();
+        }
+        catch (Exception ex)
+        {
+            _log.LogWarning(ex, "GetReservation failed");
+            return null;
         }
     }
 }

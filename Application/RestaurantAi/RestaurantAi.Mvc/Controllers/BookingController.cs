@@ -175,7 +175,13 @@ public class BookingController : BaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, ReservationViewModel model)
     {
-        if (!ModelState.IsValid) return View(model);
+        _log.LogInformation("BookingController.Edit called with id {Id} and model {@Model}", id, model);
+
+        if (!ModelState.IsValid)
+        {
+            _log.LogWarning("ModelState invalid on Edit: {@Errors}", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+            return View(model);
+        }
 
         var userId = GetCurrentUserId();
         if (userId == null) return RedirectToAction("Login", "Account");
@@ -188,13 +194,17 @@ public class BookingController : BaseController
             SpecialRequests = model.SpecialRequests
         };
 
-        var ok = await _api.UpdateReservationAsync(id, update);
-        if (!ok)
+        var result = await _api.UpdateReservationAsync(id, update);
+        if (!result.Success)
         {
-            ModelState.AddModelError(string.Empty, "Could not update reservation.");
+            _log.LogWarning("UpdateReservationAsync returned failure for id {Id}. Status: {Status}, Body: {Body}", id, result.StatusCode, result.Body);
+            ModelState.AddModelError(string.Empty, "Could not update reservation. Controleer of de API draait en je ingelogd bent.");
+            TempData["Error"] = $"Update failed ({result.StatusCode}): {result.Body}";
             return View(model);
         }
 
+        TempData["Success"] = "Reservation updated.";
+        _log.LogInformation("Reservation {Id} updated successfully", id);
         return RedirectToAction("Details", new { id });
     }
 
