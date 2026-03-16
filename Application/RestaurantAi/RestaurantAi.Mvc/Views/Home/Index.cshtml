@@ -10,6 +10,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
 
+    <script>
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -26,6 +34,14 @@
                 --text-muted: #6b7280;
                 --border: #e5e7eb;
                 --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 10px -2px rgba(0, 0, 0, 0.03);
+            }
+
+            .dark {
+                --bg-light: #0f0f0f;
+                --bg-soft-gray: #1a1a1a;
+                --text-main: #f3f4f6;
+                --text-muted: #9ca3af;
+                --border: #2d2d2d;
             }
         }
 
@@ -44,6 +60,7 @@
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -60,16 +77,16 @@
     </script>
 </head>
 
-<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen">
+<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] min-h-screen transition-colors duration-300">
 
-    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg-light)]/95 backdrop-blur-md transition-colors duration-300">
         <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-12">
                 <div class="flex items-center gap-3">
                     <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
                         <span class="material-symbols-outlined font-bold">restaurant_menu</span>
                     </div>
-                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-[var(--text-main)]">
                         DineAI
                     </h1>
                 </div>
@@ -80,15 +97,15 @@
                         EXPLORE
                     </a>
                     <a asp-controller="Home" asp-action="Dashboard"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         CONCIERGE
                     </a>
                     <a asp-controller="Booking" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         MY BOOKINGS
                     </a>
                     <a asp-controller="Home" asp-action="Privacy"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         PRIVACY
                     </a>
                 </nav>
@@ -96,10 +113,16 @@
 
             <div class="flex items-center gap-6">
                 <div class="h-6 w-px bg-[var(--border)]"></div>
-
+                <button id="theme-toggle" onclick="toggleTheme()"
+                        class="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-gold transition-all"
+                        title="Toggle dark mode">
+                    <span id="icon-light" class="material-symbols-outlined hidden dark:block text-gold">light_mode</span>
+                    <span id="icon-dark" class="material-symbols-outlined block dark:hidden">dark_mode</span>
+                </button>
+                <div class="h-6 w-px bg-[var(--border)]"></div>
                 <div class="flex items-center gap-4">
                     <a asp-controller="Account" asp-action="Login"
-                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         Sign In
                     </a>
                     <a asp-controller="Account" asp-action="Register"
@@ -123,7 +146,7 @@
                 
                 <h1 class="text-6xl md:text-7xl font-black leading-[1.1] tracking-tight">
                     Discover Your<br />
-                    <span class="gold-gradient bg-clip-text text-transparent">Perfect Meal</span>
+                    <span style="background: linear-gradient(135deg, #B08E21 0%, #D4AF37 100%); -webkit-background-clip: text; background-clip: text; color: transparent;">Perfect Meal</span>
                 </h1>
 
                 <p class="text-xl text-[var(--text-muted)] leading-relaxed max-w-lg">
@@ -134,29 +157,29 @@
 
                 <div class="flex flex-wrap gap-4">
                     <a asp-controller="Home" asp-action="Dashboard"
-                       class="px-8 py-4 bg-charcoal text-white font-bold rounded-xl hover:shadow-2xl transition-all flex items-center gap-2">
+                       class="px-8 py-4 bg-[var(--text-main)] text-[var(--bg-light)] font-bold rounded-xl hover:shadow-2xl transition-all flex items-center gap-2">
                         Start Exploring
                         <span class="material-symbols-outlined">arrow_forward</span>
                     </a>
                     <a asp-controller="Booking" asp-action="Index"
-                       class="px-8 py-4 border-2 border-charcoal text-charcoal font-bold rounded-xl hover:bg-charcoal hover:text-white transition-all">
+                       class="px-8 py-4 border-2 border-[var(--text-main)] text-[var(--text-main)] font-bold rounded-xl hover:bg-[var(--text-main)] hover:text-[var(--bg-light)] transition-all">
                         View Demo
                     </a>
                 </div>
 
                 <div class="flex items-center gap-8 pt-4">
                     <div class="flex flex-col">
-                        <p class="text-3xl font-black text-charcoal">50K+</p>
+                        <p class="text-3xl font-black text-[var(--text-main)]">50K+</p>
                         <p class="text-sm text-[var(--text-muted)] font-medium">Premium Restaurants</p>
                     </div>
                     <div class="h-12 w-px bg-[var(--border)]"></div>
                     <div class="flex flex-col">
-                        <p class="text-3xl font-black text-charcoal">1M+</p>
+                        <p class="text-3xl font-black text-[var(--text-main)]">1M+</p>
                         <p class="text-sm text-[var(--text-muted)] font-medium">Happy Diners</p>
                     </div>
                     <div class="h-12 w-px bg-[var(--border)]"></div>
                     <div class="flex flex-col">
-                        <p class="text-3xl font-black text-charcoal">4.9★</p>
+                        <p class="text-3xl font-black text-[var(--text-main)]">4.9★</p>
                         <p class="text-sm text-[var(--text-muted)] font-medium">Average Rating</p>
                     </div>
                 </div>
@@ -168,7 +191,7 @@
                          alt="Fine dining experience"
                          class="w-full h-full object-cover" />
                 </div>
-                <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-[var(--border)] max-w-xs">
+                <div class="absolute -bottom-6 -left-6 bg-[var(--bg-light)] p-6 rounded-2xl shadow-xl border border-[var(--border)] max-w-xs">
                     <div class="flex items-center gap-3 mb-2">
                         <span class="material-symbols-outlined text-gold">smart_toy</span>
                         <p class="text-xs font-black uppercase tracking-wider text-gold">AI RECOMMENDATION</p>
@@ -199,10 +222,10 @@
                     new { Name = "The Pasta House", Cuisine = "Italian Trattoria", Distance = "0.5 miles", Rating = "4.7", Price = "$$", Image = "https://lh3.googleusercontent.com/aida-public/AB6AXuDB5PnFsctL0DffbZvChcRKCiwvkGI7Px1bi3oMdUjpJsAJvCkpBNgWtnZ6Qzr9eE-5OjgIo4BQnDrJRLVvIZ3XApmzBQDus6PuV8vbmioO8dyHP3yk1N0IcJ3yIc--nNbyPAHy2lvZD7Qd3lYcAVn9dFKOu24xARPq00yCb4XnM5vkylrIJbpaBASomA8uJ9tGOTvPlLsagxGpS7sDn8Nnx4D0xXQ_fPz8eXbDX7rwG6Ad4oHSyoQXQ3p9PINCYWtCHz6yugARsbA" }
                 })
                 {
-                    <div class="group bg-white rounded-2xl overflow-hidden border border-[var(--border)] hover:shadow-xl transition-all duration-300 cursor-pointer">
+                    <div class="group bg-[var(--bg-light)] rounded-2xl overflow-hidden border border-[var(--border)] hover:shadow-xl transition-all duration-300 cursor-pointer">
                         <div class="aspect-[4/3] overflow-hidden relative">
                             <img src="@restaurant.Image" alt="@restaurant.Name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold text-sm">
+                            <div class="absolute top-4 right-4 bg-[var(--bg-light)]/90 backdrop-blur-md px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold text-sm">
                                 <span class="material-symbols-outlined text-[16px] text-amber-500">star</span>
                                 @restaurant.Rating
                             </div>
@@ -216,7 +239,7 @@
                                     @restaurant.Distance
                                 </div>
                                 <a asp-controller="Booking" asp-action="Index"
-                                   class="px-4 py-2 bg-charcoal text-white text-sm font-bold rounded-lg hover:bg-gold transition-colors">
+                                   class="px-4 py-2 bg-[var(--text-main)] text-[var(--bg-light)] text-sm font-bold rounded-lg hover:bg-gold transition-colors">
                                     Reserve
                                 </a>
                             </div>
@@ -346,5 +369,17 @@
         </div>
     </footer>
 
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
 </body>
 </html>

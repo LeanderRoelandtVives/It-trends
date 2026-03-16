@@ -1,19 +1,21 @@
 ﻿@{
     ViewData["Title"] = "DineAI Concierge Dashboard";
 }
+
 <style type="text/tailwindcss">
     .chat-container::-webkit-scrollbar {
         width: 6px
     }
+
     .chat-container::-webkit-scrollbar-thumb {
         background-color: #e5e7eb;
         border-radius: 10px
     }
 </style>
 
-<div class="flex w-full overflow-hidden" style="height: calc(100vh - 80px);">
+<div class="flex h-screen w-full overflow-hidden pt-20">
     <main class="flex-1 flex flex-col bg-[var(--bg-soft-gray)] relative">
-        <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-white/80 backdrop-blur-md z-10 sticky top-0">
+        <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-[var(--bg-light)]/80 backdrop-blur-md z-10 sticky top-0">
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <div class="size-10 rounded-full bg-gold/20 flex items-center justify-center text-gold ring-2 ring-gold/10 ring-offset-2 ring-offset-white">
@@ -31,7 +33,7 @@
                 </div>
             </div>
             <div class="flex gap-3">
-                <button onclick="clearChat()" class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" title="Clear conversation">
+                <button onclick="clearChat()" class="p-2 rounded-lg bg-[var(--bg-light)] text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" title="Clear conversation">
                     <span class="material-symbols-outlined">refresh</span>
                 </button>
             </div>
@@ -42,7 +44,7 @@
         <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg-soft-gray)] via-[var(--bg-soft-gray)]/95 to-transparent">
             <div class="max-w-4xl mx-auto relative">
                 <input id="aiMessageInput"
-                       class="w-full bg-white border border-[var(--border)] rounded-2xl py-5 px-6 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
+                       class="w-full bg-[var(--bg-light)] border border-[var(--border)] rounded-2xl py-5 px-6 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
                        placeholder="Ask me anything about restaurants..."
                        type="text" />
                 <div class="absolute inset-y-0 right-5 flex items-center gap-3">
@@ -57,223 +59,236 @@
 </div>
 
 @section Scripts {
-<script>
-    let currentLang = localStorage.getItem('language') || 'en';
-    let sessionId = '';
-    let currentCoords = null; // { latitude, longitude }
+    <script>
+        let currentLang = localStorage.getItem('language') || 'en';
+        let sessionId = '';
+        let currentCoords = null; // { latitude, longitude }
 
-    const translations = {
-        en: {
-            headerTitle: 'Restaurant Concierge AI',
-            onlineReady: 'Online & Ready',
-            typingIndicator: 'AI is thinking...',
-            placeholder: 'Ask me anything about restaurants...',
-            errorMsg: 'Sorry, an error occurred. Please try again.'
-        },
-        nl: {
-            headerTitle: 'Restaurant Conciërge AI',
-            onlineReady: 'Online & Klaar',
-            typingIndicator: 'AI denkt na...',
-            placeholder: 'Vraag me alles over restaurants...',
-            errorMsg: 'Sorry, er is een fout opgetreden. Probeer het opnieuw.'
+        const translations = {
+            en: {
+                headerTitle: 'Restaurant Concierge AI',
+                onlineReady: 'Online & Ready',
+                typingIndicator: 'AI is thinking...',
+                placeholder: 'Ask me anything about restaurants...',
+                errorMsg: 'Sorry, an error occurred. Please try again.'
+            },
+            nl: {
+                headerTitle: 'Restaurant Conciërge AI',
+                onlineReady: 'Online & Klaar',
+                typingIndicator: 'AI denkt na...',
+                placeholder: 'Vraag me alles over restaurants...',
+                errorMsg: 'Sorry, er is een fout opgetreden. Probeer het opnieuw.'
+            }
+        };
+
+        function updateLanguageUI() {
+            document.getElementById('headerTitle').textContent = translations[currentLang].headerTitle;
+            document.getElementById('onlineStatus').textContent = translations[currentLang].onlineReady;
+            document.getElementById('typingIndicator').textContent = translations[currentLang].typingIndicator;
+            document.getElementById('aiMessageInput').placeholder = translations[currentLang].placeholder;
         }
-    };
 
-    function updateLanguageUI() {
-        document.getElementById('headerTitle').textContent = translations[currentLang].headerTitle;
-        document.getElementById('onlineStatus').textContent = translations[currentLang].onlineReady;
-        document.getElementById('typingIndicator').textContent = translations[currentLang].typingIndicator;
-        document.getElementById('aiMessageInput').placeholder = translations[currentLang].placeholder;
-    }
+        const input = document.getElementById('aiMessageInput');
+        const btn = document.getElementById('aiSendButton');
+        const chat = document.getElementById('chatContainer');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const onlineStatus = document.getElementById('onlineStatus');
 
-    const input = document.getElementById('aiMessageInput');
-    const btn = document.getElementById('aiSendButton');
-    const chat = document.getElementById('chatContainer');
-    const typingIndicator = document.getElementById('typingIndicator');
-    const onlineStatus = document.getElementById('onlineStatus');
-
-    function addUserMessage(text) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'flex gap-5 max-w-2xl ml-auto flex-row-reverse';
-        msgDiv.innerHTML = `
-            <div class="size-10 rounded-xl bg-gold flex-shrink-0 flex items-center justify-center text-white border border-gold/20">
-                <span class="material-symbols-outlined">person</span>
-            </div>
-            <div class="p-5 rounded-2xl rounded-tr-none bg-gold text-white shadow-lg shadow-gold/20">
-                <p class="text-sm leading-relaxed">${escapeHtml(text)}</p>
-            </div>
-        `;
-        chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight;
-    }
-
-    function addAiMessage(text) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'flex gap-5 max-w-4xl';
-        msgDiv.innerHTML = `
-            <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
-                <span class="material-symbols-outlined">smart_toy</span>
-            </div>
-            <div class="flex-1">
-                <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
-                    <p class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text)}</p>
+        function addUserMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex gap-5 max-w-2xl ml-auto flex-row-reverse';
+            msgDiv.innerHTML = `
+                <div class="size-10 rounded-xl bg-gold flex-shrink-0 flex items-center justify-center text-white border border-gold/20">
+                    <span class="material-symbols-outlined">person</span>
                 </div>
-            </div>
-        `;
-        chat.appendChild(msgDiv);
-        chat.scrollTop = chat.scrollHeight;
-    }
+                <div class="p-5 rounded-2xl rounded-tr-none bg-gold text-white shadow-lg shadow-gold/20">
+                    <p class="text-sm leading-relaxed">${escapeHtml(text)}</p>
+                </div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
+        function addAiMessage(text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'flex gap-5 max-w-4xl';
+            msgDiv.innerHTML = `
+                <div class="size-10 rounded-xl bg-gold/10 flex-shrink-0 flex items-center justify-center text-gold border border-gold/20">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                </div>
+                <div class="flex-1">
+                    <div class="p-5 rounded-2xl rounded-tl-none bg-[var(--bg-light)] border border-[var(--border)] shadow-sm">
+                        <p class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text)}</p>
+                    </div>
+                </div>
+            `;
+            chat.appendChild(msgDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
 
-    function showTyping() {
-        typingIndicator.classList.remove('hidden');
-        onlineStatus.classList.add('hidden');
-    }
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
-    function hideTyping() {
-        typingIndicator.classList.add('hidden');
-        onlineStatus.classList.remove('hidden');
-    }
+        function showTyping() {
+            typingIndicator.classList.remove('hidden');
+            onlineStatus.classList.add('hidden');
+        }
 
-    async function sendMessage(messageText) {
-        const val = messageText || input.value.trim();
-        if (!val) return;
+        function hideTyping() {
+            typingIndicator.classList.add('hidden');
+            onlineStatus.classList.remove('hidden');
+        }
 
-        addUserMessage(val);
-        if (input) input.value = '';
-        showTyping();
+        async function sendMessage(messageText) {
+            const val = messageText || input.value.trim();
+            if (!val) return;
 
-        try {
-            let lat = null;
-            let lng = null;
+            addUserMessage(val);
+            if (input) input.value = '';
+            showTyping();
 
-            if ((val.toLowerCase().includes('near me') ||
-                 val.toLowerCase().includes('nearby') ||
-                 val.toLowerCase().includes('close to me')) &&
-                !currentCoords) {
-                const coords = await requestGeolocationIfNeeded();
-                if (coords) {
-                    lat = coords.latitude;
-                    lng = coords.longitude;
+            try {
+                let lat = null;
+                let lng = null;
+
+                if ((val.toLowerCase().includes('near me') ||
+                     val.toLowerCase().includes('nearby') ||
+                     val.toLowerCase().includes('close to me')) &&
+                    !currentCoords) {
+                    const coords = await requestGeolocationIfNeeded();
+                    if (coords) {
+                        lat = coords.latitude;
+                        lng = coords.longitude;
+                    }
+                } else if (currentCoords) {
+                    lat = currentCoords.latitude;
+                    lng = currentCoords.longitude;
                 }
-            } else if (currentCoords) {
-                lat = currentCoords.latitude;
-                lng = currentCoords.longitude;
-            }
 
-            const payload = {
-                Message: val,
-                SessionId: sessionId,
-                Language: currentLang,
-                Latitude: lat,
-                Longitude: lng
-            };
+                const payload = {
+                    Message: val,
+                    SessionId: sessionId,
+                    Language: currentLang,
+                    Latitude: lat,
+                    Longitude: lng
+                };
 
-            const response = await fetch('https://localhost:7179/api/AiChat/message', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+                const response = await fetch('https://localhost:7179/api/AiChat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-            if (!response.ok) throw new Error('Network error');
+                if (!response.ok) throw new Error('Network error');
 
-            const result = await response.json();
-            sessionId = result.sessionId || sessionId;
-
-            hideTyping();
-            addAiMessage(result.reply);
-        } catch (error) {
-            console.error('Error:', error);
-            hideTyping();
-            addAiMessage(translations[currentLang].errorMsg);
-        }
-    }
-
-    function requestGeolocationIfNeeded() {
-        return new Promise((resolve) => {
-            if (!navigator || !navigator.geolocation) {
-                getLocationFromIP().then(resolve);
-                return;
-            }
-
-            const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 };
-
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const coords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
-                    currentCoords = coords;
-                    resolve(coords);
-                },
-                (err) => {
-                    console.warn('GPS error:', err.message);
-                    getLocationFromIP().then(resolve);
-                },
-                options
-            );
-        });
-    }
-
-    async function getLocationFromIP() {
-        try {
-            const response = await fetch('https://ipapi.co/json/');
-            if (!response.ok) return null;
-            const data = await response.json();
-            const coords = { latitude: data.latitude, longitude: data.longitude };
-            currentCoords = coords;
-            return coords;
-        } catch (error) {
-            return null;
-        }
-    }
-
-    async function initChat() {
-        showTyping();
-        try {
-            const payload = { Message: '', SessionId: '', Language: currentLang, Latitude: null, Longitude: null };
-
-            const response = await fetch('https://localhost:7179/api/AiChat/message', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (response.ok) {
                 const result = await response.json();
-                sessionId = result.sessionId || '';
+                sessionId = result.sessionId || sessionId;
+
                 hideTyping();
                 addAiMessage(result.reply);
-            } else {
+            } catch (error) {
+                console.error('Error:', error);
                 hideTyping();
                 addAiMessage(translations[currentLang].errorMsg);
             }
-        } catch (error) {
-            hideTyping();
-            const welcomeMsg = currentLang === 'nl'
-                ? "Hoi! 👋 Ik ben je restaurant conciërge AI. Waar kan ik je mee helpen?"
-                : "Hi! 👋 I'm your restaurant concierge AI. How can I help you?";
-            addAiMessage(welcomeMsg);
         }
-    }
 
-    function clearChat() {
-        chat.innerHTML = '';
-        sessionId = '';
+        function requestGeolocationIfNeeded() {
+            return new Promise((resolve) => {
+                if (!navigator || !navigator.geolocation) {
+                    getLocationFromIP().then(resolve);
+                    return;
+                }
+
+                const options = { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 };
+
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const coords = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+                        currentCoords = coords;
+                        resolve(coords);
+                    },
+                    (err) => {
+                        console.warn('GPS error:', err.message);
+                        getLocationFromIP().then(resolve);
+                    },
+                    options
+                );
+            });
+        }
+
+        async function getLocationFromIP() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                if (!response.ok) return null;
+                const data = await response.json();
+                const coords = { latitude: data.latitude, longitude: data.longitude };
+                currentCoords = coords;
+                return coords;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        async function initChat() {
+            showTyping();
+            try {
+                const payload = { Message: '', SessionId: '', Language: currentLang, Latitude: null, Longitude: null };
+
+                const response = await fetch('https://localhost:7179/api/AiChat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    sessionId = result.sessionId || '';
+                    hideTyping();
+                    addAiMessage(result.reply);
+                } else {
+                    hideTyping();
+                    addAiMessage(translations[currentLang].errorMsg);
+                }
+            } catch (error) {
+                hideTyping();
+                const welcomeMsg = currentLang === 'nl'
+                    ? "Hoi! 👋 Ik ben je restaurant conciërge AI. Waar kan ik je mee helpen?"
+                    : "Hi! 👋 I'm your restaurant concierge AI. How can I help you?";
+                addAiMessage(welcomeMsg);
+            }
+        }
+
+        function clearChat() {
+            chat.innerHTML = '';
+            sessionId = '';
+            initChat();
+        }
+
+        btn?.addEventListener('click', () => sendMessage());
+        input?.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+        });
+
+        updateLanguageUI();
+        // Don't request geolocation at startup - only when user needs it
+        // initGeolocation(); ← REMOVED
         initChat();
-    }
+        input?.focus();
 
-    btn?.addEventListener('click', () => sendMessage());
-    input?.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
-    });
-
-    updateLanguageUI();
-    initChat();
-    input?.focus();
-</script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
 }

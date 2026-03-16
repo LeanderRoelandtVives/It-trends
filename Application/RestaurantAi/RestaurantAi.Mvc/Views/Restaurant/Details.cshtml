@@ -7,6 +7,7 @@
 
 <script>
     // Extend tailwind config for this page's blue primary theme + dark mode
+    // Sync dark mode with localStorage preference from _Layout
     if (typeof tailwind !== 'undefined') {
         tailwind.config = {
             darkMode: "class",
@@ -36,10 +37,19 @@
         box-shadow: 0 4px 24px -2px rgba(0,0,0,0.04)
     }
 
+    .dark .menu-section-container {
+        background-color: #1e293b;
+        border-color: rgba(255,255,255,0.1)
+    }
+
     .menu-item-card {
         border-bottom: 1px dashed #e2e8f0;
         border-radius: 0;
         background: transparent
+    }
+
+    .dark .menu-item-card {
+        border-bottom-color: rgba(255,255,255,0.08)
     }
 
         .menu-item-card:last-child {
@@ -60,16 +70,13 @@
         border: 1px solid #bfdbfe;
         border-radius: 1rem
     }
+
+    .dark .ai-highlight-box {
+        background-color: rgba(19,91,236,0.1);
+        border-color: rgba(19,91,236,0.2)
+    }
 </style>
 
-{{!-- Dark mode toggle --}}
-<div class="fixed top-24 left-4 z-[100]">
-    <button class="p-3 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700"
-            onclick="document.documentElement.classList.toggle('dark')">
-        <span class="material-symbols-outlined dark:hidden">dark_mode</span>
-        <span class="material-symbols-outlined hidden dark:block text-yellow-400">light_mode</span>
-    </button>
-</div>
 
 <main class="max-w-[1200px] mx-auto px-4 md:px-10 py-6">
     <!-- Photo Grid -->
