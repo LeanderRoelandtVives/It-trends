@@ -10,9 +10,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<JwtHandler>();
 
 builder.Services.AddControllersWithViews();
+// Use configured ApiBaseUrl for all named API clients to avoid port mismatches
+var apiBase = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:5001/";
+
 builder.Services.AddHttpClient("RestaurantApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7179");
+    client.BaseAddress = new Uri(apiBase);
 })
 .AddHttpMessageHandler<JwtHandler>();
 
@@ -20,18 +23,36 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-.AddCookie()
-.AddGoogle(options =>
+.AddCookie();
+
+var googleSection = builder.Configuration.GetSection("Authentication:Google");
+var googleClientId = googleSection["ClientId"];
+var googleClientSecret = googleSection["ClientSecret"];
+
+if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
 {
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    options.CallbackPath = "/signin-google";
-});
+    builder.Services.AddAuthentication().AddGoogle(options =>
+    {
+        options.ClientId = googleClientId;
+        options.ClientSecret = googleClientSecret;
+        options.CallbackPath = "/signin-google";
+    });
+}
 
 builder.Services.AddSession();
 
 // Register AI Service
 builder.Services.AddSingleton<AIService>();
+
+// HTTP client for backend API (ensure JwtHandler is attached so JWT from session is forwarded)
+builder.Services.AddHttpClient("api", client =>
+{
+    client.BaseAddress = new Uri(apiBase);
+})
+.AddHttpMessageHandler<JwtHandler>();
+
+// Register auth api client
+builder.Services.AddScoped<RestaurantAi.Mvc.Services.AuthApiClient>();
 
 var app = builder.Build();
 

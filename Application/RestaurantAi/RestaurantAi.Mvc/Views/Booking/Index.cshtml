@@ -1,15 +1,26 @@
-﻿@{
+@model RestaurantAi.Mvc.Models.ReservationViewModel
+@{
     ViewData["Title"] = "DineReserve AI - Assisted Booking";
 }
 
 <style>
     .no-scrollbar::-webkit-scrollbar { display: none }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none }
+}
 </style>
 
 <div class="layout-container flex h-full grow flex-col">
     <main class="flex-1 flex justify-center py-6 lg:py-10">
         <div class="flex flex-col w-full max-w-[1280px] px-4 md:px-8">
+
+            <!-- TEMP BANNER: calendar removed -->
+            <div class="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded text-sm">
+                <strong>Note:</strong> The calendar/slots UI has been removed. If you still see it, hard-refresh the page (Ctrl+F5) or restart the MVC app.
+            </div>
+
+            @{ if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> } }
+            @{ if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> } }
+
             <div class="flex flex-wrap justify-between items-end gap-4 mb-10">
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center gap-2 text-gold font-bold text-sm uppercase tracking-widest">
@@ -36,7 +47,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <!-- Left: Date/Time/Party -->
+                <!-- Left: simplified reservation area (calendar removed) -->
                 <div class="lg:col-span-7 flex flex-col gap-8">
                     <div class="bg-[var(--bg-light)] rounded-2xl border border-[var(--border)] p-8 shadow-sm">
                         <div class="flex items-center justify-between mb-8">
@@ -104,13 +115,54 @@
                         </div>
                     </div>
 
-                    <div class="flex gap-5 p-6 rounded-2xl bg-gold/5 border border-gold/10 items-start">
-                        <div class="size-10 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
-                            <span class="material-symbols-outlined text-gold">notifications_active</span>
+                        <div class="flex gap-5 p-6 rounded-2xl bg-gold/5 border border-gold/10 items-start">
+                            <div class="size-10 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-gold">notifications_active</span>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-base mb-1">Reservation Policy</h4>
+                                <p class="text-sm text-[var(--text-muted)] leading-relaxed">Tables are held for 15 minutes. Cancellations made within 24 hours may incur a $25 fee per guest.</p>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="font-extrabold text-base mb-1">Reservation Policy</h4>
-                            <p class="text-sm text-[var(--text-muted)] leading-relaxed">Tables are held for 15 minutes. Cancellations made within 24 hours may incur a $25 fee per guest.</p>
+
+                        <!-- Working reservation form -->
+                        <div class="bg-gold/5 border-2 border-dashed border-gold/30 p-5 rounded-2xl mt-4">
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="material-symbols-outlined text-gold">description</span>
+                                <h4 class="text-sm font-black text-gold uppercase tracking-widest">Reservation Draft</h4>
+                            </div>
+
+                            <form asp-action="Create" asp-controller="Booking" method="post" class="space-y-3">
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-group">
+                                    <label class="text-xs font-semibold text-[var(--text-muted)]">Date</label>
+                                    <input asp-for="Date" type="date" class="form-control form-input rounded-lg w-full h-12 px-3" />
+                                    <span asp-validation-for="Date" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-xs font-semibold text-[var(--text-muted)]">Time</label>
+                                    <input asp-for="Time" class="form-control form-input rounded-lg w-full h-12 px-3" placeholder="7:00 PM" />
+                                    <span asp-validation-for="Time" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-xs font-semibold text-[var(--text-muted)]">Party Size</label>
+                                    <input asp-for="PartySize" type="number" min="1" max="20" class="form-control form-input rounded-lg w-full h-12 px-3" />
+                                    <span asp-validation-for="PartySize" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="text-xs font-semibold text-[var(--text-muted)]">Special Requests</label>
+                                    <input asp-for="SpecialRequests" class="form-control form-input rounded-lg w-full h-12 px-3" placeholder="Allergies, seating, etc." />
+                                </div>
+
+                                <div class="flex items-center gap-3">
+                                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg">Confirm Reservation</button>
+                                    <a asp-action="List" asp-controller="Booking" class="px-4 py-2 border rounded-lg">View My Bookings</a>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -158,6 +210,7 @@
                                 <p class="text-sm font-medium">Magnifique! I've noted the shellfish allergy for the chef. Securing a window seat for your 7:00 PM arrival...</p>
                             </div>
                         </div>
+
                         <div class="bg-gold/5 border-2 border-dashed border-gold/30 p-5 rounded-2xl">
                             <div class="flex items-center gap-2 mb-4">
                                 <span class="material-symbols-outlined text-gold">description</span>
@@ -166,17 +219,16 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center py-1 border-b border-gold/10">
                                     <span class="text-xs font-semibold text-[var(--text-muted)]">Date &amp; Time</span>
-                                    <span class="text-xs font-black">Oct 5, 2023 &bull; 7:00 PM</span>
+                                    <span class="text-xs font-black">@Model.Date.ToString("MMM d, yyyy") � @Model.Time</span>
                                 </div>
                                 <div class="flex justify-between items-center py-1 border-b border-gold/10">
                                     <span class="text-xs font-semibold text-[var(--text-muted)]">Occasion</span>
-                                    <span class="text-xs font-black text-pink-500 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">cake</span> Birthday</span>
+                                    <span class="text-xs font-black text-pink-500 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">cake</span> Special Occasion</span>
                                 </div>
                                 <div class="flex justify-between items-center py-1">
                                     <span class="text-xs font-semibold text-[var(--text-muted)]">Special Requests</span>
                                     <div class="flex flex-col items-end gap-1">
-                                        <span class="text-xs font-black">Shellfish Allergy</span>
-                                        <span class="text-xs font-black">Window Seat Request</span>
+                                        <span class="text-xs font-black">@Model.SpecialRequests</span>
                                     </div>
                                 </div>
                             </div>
@@ -198,12 +250,6 @@
                                 <span class="material-symbols-outlined">send</span>
                             </button>
                         </div>
-                    </div>
-                    <div class="p-4 bg-gold">
-                        <button class="w-full flex items-center justify-center gap-3 text-white font-black text-base h-14 hover:gap-5 transition-all">
-                            <span>Confirm Reservation</span>
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -256,3 +302,7 @@
     
     window.setLanguage = setLanguage;
 </script>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

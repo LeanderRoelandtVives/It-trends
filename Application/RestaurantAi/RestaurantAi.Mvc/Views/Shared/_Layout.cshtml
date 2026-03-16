@@ -1,4 +1,6 @@
 ﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Hosting
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,6 +71,7 @@
     @{
         string? loggedInUser = null;
         bool isAdmin = false;
+        string? subClaim = null;
         var jwtToken = Context.Session.GetString("JWToken");
         if (!string.IsNullOrEmpty(jwtToken))
         {
@@ -87,159 +90,125 @@
                 || c.Type == ClaimTypes.Role
                 || c.Type == "role")
                 && c.Value == "Admin");
+
+                subClaim = jwt.Claims.FirstOrDefault(c => c.Type == System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)?.Value;
             }
             catch { }
         }
+
+        var env = Context.RequestServices.GetService(typeof(IWebHostEnvironment)) as IWebHostEnvironment;
     }
-    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg-light)]/95 backdrop-blur-md transition-colors duration-300">
-        <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-12">
-                <div class="flex items-center gap-3">
-                    <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
-                        <span class="material-symbols-outlined font-bold">restaurant_menu</span>
-                    </div>
-                    <a asp-controller="Home" asp-action="Index"
-                       class="text-2xl font-extrabold tracking-tight uppercase text-[var(--text-main)] no-underline transition-colors duration-300">
-                        DineAI
-                    </a>
-                </div>
-                <nav class="hidden lg:flex items-center gap-8">
-                    @* <a asp-controller="Home" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
-                        EXPLORE
-                    </a> *@
-                    <a asp-controller="Home" asp-action="Dashboard"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
-                        CONCIERGE
-                    </a>
-                    @if (loggedInUser != null)
-                    {
-                        <a asp-controller="Menu" asp-action="Index"
-                           class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
-                            MENU
-                        </a>
-                    }
-                    <a asp-controller="Booking" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
-                        MY BOOKINGS
-                    </a>
-                    <a asp-controller="Home" asp-action="Privacy"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
-                        PRIVACY
-                    </a>
-                    @if (isAdmin)
-                    {
-                        <a asp-controller="Admin" asp-action="Users"
-                           class="text-sm font-medium text-gold hover:text-[var(--text-main)] transition-colors">
-                            ADMIN
-                        </a>
-                    }
-                </nav>
-            </div>
+
+    <header class="bg-[var(--bg-light)]/95 border-b border-[var(--border)] sticky top-0 z-50">
+        <div class="layout-content-container mx-auto flex items-center justify-between gap-8 px-4 md:px-8 py-4 max-w-[1280px]">
             <div class="flex items-center gap-4">
-                <div class="h-6 w-px bg-[var(--border)]"></div>
-                <button id="theme-toggle"
-                        onclick="toggleTheme()"
-                        class="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-gold transition-all"
-                        title="Toggle dark mode">
-                    <span id="icon-light" class="material-symbols-outlined hidden dark:block text-gold">light_mode</span>
-                    <span id="icon-dark" class="material-symbols-outlined block dark:hidden">dark_mode</span>
-                </button>
-                <div class="h-6 w-px bg-[var(--border)]"></div>
-                <div class="flex items-center gap-4">
-                    @if (loggedInUser != null)
-                    {
-                        <span class="text-sm font-semibold text-[var(--text-main)]">
-                            Hello, @loggedInUser
-                        </span>
-                        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
-                            @Html.AntiForgeryToken()
-                            <button type="submit"
-                                    class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all cursor-pointer border-0">
-                                Sign Out
-                            </button>
-                        </form>
-                    }
-                    else
-                    {
-                        <a asp-controller="Account" asp-action="Login"
-                           class="text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
-                            Sign In
-                        </a>
-                        <a asp-controller="Account" asp-action="Register"
-                           class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">
-                            Get Started
-                        </a>
-                    }
+                <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined">restaurant_menu</span>
                 </div>
+                <a asp-controller="Home" asp-action="Index" class="text-xl font-extrabold uppercase tracking-tight no-underline">DineAI</a>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-6 text-sm text-[var(--text-muted)]">
+                <a asp-controller="Home" asp-action="Index" class="hover:text-[var(--text-main)]">Explore</a>
+                <a asp-controller="Home" asp-action="Dashboard" class="hover:text-[var(--text-main)]">Concierge</a>
+                @if (loggedInUser != null)
+                {
+                    <a asp-controller="Menu" asp-action="Index" class="hover:text-[var(--text-main)]">Menu</a>
+                }
+                <a asp-controller="Booking" asp-action="Index" class="hover:text-[var(--text-main)]">My Bookings</a>
+                <a asp-controller="Home" asp-action="Privacy" class="hover:text-[var(--text-main)]">Privacy</a>
+                @if (isAdmin)
+                {
+                    <a asp-controller="Admin" asp-action="Users" class="text-gold">Admin</a>
+                }
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)]"> <span class="material-symbols-outlined">dark_mode</span></button>
+
+                @if (loggedInUser != null)
+                {
+                    <span class="text-sm font-semibold">Hello, @loggedInUser</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="px-4 py-2 bg-gold text-white rounded-lg">Sign Out</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="text-sm">Sign In</a>
+                    <a asp-controller="Account" asp-action="Register" class="px-3 py-2 bg-gold text-white rounded-lg">Get Started</a>
+                }
             </div>
         </div>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
+
+    @* Main content wrapper to match other pages *@
+    <div class="layout-container flex h-full grow flex-col">
+        <main class="flex-1 flex justify-center py-6 lg:py-10">
+            <div class="layout-content-container flex flex-col w-full max-w-[1280px] px-4 md:px-8">
+                @* show small debug badge only in Development *@
+                @if (env?.IsDevelopment() == true)
+                {
+                    <div class="mb-4 text-sm text-[var(--text-muted)]">DEBUG: JWToken: @(string.IsNullOrEmpty(jwtToken) ? "(none)" : "present") — sub: @(string.IsNullOrEmpty(subClaim) ? "-" : subClaim)</div>
+                }
+
+                @RenderBody()
+            </div>
         </main>
     </div>
-    <footer class="border-t border-[var(--border)] py-16 bg-[var(--bg-soft-gray)] transition-colors duration-300">
-        <div class="max-w-[1440px] mx-auto px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1">
+
+    <footer class="bg-[var(--bg-soft-gray)] border-t border-[var(--border)]">
+        <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-8">
+                <div>
                     <div class="flex items-center gap-3 mb-4">
                         <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
-                            <span class="material-symbols-outlined font-bold">restaurant_menu</span>
+                            <span class="material-symbols-outlined">restaurant_menu</span>
                         </div>
-                        <h2 class="text-2xl font-extrabold uppercase text-[var(--text-main)]">DineAI</h2>
+                        <h3 class="text-lg font-extrabold uppercase">DineAI</h3>
                     </div>
-                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
-                        AI-powered dining discovery and reservation platform for discerning food lovers.
-                    </p>
+                    <p class="text-sm text-[var(--text-muted)]">AI-powered dining discovery and reservation platform for discerning food lovers.</p>
                 </div>
                 <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4 text-[var(--text-main)]">Platform</h3>
-                    <ul class="space-y-3">
-                        <li><a asp-controller="Home" asp-action="Dashboard" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Explore</a></li>
-                        <li><a asp-controller="Booking" asp-action="Index" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">My Bookings</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Collections</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Favorites</a></li>
+                    <h4 class="font-black text-sm uppercase tracking-widest mb-4">Platform</h4>
+                    <ul class="space-y-3 text-sm text-[var(--text-muted)]">
+                        <li><a asp-controller="Home" asp-action="Dashboard" class="hover:text-[var(--text-main)]">Explore</a></li>
+                        <li><a asp-controller="Booking" asp-action="Index" class="hover:text-[var(--text-main)]">My Bookings</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)]">Collections</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)]">Favorites</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4 text-[var(--text-main)]">Company</h3>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">About Us</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Careers</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Press</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Partners</a></li>
+                    <h4 class="font-black text-sm uppercase tracking-widest mb-4">Company</h4>
+                    <ul class="space-y-3 text-sm text-[var(--text-muted)]">
+                        <li><a href="#" class="hover:text-[var(--text-main)]">About Us</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)]">Careers</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)]">Press</a></li>
+                        <li><a href="#" class="hover:text-[var,--text-main)]">Partners</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="font-black text-sm uppercase tracking-widest mb-4 text-[var(--text-main)]">Legal</h3>
-                    <ul class="space-y-3">
-                        <li><a asp-controller="Home" asp-action="Privacy" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Cookie Policy</a></li>
-                        <li><a href="#" class="text-sm text-[var(--text-muted)] hover:text-gold transition-colors">Support</a></li>
+                    <h4 class="font-black text-sm uppercase tracking-widest mb-4">Legal</h4>
+                    <ul class="space-y-3 text-sm text-[var(--text-muted)]">
+                        <li><a asp-controller="Home" asp-action="Privacy" class="hover:text-[var(--text-main)]">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)]">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)]">Cookie Policy</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)]">Support</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">
-                    © @DateTime.Now.Year DineAI Luxury Group. All rights reserved.
-                </p>
-                <div class="flex gap-6">
-                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
-                        <span class="material-symbols-outlined">language</span>
-                    </a>
-                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
-                        <span class="material-symbols-outlined">chat</span>
-                    </a>
-                    <a href="#" class="text-[var(--text-muted)] hover:text-gold transition-colors">
-                        <span class="material-symbols-outlined">help</span>
-                    </a>
+            <div class="border-t border-[var(--border)] pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-[var(--text-muted)]">© @DateTime.Now.Year DineAI. All rights reserved.</p>
+                <div class="flex gap-6 text-[var(--text-muted)]">
+                    <a href="#" class="hover:text-[var(--text-main)]">Terms</a>
+                    <a href="#" class="hover:text-[var(--text-main)]">Privacy</a>
+                    <a href="#" class="hover:text-[var(--text-main)]">Support</a>
                 </div>
             </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
