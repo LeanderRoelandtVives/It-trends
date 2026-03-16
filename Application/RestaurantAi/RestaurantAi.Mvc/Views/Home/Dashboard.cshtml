@@ -8,11 +8,20 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>@ViewData["Title"]</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -38,6 +47,14 @@
                 --text-muted: #6b7280;
                 --border: #e5e7eb;
             }
+
+            .dark {
+                --bg-light: #0f0f0f;
+                --bg-soft-gray: #1a1a1a;
+                --text-main: #f3f4f6;
+                --text-muted: #9ca3af;
+                --border: #2d2d2d;
+            }
         }
         .font-display {
             font-family: 'Manrope', sans-serif;
@@ -59,14 +76,14 @@
 </head>
 <body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] transition-colors duration-500">
 
-    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg-light)]/95 backdrop-blur-md transition-colors duration-300">
         <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-12">
                 <div class="flex items-center gap-3">
                     <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
                         <span class="material-symbols-outlined font-bold">restaurant_menu</span>
                     </div>
-                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">DineAI</h1>
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-[var(--text-main)]">DineAI</h1>
                 </div>
 
                 <nav class="hidden lg:flex items-center gap-8">
@@ -80,12 +97,12 @@
             <div class="flex items-center gap-6">
                 <!-- Language Switcher -->
                 <div class="relative">
-                    <button id="languageButton" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-[var(--text-main)] hover:bg-gray-50 transition-all border border-[var(--border)] group">
+                    <button id="languageButton" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-light)] text-[var(--text-main)] hover:bg-[var(--bg-soft-gray)] transition-all border border-[var(--border)] group">
                         <span class="material-symbols-outlined text-lg">language</span>
                         <span id="currentLanguage" class="text-sm font-bold">EN</span>
                         <span class="material-symbols-outlined text-sm group-hover:rotate-180 transition-transform">expand_more</span>
                     </button>
-                    <div id="languageMenu" class="hidden absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-[var(--border)] overflow-hidden z-50">
+                    <div id="languageMenu" class="hidden absolute right-0 mt-2 w-40 bg-[var(--bg-light)] rounded-xl shadow-xl border border-[var(--border)] overflow-hidden z-50">
                         <button onclick="setLanguage('en')" class="w-full px-4 py-3 text-left text-sm font-semibold hover:bg-gold/10 hover:text-gold transition-colors flex items-center gap-3">
                             <span class="text-lg">🇬🇧</span> English
                         </button>
@@ -96,9 +113,16 @@
                 </div>
 
                 <div class="h-6 w-px bg-[var(--border)]"></div>
+                <button id="theme-toggle" onclick="toggleTheme()"
+                        class="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-gold transition-all"
+                        title="Toggle dark mode">
+                    <span class="material-symbols-outlined hidden dark:block text-gold">light_mode</span>
+                    <span class="material-symbols-outlined block dark:hidden">dark_mode</span>
+                </button>
+                <div class="h-6 w-px bg-[var(--border)]"></div>
 
                 <div class="flex items-center gap-4">
-                    <a asp-controller="Account" asp-action="Login" class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">Sign In</a>
+                    <a asp-controller="Account" asp-action="Login" class="text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">Sign In</a>
                     <a asp-controller="Account" asp-action="Register" class="px-6 py-2.5 bg-gold text-white text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all">Get Started</a>
                 </div>
             </div>
@@ -107,7 +131,7 @@
 
     <div class="flex h-screen w-full overflow-hidden pt-20">
         <main class="flex-1 flex flex-col bg-[var(--bg-soft-gray)] relative">
-            <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-white/80 backdrop-blur-md z-10 sticky top-0">
+            <header class="flex items-center justify-between px-8 py-4 border-b border-[var(--border)] bg-[var(--bg-light)]/80 backdrop-blur-md z-10 sticky top-0">
                 <div class="flex items-center gap-3">
                     <div class="relative">
                         <div class="size-10 rounded-full bg-gold/20 flex items-center justify-center text-gold ring-2 ring-gold/10 ring-offset-2 ring-offset-white">
@@ -125,7 +149,7 @@
                     </div>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="clearChat()" class="p-2 rounded-lg bg-white text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" title="Clear conversation">
+                    <button onclick="clearChat()" class="p-2 rounded-lg bg-[var(--bg-light)] text-[var(--text-muted)] hover:text-gold transition-colors border border-[var(--border)]" title="Clear conversation">
                         <span class="material-symbols-outlined">refresh</span>
                     </button>
                 </div>
@@ -136,7 +160,7 @@
             <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[var(--bg-soft-gray)] via-[var(--bg-soft-gray)]/95 to-transparent">
                 <div class="max-w-4xl mx-auto relative">
                     <input id="aiMessageInput"
-                           class="w-full bg-white border border-[var(--border)] rounded-2xl py-5 px-6 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
+                           class="w-full bg-[var(--bg-light)] border border-[var(--border)] rounded-2xl py-5 px-6 pr-20 text-sm focus:ring-2 focus:ring-gold focus:border-transparent transition-all shadow-2xl placeholder:text-[var(--text-muted)]"
                            placeholder="Ask me anything about restaurants..."
                            type="text" />
                     <div class="absolute inset-y-0 right-5 flex items-center gap-3">
@@ -230,7 +254,7 @@
                     <span class="material-symbols-outlined">smart_toy</span>
                 </div>
                 <div class="flex-1">
-                    <div class="p-5 rounded-2xl rounded-tl-none bg-white border border-[var(--border)] shadow-sm">
+                    <div class="p-5 rounded-2xl rounded-tl-none bg-[var(--bg-light)] border border-[var(--border)] shadow-sm">
                         <p class="text-sm leading-relaxed whitespace-pre-line">${escapeHtml(text)}</p>
                     </div>
                 </div>
@@ -423,6 +447,17 @@
         // initGeolocation(); ← REMOVED
         initChat();
         input?.focus();
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
     </script>
 </body>
 </html>

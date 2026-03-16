@@ -9,11 +9,20 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>@ViewData["Title"]</title>
+    <script>
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -39,6 +48,14 @@
                 --text-muted: #6b7280;
                 --border: #e5e7eb;
             }
+
+            .dark {
+                --bg-light: #0f0f0f;
+                --bg-soft-gray: #1a1a1a;
+                --text-main: #f3f4f6;
+                --text-muted: #9ca3af;
+                --border: #2d2d2d;
+            }
         }
         .font-display {
             font-family: 'Manrope', sans-serif;
@@ -54,35 +71,35 @@
         }
     </style>
 </head>
-<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] overflow-hidden">
+<body class="bg-[var(--bg-light)] font-display text-[var(--text-main)] overflow-hidden transition-colors duration-300">
 
-    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-white/95 backdrop-blur-md">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border)] bg-[var(--bg-light)]/95 backdrop-blur-md transition-colors duration-300">
         <div class="max-w-[1440px] mx-auto px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-12">
                 <div class="flex items-center gap-3">
                     <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
                         <span class="material-symbols-outlined font-bold">restaurant_menu</span>
                     </div>
-                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-charcoal">
+                    <h1 class="text-2xl font-extrabold tracking-tight uppercase text-[var(--text-main)]">
                         DineAI
                     </h1>
                 </div>
 
                 <nav class="hidden lg:flex items-center gap-8">
                     <a asp-controller="Home" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         EXPLORE
                     </a>
                     <a asp-controller="Home" asp-action="Dashboard"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         CONCIERGE
                     </a>
                     <a asp-controller="Booking" asp-action="Index"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         MY BOOKINGS
                     </a>
                     <a asp-controller="Home" asp-action="Privacy"
-                       class="text-sm font-medium text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         PRIVACY
                     </a>
                 </nav>
@@ -90,10 +107,17 @@
 
             <div class="flex items-center gap-6">
                 <div class="h-6 w-px bg-[var(--border)]"></div>
+                <button onclick="toggleTheme()"
+                        class="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-gold transition-all"
+                        title="Toggle dark mode">
+                    <span class="material-symbols-outlined hidden dark:block text-gold">light_mode</span>
+                    <span class="material-symbols-outlined block dark:hidden">dark_mode</span>
+                </button>
+                <div class="h-6 w-px bg-[var(--border)]"></div>
 
                 <div class="flex items-center gap-4">
                     <a asp-controller="Account" asp-action="Login"
-                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-charcoal transition-colors">
+                       class="text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                         Sign In
                     </a>
                     <a asp-controller="Account" asp-action="Register"
@@ -114,14 +138,14 @@
             </div>
             <div class="relative z-10 flex flex-col justify-between p-12 w-full">
                 <div class="max-w-md mt-auto mb-20">
-                    <h2 class="text-5xl font-extrabold leading-tight mb-6 text-charcoal">Redefining the art of discovery.</h2>
+                    <h2 class="text-5xl font-extrabold leading-tight mb-6 text-[var(--text-main)]">Redefining the art of discovery.</h2>
                     <p class="text-xl text-[var(--text-muted)] font-light">Experience a world where every reservation is a masterpiece, curated specifically for your palate.</p>
                 </div>
             </div>
         </div>
 
         <!-- Right Form -->
-        <div class="w-full lg:w-1/2 h-full flex flex-col items-center justify-center p-8 md:p-16 bg-white overflow-y-auto">
+        <div class="w-full lg:w-1/2 h-full flex flex-col items-center justify-center p-8 md:p-16 bg-[var(--bg-light)] overflow-y-auto">
             <div class="w-full max-w-[480px]">
                 <div class="mb-10">
                     <h2 class="text-4xl font-black tracking-tight mb-2">Join the Table</h2>
@@ -132,23 +156,23 @@
                     @Html.AntiForgeryToken()
                     <div class="grid grid-cols-2 gap-4">
                         <label class="flex flex-col gap-2">
-                            <span class="text-sm font-medium text-charcoal">First Name</span>
+                            <span class="text-sm font-medium text-[var(--text-main)]">First Name</span>
                             <input asp-for="FirstName" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
                                    placeholder="Alex" type="text" />
                         </label>
                         <label class="flex flex-col gap-2">
-                            <span class="text-sm font-medium text-charcoal">Last Name</span>
+                            <span class="text-sm font-medium text-[var(--text-main)]">Last Name</span>
                             <input asp-for="LastName" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
                                    placeholder="Luxury" type="text" />
                         </label>
                     </div>
                     <label class="flex flex-col gap-2">
-                        <span class="text-sm font-medium text-charcoal">Email Address</span>
+                        <span class="text-sm font-medium text-[var(--text-main)]">Email Address</span>
                         <input asp-for="Email" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
                                placeholder="e.g., alex@luxury.com" type="email" />
                     </label>
                     <label class="flex flex-col gap-2">
-                        <span class="text-sm font-medium text-charcoal">Password</span>
+                        <span class="text-sm font-medium text-[var(--text-main)]">Password</span>
                         <input asp-for="Password" class="form-input rounded-lg border-[var(--border)] bg-[var(--bg-soft-gray)] text-charcoal focus:border-gold focus:ring-1 focus:ring-gold h-12 px-4 placeholder:text-[var(--text-muted)]"
                                placeholder="••••••••" type="password" />
                     </label>
@@ -164,7 +188,7 @@
                             </div>
                             <span class="font-bold text-sm uppercase tracking-wider text-gold">AI Concierge Initialization</span>
                         </div>
-                        <p class="text-sm text-charcoal mb-4">"Help your AI agent personalize your journey. Which flavors do you crave most?"</p>
+                        <p class="text-sm text-[var(--text-main)] mb-4">"Help your AI agent personalize your journey. Which flavors do you crave most?"</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach (var p in new[]{
                                 new { Icon="restaurant_menu", Label="Fine Dining", Active=true },
@@ -213,5 +237,17 @@
             </div>
         </div>
     </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
 </body>
 </html>
