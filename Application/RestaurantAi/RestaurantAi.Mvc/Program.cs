@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using RestaurantAi.Model;
 using RestaurantAi.Mvc.Handlers;
+using RestaurantAi.Mvc.Services;
 using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +41,8 @@ if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientS
 
 builder.Services.AddSession();
 
+// Register AI Service
+builder.Services.AddSingleton<AIService>();
 
 // HTTP client for backend API (ensure JwtHandler is attached so JWT from session is forwarded)
 builder.Services.AddHttpClient("api", client =>

@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <a asp-action="Index" asp-controller="Home"
-                   class="flex items-center gap-2 rounded-xl h-11 px-6 bg-white text-charcoal text-sm font-bold hover:bg-gray-50 transition-all border border-[var(--border)]">
+                   class="flex items-center gap-2 rounded-xl h-11 px-6 bg-[var(--bg-soft-gray)] text-[var(--text-main)] text-sm font-bold hover:bg-[var(--bg-light)] transition-all border border-[var(--border)]">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span> Back to Discovery
                 </a>
             </div>
@@ -49,9 +49,71 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <!-- Left: simplified reservation area (calendar removed) -->
                 <div class="lg:col-span-7 flex flex-col gap-8">
-                    <div class="bg-white rounded-2xl border border-[var(--border)] p-8 shadow-sm">
-                        <h3 class="text-xl font-bold mb-4">Make a Reservation</h3>
-                        <p class="text-sm text-[var(--text-muted)] mb-6">Choose a date, time and party size below and confirm your booking.</p>
+                    <div class="bg-[var(--bg-light)] rounded-2xl border border-[var(--border)] p-8 shadow-sm">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-xl font-bold">Select Date &amp; Time</h3>
+                            <div class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">Step 1 of 2</div>
+                        </div>
+                        <div class="flex flex-col items-center gap-4 max-w-[400px] mx-auto lg:mx-0">
+                            <div class="flex items-center justify-between w-full mb-2">
+                                <button class="p-2 rounded-xl bg-[var(--bg-soft-gray)] hover:bg-[var(--bg-soft-gray)] transition-colors">
+                                    <span class="material-symbols-outlined">chevron_left</span>
+                                </button>
+                                <p class="text-lg font-extrabold">October 2023</p>
+                                <button class="p-2 rounded-xl bg-[var(--bg-soft-gray)] hover:bg-[var(--bg-soft-gray)] transition-colors">
+                                    <span class="material-symbols-outlined">chevron_right</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-7 w-full gap-1">
+                                @foreach (var d in new[] { "S", "M", "T", "W", "T", "F", "S" })
+                                {
+                                    <p class="text-[var(--text-muted)] text-xs font-black uppercase text-center py-2">@d</p>
+                                }
+                                <div class="col-start-4"></div>
+                                @for (int i = 1; i <= 10; i++)
+                                {
+                                    if (i == 5)
+                                    {
+                                        <button class="h-12 w-full flex items-center justify-center rounded-xl bg-gold text-white font-black shadow-lg shadow-gold/30">@i</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="h-12 w-full flex items-center justify-center rounded-xl hover:bg-[var(--bg-soft-gray)] font-bold transition-colors">@i</button>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="my-8 border-t border-[var(--border)]"></div>
+
+                        <h3 class="text-xs font-black uppercase text-[var(--text-muted)] tracking-widest mb-4">Party Size</h3>
+                        <div class="flex gap-2 flex-wrap mb-8">
+                            <button class="h-10 px-5 rounded-xl bg-[var(--bg-soft-gray)] font-bold text-sm transition-colors">1 Guest</button>
+                            <button class="h-10 px-5 rounded-xl bg-gold/10 border-2 border-gold text-gold font-black text-sm">2 Guests</button>
+                            <button class="h-10 px-5 rounded-xl bg-[var(--bg-soft-gray)] font-bold text-sm transition-colors">3 Guests</button>
+                            <button class="h-10 px-5 rounded-xl bg-[var(--bg-soft-gray)] font-bold text-sm transition-colors">4 Guests</button>
+                            <button class="h-10 px-5 rounded-xl bg-[var(--bg-soft-gray)] font-bold text-sm transition-colors">5+</button>
+                        </div>
+
+                        <h3 class="text-xs font-black uppercase text-[var(--text-muted)] tracking-widest mb-4">Available Times</h3>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            @foreach (var slot in new[] { ("6:00 PM", false), ("6:30 PM", false), ("7:00 PM", true), ("7:30 PM", false), ("8:00 PM", false), ("8:30 PM", false), ("9:00 PM", false), ("9:30 PM", false) })
+                            {
+                                if (slot.Item2)
+                                {
+                                    <button class="h-12 rounded-xl bg-gold text-white font-black text-sm shadow-md shadow-gold/20">@slot.Item1</button>
+                                }
+                                else if (slot.Item1 == "9:30 PM")
+                                {
+                                    <button class="h-12 rounded-xl bg-[var(--bg-soft-gray)] font-bold text-sm opacity-40 cursor-not-allowed" disabled>@slot.Item1</button>
+                                }
+                                else
+                                {
+                                    <button class="h-12 rounded-xl bg-[var(--bg-soft-gray)] font-bold text-sm hover:ring-2 hover:ring-gold/50 transition-all">@slot.Item1</button>
+                                }
+                            }
+                        </div>
+                    </div>
 
                         <div class="flex gap-5 p-6 rounded-2xl bg-gold/5 border border-gold/10 items-start">
                             <div class="size-10 rounded-full bg-gold/20 flex items-center justify-center shrink-0">
@@ -105,8 +167,8 @@
                     </div>
                 </div>
 
-                <!-- Right: AI Concierge Chat (no form) -->
-                <div class="lg:col-span-5 flex flex-col h-[700px] bg-white rounded-2xl border border-[var(--border)] overflow-hidden shadow-2xl">
+                <!-- Right: AI Concierge Chat -->
+                <div class="lg:col-span-5 flex flex-col h-[700px] bg-[var(--bg-light)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-2xl">
                     <div class="p-5 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg-soft-gray)]">
                         <div class="flex items-center gap-4">
                             <div class="relative">
@@ -125,15 +187,15 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="p-2 text-[var(--text-muted)] hover:text-charcoal">
+                        <button class="p-2 text-[var(--text-muted)] hover:text-[var(--text-main)]">
                             <span class="material-symbols-outlined">tune</span>
                         </button>
                     </div>
 
                     <div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6 no-scrollbar">
                         <div class="flex flex-col gap-1.5 max-w-[85%] self-start">
-                            <div class="bg-gray-100 p-4 rounded-2xl rounded-tl-none shadow-sm">
-                                <p class="text-sm font-medium leading-relaxed">Bonjour! I've confirmed availability for your selected date. Would you like to proceed?</p>
+                            <div class="bg-[var(--bg-soft-gray)] p-4 rounded-2xl rounded-tl-none shadow-sm">
+                                <p class="text-sm font-medium leading-relaxed">Bonjour! I've confirmed availability for October 5th at 7:00 PM for 2 guests. Would you like to proceed?</p>
                             </div>
                             <span class="text-[10px] font-bold text-[var(--text-muted)] ml-1 uppercase">11:42 AM &bull; Delivered</span>
                         </div>
@@ -144,8 +206,8 @@
                             <span class="text-[10px] font-bold text-[var(--text-muted)] mr-1 text-right uppercase">11:43 AM &bull; Read</span>
                         </div>
                         <div class="flex flex-col gap-1.5 max-w-[85%] self-start">
-                            <div class="bg-gray-100 p-4 rounded-2xl rounded-tl-none shadow-sm">
-                                <p class="text-sm font-medium">Magnifique! I've noted the shellfish allergy for the chef. Securing a window seat for your arrival...</p>
+                            <div class="bg-[var(--bg-soft-gray)] p-4 rounded-2xl rounded-tl-none shadow-sm">
+                                <p class="text-sm font-medium">Magnifique! I've noted the shellfish allergy for the chef. Securing a window seat for your 7:00 PM arrival...</p>
                             </div>
                         </div>
 
@@ -157,7 +219,7 @@
                             <div class="space-y-3">
                                 <div class="flex justify-between items-center py-1 border-b border-gold/10">
                                     <span class="text-xs font-semibold text-[var(--text-muted)]">Date &amp; Time</span>
-                                    <span class="text-xs font-black">@Model.Date.ToString("MMM d, yyyy") • @Model.Time</span>
+                                    <span class="text-xs font-black">@Model.Date.ToString("MMM d, yyyy") ï¿½ @Model.Time</span>
                                 </div>
                                 <div class="flex justify-between items-center py-1 border-b border-gold/10">
                                     <span class="text-xs font-semibold text-[var(--text-muted)]">Occasion</span>
@@ -175,13 +237,13 @@
 
                     <div class="p-5 bg-[var(--bg-soft-gray)] border-t border-[var(--border)] backdrop-blur-md">
                         <div class="flex gap-3 mb-4 overflow-x-auto no-scrollbar pb-1">
-                            <button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-bold bg-white hover:bg-gray-50 transition-colors">Add high chair</button>
-                            <button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-bold bg-white hover:bg-gray-50 transition-colors">Outdoor seating?</button>
-                            <button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-bold bg-white hover:bg-gray-50 transition-colors">Pre-order wine</button>
+                            <button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-bold bg-[var(--bg-soft-gray)] hover:bg-[var(--bg-light)] transition-colors">Add high chair</button>
+                            <button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-bold bg-[var(--bg-soft-gray)] hover:bg-[var(--bg-light)] transition-colors">Outdoor seating?</button>
+                            <button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-[var(--border)] text-[11px] font-bold bg-[var(--bg-soft-gray)] hover:bg-[var(--bg-light)] transition-colors">Pre-order wine</button>
                         </div>
                         <div class="flex gap-2">
                             <div class="relative flex-1">
-                                <input class="w-full bg-white border-[var(--border)] rounded-xl text-sm px-4 py-3 focus:ring-2 focus:ring-gold focus:border-transparent outline-none transition-all" placeholder="Message Concierge AI..." type="text" />
+                                <input class="w-full bg-[var(--bg-soft-gray)] text-[var(--text-main)] border border-[var(--border)] rounded-xl text-sm px-4 py-3 focus:ring-2 focus:ring-gold focus:border-transparent outline-none transition-all" placeholder="Message Concierge AI..." type="text" />
                                 <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] cursor-pointer">mic</span>
                             </div>
                             <button class="size-11 bg-gold rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-gold/20 hover:scale-[1.05] active:scale-[0.95] transition-all">
@@ -208,6 +270,38 @@
         </div>
     </main>
 </div>
+
+<script>
+    // Simple language switcher for Booking page
+    let currentLang = localStorage.getItem('language') || 'en';
+    
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('language', lang);
+        document.getElementById('currentLanguage').textContent = lang.toUpperCase();
+        document.getElementById('languageMenu').classList.add('hidden');
+    }
+    
+    // Set initial language
+    document.getElementById('currentLanguage').textContent = currentLang.toUpperCase();
+    
+    // Toggle language menu
+    document.getElementById('languageButton')?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('languageMenu').classList.toggle('hidden');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('languageMenu');
+        const button = document.getElementById('languageButton');
+        if (menu && button && !menu.contains(e.target) && !button.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+    
+    window.setLanguage = setLanguage;
+</script>
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />

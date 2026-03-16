@@ -6,3 +6,5 @@ obj/
 *.cache
 *.log
 *.vspscc
+*.vspscc
+appsettings.Development.json
