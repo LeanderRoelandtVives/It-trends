@@ -112,11 +112,10 @@
                 <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
                     <span class="material-symbols-outlined">restaurant_menu</span>
                 </div>
-                <a asp-controller="Home" asp-action="Index" class="text-xl font-extrabold uppercase tracking-tight no-underline">DineAI</a>
+                <a asp-controller="Menu" asp-action="Index" class="text-xl font-extrabold uppercase tracking-tight no-underline">DineAI</a>
             </div>
 
             <nav class="hidden lg:flex items-center gap-6 text-sm text-[var(--text-muted)]">
-                <a asp-controller="Home" asp-action="Index" class="hover:text-[var(--text-main)]">Explore</a>
                 <a asp-controller="Home" asp-action="Dashboard" class="hover:text-[var(--text-main)]">Concierge</a>
                 @if (loggedInUser != null)
                 {
@@ -154,12 +153,6 @@
     <div class="layout-container flex h-full grow flex-col">
         <main class="flex-1 flex justify-center py-6 lg:py-10">
             <div class="layout-content-container flex flex-col w-full max-w-[1280px] px-4 md:px-8">
-                @* show small debug badge only in Development *@
-                @if (env?.IsDevelopment() == true)
-                {
-                    <div class="mb-4 text-sm text-[var(--text-muted)]">DEBUG: JWToken: @(string.IsNullOrEmpty(jwtToken) ? "(none)" : "present") — sub: @(string.IsNullOrEmpty(subClaim) ? "-" : subClaim)</div>
-                }
-
                 @RenderBody()
             </div>
         </main>
