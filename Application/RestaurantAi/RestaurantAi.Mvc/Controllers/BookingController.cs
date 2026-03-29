@@ -34,6 +34,22 @@ public class BookingController : BaseController
         }
     }
 
+    private bool IsAdmin()
+    {
+        var token = HttpContext.Session.GetString("JWToken");
+        if (string.IsNullOrEmpty(token)) return false;
+
+        try
+        {
+            var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(token);
+            return jwt.Claims.Any(c =>
+                c.Type == System.Security.Claims.ClaimTypes.Role &&
+                c.Value == "Admin");
+        }
+        catch { return false; }
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index()
     {
@@ -46,7 +62,6 @@ public class BookingController : BaseController
         var userId = GetCurrentUserId();
         if (userId == null)
         {
-            // Not logged in — redirect to login and come back
             var returnUrl = Url.Action("New", "Booking");
             return RedirectToAction("Login", "Account", new { returnUrl });
         }
@@ -120,7 +135,7 @@ public class BookingController : BaseController
             SpecialRequests = item.SpecialRequests
         };
 
-        if (model.OwnerId != userId) return Forbid();
+        if (model.OwnerId != userId && !IsAdmin()) return Forbid();
 
         return View(model);
     }
@@ -132,19 +147,24 @@ public class BookingController : BaseController
         if (userId == null) return RedirectToAction("Login", "Account");
 
         var reservations = await _api.GetReservationsAsync();
-        var mine = reservations?.Where(r => r.OwnerId == userId)
-            .Select(r => new ReservationViewModel
-            {
-                Id = r.Id.ToString(),
-                OwnerId = r.OwnerId,
-                Date = r.Date,
-                Time = r.Time,
-                PartySize = r.PartySize,
-                SpecialRequests = r.SpecialRequests
-            })
-            .ToList() ?? new List<ReservationViewModel>();
 
-        return View(mine);
+        var filtered = IsAdmin()
+            ? reservations ?? new List<Reservation>()
+            : reservations?.Where(r => r.OwnerId == userId).ToList()
+              ?? new List<Reservation>();
+
+        var viewModels = filtered.Select(r => new ReservationViewModel
+        {
+            Id = r.Id.ToString(),
+            OwnerId = r.OwnerId,
+            Date = r.Date,
+            Time = r.Time,
+            PartySize = r.PartySize,
+            SpecialRequests = r.SpecialRequests
+        }).ToList();
+
+        ViewBag.IsAdmin = IsAdmin();
+        return View(viewModels);
     }
 
     [HttpGet]
@@ -156,7 +176,7 @@ public class BookingController : BaseController
         var reservations = await _api.GetReservationsAsync();
         var r = reservations?.FirstOrDefault(x => x.Id == id);
         if (r == null) return NotFound();
-        if (r.OwnerId != userId) return Forbid();
+        if (r.OwnerId != userId && !IsAdmin()) return Forbid();
 
         var model = new ReservationViewModel
         {

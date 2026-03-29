@@ -2,46 +2,91 @@
 @{
     ViewData["Title"] = "My Bookings";
     Layout = "_Layout";
+    bool isAdmin = ViewBag.IsAdmin ?? false;
 }
 
-<div class="container py-8">
-    <h1 class="mb-4">My Bookings</h1>
+<div class="flex flex-wrap justify-between items-end gap-4 mb-10">
+    <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2 text-gold font-bold text-sm uppercase tracking-widest">
+            <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+            Reservations
+        </div>
+        <h1 class="text-3xl md:text-5xl font-black leading-tight tracking-tight">
+            @(isAdmin ? "All Bookings" : "My Bookings")
+        </h1>
+    </div>
+    <a asp-controller="Booking" asp-action="New"
+       class="flex items-center gap-2 h-11 px-6 bg-gold text-white text-sm font-bold rounded-xl shadow-lg shadow-gold/20 hover:scale-[1.02] transition-all">
+        <span class="material-symbols-outlined text-[18px]">add</span> Make a Reservation
+    </a>
+</div>
 
-    <a class="btn btn-primary mb-3" asp-controller="Booking" asp-action="New">Make a Reservation</a>
-
-    @if (Model == null || Model.Count == 0)
-    {
-        <div class="alert alert-info">You have no bookings yet.</div>
-    }
-    else
-    {
-        <table class="table">
+@if (Model == null || Model.Count == 0)
+{
+    <div class="flex flex-col items-center justify-center py-24 gap-4 text-[var(--text-muted)]">
+        <span class="material-symbols-outlined text-[64px] text-gold/40">calendar_month</span>
+        <p class="text-lg font-semibold">No bookings found.</p>
+    </div>
+}
+else
+{
+    <div class="rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
+        <table class="w-full text-sm">
             <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Party</th>
-                    <th>Requests</th>
-                    <th></th>
+                <tr class="bg-[var(--bg-soft-gray)] border-b border-[var(--border)]">
+                    <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">#</th>
+                    @if (isAdmin)
+                    {
+                        <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Owner</th>
+                    }
+                    <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Date</th>
+                    <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Time</th>
+                    <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Party</th>
+                    <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-widest text-[var(--text-muted)]">Requests</th>
+                    <th class="px-6 py-4"></th>
                 </tr>
             </thead>
             <tbody>
                 @for (int i = 0; i < Model.Count; i++)
                 {
                     var r = Model[i];
-                    <tr>
-                        <td>@(i+1)</td>
-                        <td>@r.Date.ToString("MMM d, yyyy")</td>
-                        <td>@r.Time</td>
-                        <td>@r.PartySize</td>
-                        <td>@r.SpecialRequests</td>
-                        <td>
-                            <a class="btn btn-sm btn-outline-primary" asp-controller="Booking" asp-action="Details" asp-route-id="@r.Id">View</a>
+                    <tr class="border-b border-[var(--border)] bg-[var(--bg-light)] hover:bg-[var(--bg-soft-gray)] transition-colors">
+                        <td class="px-6 py-4 font-bold text-[var(--text-muted)]">@(i + 1)</td>
+                        @if (isAdmin)
+                        {
+                            <td class="px-6 py-4 text-[var(--text-muted)] text-xs font-mono">@r.OwnerId</td>
+                        }
+                        <td class="px-6 py-4 font-semibold text-[var(--text-main)]">@r.Date.ToString("MMM d, yyyy")</td>
+                        <td class="px-6 py-4 text-[var(--text-main)]">@r.Time</td>
+                        <td class="px-6 py-4 text-[var(--text-main)]">@r.PartySize</td>
+                        <td class="px-6 py-4 text-[var(--text-muted)]">@r.SpecialRequests</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2 justify-end">
+                                <a asp-controller="Booking" asp-action="Details" asp-route-id="@r.Id"
+                                   class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border)] text-xs font-bold hover:bg-gold hover:text-white hover:border-gold transition-all">
+                                    <span class="material-symbols-outlined text-[14px]">visibility</span> View
+                                </a>
+                                @if (isAdmin)
+                                {
+                                    <a asp-controller="Booking" asp-action="Edit" asp-route-id="@r.Id"
+                                       class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--border)] text-xs font-bold hover:bg-[var(--bg-soft-gray)] transition-all">
+                                        <span class="material-symbols-outlined text-[14px]">edit</span> Edit
+                                    </a>
+                                    <form method="post" asp-controller="Booking" asp-action="Delete"
+                                          asp-route-id="@r.Id" class="inline"
+                                          onsubmit="return confirm('Delete this reservation?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-red-200 text-red-500 text-xs font-bold hover:bg-red-500 hover:text-white hover:border-red-500 transition-all">
+                                            <span class="material-symbols-outlined text-[14px]">delete</span> Delete
+                                        </button>
+                                    </form>
+                                }
+                            </div>
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-    }
-</div>
+    </div>
+}
