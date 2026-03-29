@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestaurantAi.Mvc.styles.css" asp-append-version="true" />
     <script>
-        // Ensure Tailwind uses class-based dark mode when the CDN loads
         window.tailwind = window.tailwind || {};
         window.tailwind.config = window.tailwind.config || {};
         window.tailwind.config.darkMode = 'class';
@@ -60,9 +59,17 @@
         .gold-gradient {
             background: linear-gradient(135deg, #B08E21 0%, #D4AF37 100%);
         }
+
+        #mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+            #mobile-menu.open {
+                transform: translateX(0);
+            }
     </style>
     <script>
-        // Additional Tailwind config (will merge with the preloaded config)
         tailwind.config = Object.assign(tailwind.config || {}, {
             darkMode: 'class',
             theme: {
@@ -106,103 +113,197 @@
         var env = Context.RequestServices.GetService(typeof(IWebHostEnvironment)) as IWebHostEnvironment;
     }
 
-    <header class="bg-[var(--bg-light)]/95 border-b border-[var(--border)] sticky top-0 z-50">
-        <div class="layout-content-container mx-auto flex items-center justify-between gap-8 px-4 md:px-8 py-4 max-w-[1280px]">
-            <div class="flex items-center gap-4">
-                <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
-                    <span class="material-symbols-outlined">restaurant_menu</span>
+    <!-- HEADER -->
+    <header class="bg-[var(--bg-light)]/95 border-b border-[var(--border)] sticky top-0 z-50 backdrop-blur-sm">
+        <div class="mx-auto flex items-center justify-between gap-3 px-4 md:px-8 py-3 md:py-4 max-w-[1280px]">
+
+            <!-- Logo -->
+            <div class="flex items-center gap-3 shrink-0">
+                <div class="size-9 md:size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined text-xl">restaurant_menu</span>
                 </div>
-                <a asp-controller="Menu" asp-action="Index" class="text-xl font-extrabold uppercase tracking-tight no-underline">DineAI</a>
+                <a asp-controller="Menu" asp-action="Index" class="text-lg md:text-xl font-extrabold uppercase tracking-tight no-underline text-[var(--text-main)]">DineAI</a>
             </div>
 
+            <!-- Desktop nav -->
             <nav class="hidden lg:flex items-center gap-6 text-sm text-[var(--text-muted)]">
-                <a asp-controller="Home" asp-action="Dashboard" class="hover:text-[var(--text-main)]">Concierge</a>
+                <a asp-controller="Home" asp-action="Dashboard" class="hover:text-[var(--text-main)] transition-colors">Concierge</a>
                 @if (loggedInUser != null)
                 {
-                    <a asp-controller="Menu" asp-action="Index" class="hover:text-[var(--text-main)]">Menu</a>
+                    <a asp-controller="Menu" asp-action="Index" class="hover:text-[var(--text-main)] transition-colors">Menu</a>
                 }
-                <a asp-controller="Booking" asp-action="Index" class="hover:text-[var(--text-main)]">My Bookings</a>
-                <a asp-controller="Home" asp-action="Privacy" class="hover:text-[var(--text-main)]">Privacy</a>
+                <a asp-controller="Booking" asp-action="Index" class="hover:text-[var(--text-main)] transition-colors">My Bookings</a>
+                <a asp-controller="Home" asp-action="Privacy" class="hover:text-[var(--text-main)] transition-colors">Privacy</a>
                 @if (isAdmin)
                 {
-                    <a asp-controller="Admin" asp-action="Users" class="text-gold">Admin</a>
+                    <a asp-controller="Admin" asp-action="Users" class="text-gold font-semibold">Admin</a>
                 }
             </nav>
 
-            <div class="flex items-center gap-3">
-                <button id="theme-toggle" onclick="toggleTheme()" class="px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)]" title="Toggle dark mode"> <span class="material-symbols-outlined">dark_mode</span></button>
+            <!-- Right actions -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <button id="theme-toggle" onclick="toggleTheme()"
+                        class="p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors"
+                        title="Toggle dark mode">
+                    <span class="material-symbols-outlined text-xl leading-none">dark_mode</span>
+                </button>
 
                 @if (loggedInUser != null)
                 {
-                    <span class="text-sm font-semibold">Hello, @loggedInUser</span>
+                    <span class="hidden sm:inline text-sm font-semibold truncate max-w-[120px]">Hello, @loggedInUser</span>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="px-4 py-2 bg-gold text-white rounded-lg">Sign Out</button>
+                        <button type="submit" class="px-3 md:px-4 py-2 bg-gold text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">Sign Out</button>
                     </form>
                 }
                 else
                 {
-                    <a asp-controller="Account" asp-action="Login" class="text-sm">Sign In</a>
-                    <a asp-controller="Account" asp-action="Register" class="px-3 py-2 bg-gold text-white rounded-lg">Get Started</a>
+                    <a asp-controller="Account" asp-action="Login" class="hidden sm:inline text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">Sign In</a>
+                    <a asp-controller="Account" asp-action="Register" class="px-3 py-2 bg-gold text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">Get Started</a>
                 }
+
+                <!-- Hamburger -->
+                <button id="menu-btn" onclick="toggleMobileMenu()"
+                        class="lg:hidden p-2 rounded-lg border border-[var(--border)] bg-[var(--bg-soft-gray)] text-[var(--text-muted)]"
+                        aria-label="Open navigation">
+                    <span class="material-symbols-outlined text-xl leading-none">menu</span>
+                </button>
             </div>
         </div>
     </header>
 
-    @* Main content wrapper to match other pages *@
+    <!-- MOBILE OVERLAY -->
+    <div id="mobile-overlay" onclick="toggleMobileMenu()"
+         class="fixed inset-0 bg-black/40 z-40 hidden lg:hidden"></div>
+
+    <!-- MOBILE DRAWER -->
+    <aside id="mobile-menu"
+           class="fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-[var(--bg-light)] border-r border-[var(--border)] z-50 flex flex-col lg:hidden shadow-2xl">
+
+        <div class="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+            <div class="flex items-center gap-3">
+                <div class="size-8 gold-gradient rounded-lg flex items-center justify-center text-white">
+                    <span class="material-symbols-outlined text-lg">restaurant_menu</span>
+                </div>
+                <span class="font-extrabold uppercase tracking-tight">DineAI</span>
+            </div>
+            <button onclick="toggleMobileMenu()" class="p-1 text-[var(--text-muted)] hover:text-[var(--text-main)]" aria-label="Close navigation">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <nav class="flex flex-col gap-1 p-4 flex-1 text-sm">
+            <a asp-controller="Home" asp-action="Dashboard"
+               onclick="toggleMobileMenu()"
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-soft-gray)] hover:text-[var(--text-main)] transition-colors">
+                <span class="material-symbols-outlined text-base">explore</span> Concierge
+            </a>
+            @if (loggedInUser != null)
+            {
+                <a asp-controller="Menu" asp-action="Index"
+                   onclick="toggleMobileMenu()"
+                   class="flex items-center gap-3 px-3 py-3 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-soft-gray)] hover:text-[var(--text-main)] transition-colors">
+                    <span class="material-symbols-outlined text-base">menu_book</span> Menu
+                </a>
+            }
+            <a asp-controller="Booking" asp-action="Index"
+               onclick="toggleMobileMenu()"
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-soft-gray)] hover:text-[var(--text-main)] transition-colors">
+                <span class="material-symbols-outlined text-base">calendar_month</span> My Bookings
+            </a>
+            <a asp-controller="Home" asp-action="Privacy"
+               onclick="toggleMobileMenu()"
+               class="flex items-center gap-3 px-3 py-3 rounded-lg text-[var(--text-muted)] hover:bg-[var(--bg-soft-gray)] hover:text-[var(--text-main)] transition-colors">
+                <span class="material-symbols-outlined text-base">lock</span> Privacy
+            </a>
+            @if (isAdmin)
+            {
+                <a asp-controller="Admin" asp-action="Users"
+                   onclick="toggleMobileMenu()"
+                   class="flex items-center gap-3 px-3 py-3 rounded-lg text-gold font-semibold hover:bg-[var(--bg-soft-gray)] transition-colors">
+                    <span class="material-symbols-outlined text-base">admin_panel_settings</span> Admin
+                </a>
+            }
+        </nav>
+
+        <div class="p-4 border-t border-[var(--border)] space-y-2">
+            @if (loggedInUser != null)
+            {
+                <p class="text-xs text-[var(--text-muted)] px-3">Signed in as <strong>@loggedInUser</strong></p>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="w-full px-4 py-2.5 bg-gold text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">Sign Out</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login"
+                   class="block w-full text-center px-4 py-2.5 border border-[var(--border)] rounded-lg text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-soft-gray)] transition-colors">Sign In</a>
+                <a asp-controller="Account" asp-action="Register"
+                   class="block w-full text-center px-4 py-2.5 bg-gold text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">Get Started</a>
+            }
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
     <div class="layout-container flex h-full grow flex-col">
-        <main class="flex-1 flex justify-center py-6 lg:py-10">
+        <main class="flex-1 flex justify-center py-4 md:py-6 lg:py-10">
             <div class="layout-content-container flex flex-col w-full max-w-[1280px] px-4 md:px-8">
                 @RenderBody()
             </div>
         </main>
     </div>
 
+    <!-- FOOTER -->
     <footer class="bg-[var(--bg-soft-gray)] border-t border-[var(--border)]">
-        <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-8">
-                <div>
+        <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-10 md:py-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-8">
+                <div class="col-span-2 md:col-span-1">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="size-10 gold-gradient rounded-lg flex items-center justify-center text-white">
-                            <span class="material-symbols-outlined">restaurant_menu</span>
+                        <div class="size-9 gold-gradient rounded-lg flex items-center justify-center text-white">
+                            <span class="material-symbols-outlined text-xl">restaurant_menu</span>
                         </div>
-                        <h3 class="text-lg font-extrabold uppercase">DineAI</h3>
+                        <h3 class="text-base font-extrabold uppercase">DineAI</h3>
                     </div>
-                    <p class="text-sm text-[var(--text-muted)]">AI-powered dining discovery and reservation platform for discerning food lovers.</p>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">AI-powered dining discovery and reservation platform for discerning food lovers.</p>
                 </div>
+
                 <div>
-                    <h4 class="font-black text-sm uppercase tracking-widest mb-4">Platform</h4>
+                    <h4 class="font-black text-xs uppercase tracking-widest mb-4">Platform</h4>
                     <ul class="space-y-3 text-sm text-[var(--text-muted)]">
-                        <li><a asp-controller="Home" asp-action="Dashboard" class="hover:text-[var(--text-main)]">Explore</a></li>
-                        <li><a asp-controller="Booking" asp-action="Index" class="hover:text-[var(--text-main)]">My Bookings</a></li>
-                        <li><a href="#" class="hover:text-[var(--text-main)]">Collections</a></li>
-                        <li><a href="#" class="hover:text-[var(--text-main)]">Favorites</a></li>
+                        <li><a asp-controller="Home" asp-action="Dashboard" class="hover:text-[var(--text-main)] transition-colors">Explore</a></li>
+                        <li><a asp-controller="Booking" asp-action="Index" class="hover:text-[var(--text-main)] transition-colors">My Bookings</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">Collections</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">Favorites</a></li>
                     </ul>
                 </div>
+
                 <div>
-                    <h4 class="font-black text-sm uppercase tracking-widest mb-4">Company</h4>
+                    <h4 class="font-black text-xs uppercase tracking-widest mb-4">Company</h4>
                     <ul class="space-y-3 text-sm text-[var(--text-muted)]">
-                        <li><a href="#" class="hover:text-[var(--text-main)]">About Us</a></li>
-                        <li><a href="#" class="hover:text-[var(--text-main)]">Careers</a></li>
-                        <li><a href="#" class="hover:text-[var,--text-main)]">Partners</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">Partners</a></li>
                     </ul>
                 </div>
+
                 <div>
-                    <h4 class="font-black text-sm uppercase tracking-widest mb-4">Legal</h4>
+                    <h4 class="font-black text-xs uppercase tracking-widest mb-4">Legal</h4>
                     <ul class="space-y-3 text-sm text-[var(--text-muted)]">
-                        <li><a asp-controller="Home" asp-action="Privacy" class="hover:text-[var(--text-main)]">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-[var(--text-main)]">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-[var(--text-main)]">Cookie Policy</a></li>
-                        <li><a href="#" class="hover:text-[var(--text-main)]">Support</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy" class="hover:text-[var(--text-main)] transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">Cookie Policy</a></li>
+                        <li><a href="#" class="hover:text-[var(--text-main)] transition-colors">Support</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-[var(--border)] pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+
+            <div class="border-t border-[var(--border)] pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
                 <p class="text-xs text-[var(--text-muted)]">© @DateTime.Now.Year DineAI. All rights reserved.</p>
-                <div class="flex gap-6 text-[var(--text-muted)]">
-                    <a href="#" class="hover:text-[var(--text-main)]">Terms</a>
-                    <a href="#" class="hover:text-[var(--text-main)]">Privacy</a>
-                    <a href="#" class="hover:text-[var(--text-main)]">Support</a>
+                <div class="flex gap-5 text-xs text-[var(--text-muted)]">
+                    <a href="#" class="hover:text-[var(--text-main)] transition-colors">Terms</a>
+                    <a href="#" class="hover:text-[var(--text-main)] transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-[var(--text-main)] transition-colors">Support</a>
                 </div>
             </div>
         </div>
@@ -212,6 +313,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
     <script>
         function toggleTheme() {
             const html = document.documentElement;
@@ -223,6 +325,32 @@
                 localStorage.setItem('theme', 'dark');
             }
         }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-overlay');
+            const isOpen = menu.classList.contains('open');
+
+            if (isOpen) {
+                menu.classList.remove('open');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            } else {
+                menu.classList.add('open');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                const menu = document.getElementById('mobile-menu');
+                const overlay = document.getElementById('mobile-overlay');
+                menu.classList.remove('open');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
     </script>
 </body>
 </html>
