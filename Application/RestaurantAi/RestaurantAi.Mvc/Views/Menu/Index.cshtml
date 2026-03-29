@@ -4,22 +4,21 @@
     var isAdmin = ViewData["IsAdmin"] is true;
 }
 
-<main class="max-w-[1440px] mx-auto px-8 py-10">
+<main class="max-w-4xl mx-auto px-8 py-16">
 
-    <div class="flex items-center justify-between mb-12">
-        <div>
-            <div class="flex items-center gap-2 text-gold font-bold text-sm uppercase tracking-widest mb-3">
-                <span class="material-symbols-outlined text-[18px]">restaurant_menu</span>
-                DineAI
-            </div>
-            <h1 class="text-5xl font-black text-[var(--text-main)]">Our Menu</h1>
-            <p class="text-[var(--text-muted)] mt-2 font-medium">Freshly curated dishes for every taste</p>
+    <div class="text-center mb-16">
+        <div class="flex items-center justify-center gap-2 text-gold font-bold text-xs uppercase tracking-[0.3em] mb-4">
+            <div class="h-px w-12 bg-gold"></div>
+            Est. 2024
+            <div class="h-px w-12 bg-gold"></div>
         </div>
+        <h1 class="text-6xl font-black text-[var(--text-main)] tracking-tight mb-3">Our Menu</h1>
+        <p class="text-[var(--text-muted)] font-medium">Freshly prepared with the finest ingredients</p>
         @if (isAdmin)
         {
             <a asp-controller="Menu" asp-action="Create"
-               class="px-6 py-3 bg-gold text-white font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined">add</span>
+               class="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-gold text-white font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all">
+                <span class="material-symbols-outlined text-[18px]">add</span>
                 Add Item
             </a>
         }
@@ -27,55 +26,54 @@
 
     @foreach (var category in Model)
     {
-        <section class="mb-16">
-            <div class="flex items-center gap-4 mb-8">
-                <h2 class="text-3xl font-black text-[var(--text-main)]">@category.Key</h2>
-                <div class="flex-1 h-px bg-[var(--border)]"></div>
+        <section class="mb-20">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-black text-[var(--text-main)] tracking-tight uppercase">@category.Key</h2>
+                <div class="flex items-center justify-center gap-3 mt-3">
+                    <div class="h-px w-16 bg-[var(--border)]"></div>
+                    <span class="material-symbols-outlined text-gold text-[16px]">restaurant</span>
+                    <div class="h-px w-16 bg-[var(--border)]"></div>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="flex flex-col divide-y divide-dashed divide-[var(--border)]">
                 @foreach (var item in category.Value)
                 {
-                    <div class="group bg-[var(--bg-light)] rounded-2xl overflow-hidden border border-[var(--border)] hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-start gap-6 py-8 group">
                         @if (!string.IsNullOrEmpty(item.ImageUrl))
                         {
-                            <div class="aspect-[4/3] overflow-hidden">
+                            <div class="w-24 h-24 rounded-xl overflow-hidden shrink-0 shadow-sm border border-[var(--border)]">
                                 <img src="@item.ImageUrl" alt="@item.Name"
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                             </div>
                         }
-                        else
+
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-baseline justify-between gap-4 mb-1">
+                                <h3 class="text-xl font-black text-[var(--text-main)]">@item.Name</h3>
+                                <div class="flex-1 border-b border-dotted border-[var(--border)] mb-1 mx-2"></div>
+                                <span class="text-gold font-black text-lg shrink-0">€@item.Price.ToString("0.00")</span>
+                            </div>
+                            <p class="text-sm text-[var(--text-muted)] leading-relaxed">@item.Description</p>
+                        </div>
+
+                        @if (isAdmin)
                         {
-                            <div class="aspect-[4/3] bg-[var(--bg-soft-gray)] flex items-center justify-center">
-                                <span class="material-symbols-outlined text-6xl text-[var(--text-muted)]">restaurant</span>
+                            <div class="flex gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <a asp-controller="Menu" asp-action="Edit" asp-route-id="@item.Id"
+                                   class="px-3 py-1.5 border border-[var(--border)] text-[var(--text-muted)] text-xs font-bold rounded-lg hover:border-gold hover:text-gold transition-colors">
+                                    Edit
+                                </a>
+                                <form asp-controller="Menu" asp-action="Delete" asp-route-id="@item.Id" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit"
+                                            onclick="return confirm('Delete @item.Name?')"
+                                            class="px-3 py-1.5 text-red-500 text-xs font-bold rounded-lg hover:bg-red-50 transition-colors border border-red-200">
+                                        Delete
+                                    </button>
+                                </form>
                             </div>
                         }
-
-                        <div class="p-6">
-                            <div class="flex items-start justify-between mb-2">
-                                <h3 class="text-xl font-black text-[var(--text-main)]">@item.Name</h3>
-                                <span class="text-gold font-black text-lg ml-2 shrink-0">€@item.Price.ToString("0.00")</span>
-                            </div>
-                            <p class="text-sm text-[var(--text-muted)] leading-relaxed mb-4">@item.Description</p>
-
-                            @if (isAdmin)
-                            {
-                                <div class="flex gap-2 pt-4 border-t border-[var(--border)]">
-                                    <a asp-controller="Menu" asp-action="Edit" asp-route-id="@item.Id"
-                                       class="flex-1 px-4 py-2 border border-[var(--border)] text-[var(--text-main)] text-sm font-bold rounded-lg hover:border-gold hover:text-gold transition-colors text-center">
-                                        Edit
-                                    </a>
-                                    <form asp-controller="Menu" asp-action="Delete" asp-route-id="@item.Id" method="post">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit"
-                                                onclick="return confirm('Delete @item.Name?')"
-                                                class="px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 text-sm font-bold rounded-lg hover:bg-red-100 transition-colors border border-red-200">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            }
-                        </div>
                     </div>
                 }
             </div>
@@ -90,10 +88,11 @@
             @if (isAdmin)
             {
                 <a asp-controller="Menu" asp-action="Create"
-                   class="mt-6 inline-flex px-6 py-3 bg-gold text-white font-bold rounded-xl hover:shadow-lg transition-all items-center gap-2">
+                   class="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-gold text-white font-bold rounded-xl hover:shadow-lg transition-all">
                     <span class="material-symbols-outlined">add</span> Add your first item
                 </a>
             }
         </div>
     }
+
 </main>

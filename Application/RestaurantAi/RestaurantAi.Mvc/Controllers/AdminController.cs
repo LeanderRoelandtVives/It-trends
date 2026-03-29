@@ -16,7 +16,7 @@ namespace RestaurantAi.Mvc.Controllers
         public async Task<IActionResult> Users()
         {
             if (ViewData["IsAdmin"] is not true)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Menu");
 
             var response = await _client.GetAsync("api/admin/users");
             if (!response.IsSuccessStatusCode)
@@ -31,7 +31,7 @@ namespace RestaurantAi.Mvc.Controllers
         public async Task<IActionResult> AssignAdmin(string userId)
         {
             if (ViewData["IsAdmin"] is not true)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Menu");
 
             await _client.PostAsJsonAsync("api/admin/assign-role", new { UserId = userId });
             return RedirectToAction("Users");

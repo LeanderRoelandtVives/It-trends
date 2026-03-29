@@ -43,7 +43,7 @@ public class AccountController : BaseController
         var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
         HttpContext.Session.SetString("JWToken", result.Token);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Menu");
     }
 
     [HttpGet]
@@ -74,14 +74,14 @@ public class AccountController : BaseController
         var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
         HttpContext.Session.SetString("JWToken", result.Token);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Menu");
     }
 
     [HttpPost]
     public IActionResult Logout()
     {
         HttpContext.Session.Remove("JWToken");
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Menu");
     }
 
     [HttpGet]
@@ -138,7 +138,7 @@ public class AccountController : BaseController
         var tokenResult = await response.Content.ReadFromJsonAsync<TokenResponse>();
         HttpContext.Session.SetString("JWToken", tokenResult!.Token);
 
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Menu");
     }
 }
 
